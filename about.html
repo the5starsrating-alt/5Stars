@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>من نحن — 5tars</title>
+<meta name="description" content="قصة 5tars — منصة سعودية ولدت من مشكلة حقيقية يعيشها كل صاحب مشروع في المنطقة.">
+<link rel="canonical" href="https://www.the5starsrating.com/about.html">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue:#0B1F4E; --blue2:#1A3A8F; --blue3:#2251D3;
+  --blue4:#EEF3FF; --blue5:#F5F8FF;
+  --gold:#D4920A; --gold2:#F5B429; --gold3:#FFF8E7;
+  --white:#fff; --text:#0B1F4E; --muted:#64748B;
+  --border:rgba(34,81,211,0.10);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Cairo',sans-serif;background:var(--white);color:var(--text);direction:rtl;overflow-x:hidden;}
+.container{max-width:1000px;margin:0 auto;padding:0 24px;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(11,31,78,0.96);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.08);}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;max-width:1000px;margin:0 auto;}
+.nav-logo{text-decoration:none;display:flex;align-items:center;}
+.logo-box{background:linear-gradient(135deg,#0B1F4E,#1A3A8F);border-radius:10px;padding:6px 14px;display:flex;flex-direction:column;align-items:center;gap:2px;}
+.logo-text{display:flex;align-items:baseline;direction:ltr;}
+.logo-5{font-family:'Tajawal',sans-serif;font-size:22px;font-weight:900;font-style:italic;background:linear-gradient(180deg,#FFF0A0,#F5B429,#8A5500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-1px;}
+.logo-tars{font-family:'Tajawal',sans-serif;font-size:22px;font-weight:900;color:#fff;}
+.logo-stars{color:#F5B429;font-size:7px;letter-spacing:3px;}
+.nav-back{color:rgba(255,255,255,0.8);text-decoration:none;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px;transition:color 0.2s;}
+.nav-back:hover{color:var(--gold2);}
+
+/* HERO */
+.hero{
+  min-height:60vh;
+  background:linear-gradient(160deg,var(--blue) 0%,var(--blue2) 60%,#1E4EC4 100%);
+  display:flex;align-items:center;
+  padding:120px 24px 80px;
+  position:relative;overflow:hidden;
+  text-align:center;
+}
+.hero::before{content:'';position:absolute;top:-100px;right:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(245,180,41,0.1) 0%,transparent 65%);pointer-events:none;}
+.hero::after{content:'';position:absolute;bottom:-100px;left:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(34,81,211,0.3) 0%,transparent 65%);pointer-events:none;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px);background-size:50px 50px;pointer-events:none;}
+.hero-inner{position:relative;z-index:1;max-width:700px;margin:0 auto;}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.85);font-size:11px;font-weight:700;padding:6px 16px;border-radius:30px;margin-bottom:24px;letter-spacing:1px;animation:fadeDown 0.6s ease both;}
+.hero-title{font-family:'Tajawal',sans-serif;font-size:clamp(32px,5vw,56px);font-weight:900;color:#fff;line-height:1.2;margin-bottom:20px;animation:fadeUp 0.7s 0.1s ease both;}
+.hero-title em{font-style:normal;background:linear-gradient(135deg,var(--gold2),#FFE08A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero-sub{font-size:16px;color:rgba(255,255,255,0.7);line-height:1.8;max-width:560px;margin:0 auto;animation:fadeUp 0.7s 0.2s ease both;}
+
+/* FOUNDER SECTION */
+.founder{padding:80px 0;background:var(--white);}
+.founder-grid{display:grid;grid-template-columns:280px 1fr;gap:56px;align-items:start;}
+.founder-card{
+  background:linear-gradient(160deg,var(--blue),var(--blue2));
+  border-radius:24px;padding:32px;text-align:center;
+  position:sticky;top:100px;
+  box-shadow:0 20px 60px rgba(11,31,78,0.2);
+}
+.founder-avatar{
+  width:100px;height:100px;border-radius:50%;
+  background:linear-gradient(135deg,var(--gold2),var(--gold));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Tajawal',sans-serif;font-size:42px;font-weight:900;
+  color:var(--blue);margin:0 auto 16px;
+  box-shadow:0 8px 24px rgba(212,146,10,0.4);
+}
+.founder-name{font-family:'Tajawal',sans-serif;font-size:20px;font-weight:900;color:#fff;margin-bottom:6px;}
+.founder-title{font-size:12px;color:rgba(255,255,255,0.65);margin-bottom:20px;line-height:1.6;}
+.founder-location{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:rgba(255,255,255,0.55);margin-bottom:20px;}
+.founder-divider{height:1px;background:rgba(255,255,255,0.1);margin-bottom:20px;}
+.founder-contact a{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);
+  border-radius:10px;padding:10px;color:rgba(255,255,255,0.8);
+  text-decoration:none;font-size:12px;font-weight:600;
+  transition:all 0.2s;margin-bottom:8px;
+}
+.founder-contact a:hover{background:rgba(255,255,255,0.15);color:#fff;}
+.founder-contact a.whatsapp{background:rgba(37,211,102,0.15);border-color:rgba(37,211,102,0.3);color:#25D366;}
+.founder-contact a.whatsapp:hover{background:rgba(37,211,102,0.25);}
+
+/* STORY */
+.story h2{font-family:'Tajawal',sans-serif;font-size:32px;font-weight:900;margin-bottom:8px;}
+.story h2 em{font-style:normal;color:var(--blue3);}
+.story-lead{font-size:17px;color:var(--muted);line-height:1.9;margin-bottom:40px;border-right:3px solid var(--gold2);padding-right:16px;}
+.story-block{margin-bottom:36px;}
+.story-block h3{font-size:18px;font-weight:900;margin-bottom:12px;display:flex;align-items:center;gap:10px;}
+.story-block p{font-size:15px;color:var(--muted);line-height:1.9;}
+
+/* MISSION */
+.mission{padding:80px 0;background:var(--blue5);}
+.mission-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px;}
+.mission-card{background:var(--white);border:1px solid var(--border);border-radius:20px;padding:28px;text-align:center;transition:all 0.3s;}
+.mission-card:hover{transform:translateY(-4px);box-shadow:0 12px 36px rgba(11,31,78,0.08);}
+.mission-icon{font-size:36px;margin-bottom:16px;}
+.mission-title{font-family:'Tajawal',sans-serif;font-size:18px;font-weight:900;margin-bottom:10px;}
+.mission-desc{font-size:13px;color:var(--muted);line-height:1.8;}
+
+/* NUMBERS */
+.numbers{padding:80px 0;background:linear-gradient(135deg,var(--blue),var(--blue2));text-align:center;}
+.numbers-title{font-family:'Tajawal',sans-serif;font-size:32px;font-weight:900;color:#fff;margin-bottom:48px;}
+.numbers-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;}
+.number-item{padding:24px;border-left:1px solid rgba(255,255,255,0.08);}
+.number-item:last-child{border-left:none;}
+.number-val{font-family:'Tajawal',sans-serif;font-size:42px;font-weight:900;color:var(--gold2);line-height:1;margin-bottom:8px;}
+.number-label{font-size:13px;color:rgba(255,255,255,0.65);}
+
+/* VALUES */
+.values{padding:80px 0;background:var(--white);}
+.values-list{display:flex;flex-direction:column;gap:20px;margin-top:40px;}
+.value-item{display:flex;gap:20px;align-items:flex-start;padding:24px;background:var(--blue5);border-radius:16px;border:1px solid var(--border);transition:all 0.2s;}
+.value-item:hover{border-color:rgba(34,81,211,0.2);}
+.value-num{font-family:'Tajawal',sans-serif;font-size:32px;font-weight:900;color:var(--blue3);opacity:0.3;flex-shrink:0;line-height:1;}
+.value-content h4{font-size:16px;font-weight:900;margin-bottom:6px;}
+.value-content p{font-size:13px;color:var(--muted);line-height:1.8;}
+
+/* CTA */
+.cta{padding:80px 0;background:linear-gradient(135deg,var(--blue),var(--blue2));text-align:center;}
+.cta h2{font-family:'Tajawal',sans-serif;font-size:36px;font-weight:900;color:#fff;margin-bottom:16px;}
+.cta h2 em{font-style:normal;color:var(--gold2);}
+.cta p{font-size:15px;color:rgba(255,255,255,0.7);margin-bottom:36px;}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.btn-primary{background:linear-gradient(135deg,var(--gold2),var(--gold));color:var(--blue);border:none;border-radius:12px;padding:14px 28px;font-family:'Cairo',sans-serif;font-size:14px;font-weight:900;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:all 0.25s;}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 32px rgba(212,146,10,0.5);}
+.btn-secondary{background:rgba(255,255,255,0.1);color:#fff;border:1.5px solid rgba(255,255,255,0.25);border-radius:12px;padding:14px 24px;font-family:'Cairo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;transition:all 0.25s;}
+.btn-secondary:hover{background:rgba(255,255,255,0.18);}
+
+/* FOOTER */
+footer{background:var(--blue);padding:32px 24px;text-align:center;color:rgba(255,255,255,0.5);font-size:12px;}
+footer a{color:var(--gold2);text-decoration:none;}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeDown{from{opacity:0;transform:translateY(-16px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity 0.6s ease,transform 0.6s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:768px){
+  .founder-grid{grid-template-columns:1fr;}
+  .founder-card{position:static;}
+  .mission-grid{grid-template-columns:1fr;}
+  .numbers-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div class="logo-box">
+        <div class="logo-text"><span class="logo-5">5</span><span class="logo-tars">tars</span></div>
+        <div class="logo-stars">★★★★★</div>
+      </div>
+    </a>
+    <a href="index.html" class="nav-back">← العودة للرئيسية</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-tag">🌟 قصتنا</div>
+    <h1 class="hero-title">بُنيت من <em>مشكلة حقيقية</em><br>يعيشها كل صاحب مشروع</h1>
+    <p class="hero-sub">5tars لم تولد في مكتب أو اجتماع — ولدت من إحباط شخصي عشته أنا بنفسي، وأعلم أنك عشته أنت أيضاً.</p>
+  </div>
+</section>
+
+<!-- FOUNDER -->
+<section class="founder">
+  <div class="container">
+    <div class="founder-grid">
+
+      <!-- Card -->
+      <div class="founder-card reveal">
+        <div class="founder-avatar">إ</div>
+        <div class="founder-name">إبراهيم الدوسري</div>
+        <div class="founder-title">المؤسس والرئيس التنفيذي<br>5tars Platform</div>
+        <div class="founder-location">📍 الرياض، المملكة العربية السعودية</div>
+        <div class="founder-divider"></div>
+        <div class="founder-contact">
+          <a href="https://wa.me/966555867232" class="whatsapp">
+            💬 تواصل على واتساب
+          </a>
+          <a href="mailto:the5starsrating@gmail.com">
+            ✉️ the5starsrating@gmail.com
+          </a>
+          <a href="https://www.the5starsrating.com">
+            🌐 the5starsrating.com
+          </a>
+        </div>
+      </div>
+
+      <!-- Story -->
+      <div class="story reveal">
+        <h2>من <em>الرياض</em> إلى كل صاحب مشروع في الخليج</h2>
+        <p class="story-lead">
+          شاهدت بعيني كيف يخسر أصحاب المشاريع الرائعة عملاءهم — ليس بسبب ضعف خدمتهم، بل لأن أحداً لم يرد على تقييم سلبي، أو لأن تقييماتهم على Google لا تعكس جودتهم الحقيقية.
+        </p>
+
+        <div class="story-block">
+          <h3>🔍 المشكلة التي شاهدتها</h3>
+          <p>
+            في الرياض، رأيت مطاعم وصالونات وعيادات رائعة تعاني من تقييمات منخفضة على Google — ليس لأن خدمتهم سيئة، بل لأنهم لا يملكون الوقت أو الأدوات للرد والتفاعل. العميل الراضي لا يكتب تقييماً، والزعلان يكتب في الحال. هذا الخلل يدمر سمعة مشاريع جميلة بنى أصحابها أحلامهم عليها.
+          </p>
+        </div>
+
+        <div class="story-block">
+          <h3>💡 فكرة 5tars</h3>
+          <p>
+            قررت أن أبني الحل الذي يتمناه كل صاحب مشروع: أداة تعمل عنه 24 ساعة، ترد على تقييماته بذكاء، تحمي سمعته من التقييمات السلبية، وتجلب له تقييمات إيجابية جديدة — كل هذا بدون أن يحتاج يفتح لابتوبه أو يفكر كيف يرد.
+          </p>
+        </div>
+
+        <div class="story-block">
+          <h3>🇸🇦 لماذا عربي؟</h3>
+          <p>
+            كل الأدوات الموجودة مبنية للسوق الغربي. لا تفهم اللهجة الخليجية، لا تعرف ثقافتنا في التعامل مع العملاء، ولا تناسب طريقة عمل المنشآت السعودية. 5tars بُنيت من الصفر للسوق السعودي والخليجي — بلغتنا، بأسلوبنا، ولمشاكلنا الحقيقية.
+          </p>
+        </div>
+
+        <div class="story-block">
+          <h3>🚀 رؤيتنا</h3>
+          <p>
+            نريد أن نكون الموظف الرقمي الذي يستحقه كل صاحب مشروع في الخليج — يدير سمعته، يرد عنه، ويبلغه بكل جديد — بسعر لا يساوي راتب موظف واحد. نؤمن أن كل مشروع سعودي يستحق أن يصل لـ 5 نجوم.
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- MISSION -->
+<section class="mission">
+  <div class="container">
+    <div style="text-align:center;">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:var(--blue4);color:var(--blue3);border:1px solid rgba(34,81,211,0.18);font-size:11px;font-weight:800;letter-spacing:2px;padding:6px 16px;border-radius:40px;margin-bottom:18px;text-transform:uppercase;">🎯 مهمتنا</div>
+      <h2 style="font-family:'Tajawal',sans-serif;font-size:32px;font-weight:900;margin-bottom:16px;">ثلاثة مبادئ <span style="color:var(--blue3);">تقود كل قرار</span></h2>
+    </div>
+    <div class="mission-grid reveal">
+      <div class="mission-card">
+        <div class="mission-icon">🤝</div>
+        <div class="mission-title">نبني ثقة حقيقية</div>
+        <div class="mission-desc">كل ميزة نبنيها تخدم صاحب المشروع فعلاً. لا وعود فارغة، لا مميزات للمظهر فقط — كل شيء يحل مشكلة حقيقية.</div>
+      </div>
+      <div class="mission-card">
+        <div class="mission-icon">⚡</div>
+        <div class="mission-title">نوفر الوقت فعلاً</div>
+        <div class="mission-desc">صاحب المطعم أو الصالون يعمل 12 ساعة يومياً. نحن نأخذ عنه متابعة التقييمات كاملاً — حرفياً صفر وقت يومي.</div>
+      </div>
+      <div class="mission-card">
+        <div class="mission-icon">🌍</div>
+        <div class="mission-title">نفهم ثقافتنا</div>
+        <div class="mission-desc">العميل الخليجي له أسلوب خاص في التواصل. ذكاؤنا الاصطناعي يكتب بلهجتنا، يفهم قيمنا، ويعكس شخصية مشروعك.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NUMBERS -->
+<section class="numbers">
+  <div class="container">
+    <div class="numbers-title">الأرقام تتحدث</div>
+    <div class="numbers-grid reveal">
+      <div class="number-item">
+        <div class="number-val">5 دقائق</div>
+        <div class="number-label">وقت الإعداد الكامل</div>
+      </div>
+      <div class="number-item">
+        <div class="number-val">24/7</div>
+        <div class="number-label">مراقبة آلية مستمرة</div>
+      </div>
+      <div class="number-item">
+        <div class="number-val">0.6+</div>
+        <div class="number-label">متوسط زيادة التقييم خلال شهر</div>
+      </div>
+      <div class="number-item">
+        <div class="number-val">×3</div>
+        <div class="number-label">تقييمات جديدة كل شهر</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VALUES -->
+<section class="values">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:8px;">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:var(--blue4);color:var(--blue3);border:1px solid rgba(34,81,211,0.18);font-size:11px;font-weight:800;letter-spacing:2px;padding:6px 16px;border-radius:40px;margin-bottom:18px;text-transform:uppercase;">💎 قيمنا</div>
+      <h2 style="font-family:'Tajawal',sans-serif;font-size:32px;font-weight:900;margin-bottom:8px;">ما الذي <span style="color:var(--blue3);">يميزنا فعلاً؟</span></h2>
+    </div>
+    <div class="values-list reveal">
+      <div class="value-item">
+        <div class="value-num">01</div>
+        <div class="value-content">
+          <h4>الشفافية الكاملة</h4>
+          <p>أسعارنا واضحة بلا رسوم خفية. مميزاتنا صريحة — نقول لك ما يشتغل الآن وما هو قادم. لا نبيع وعوداً لا نستطيع تحقيقها.</p>
+        </div>
+      </div>
+      <div class="value-item">
+        <div class="value-num">02</div>
+        <div class="value-content">
+          <h4>العميل يتحكم دائماً</h4>
+          <p>الذكاء الاصطناعي يقترح، وأنت تقرر. كل رد يمر بموافقتك قبل النشر — لأن سمعتك ملكك أنت، نحن فقط نساعدك تديرها أذكى.</p>
+        </div>
+      </div>
+      <div class="value-item">
+        <div class="value-num">03</div>
+        <div class="value-content">
+          <h4>بُنينا للسوق السعودي أولاً</h4>
+          <p>لسنا نسخة معربة من أداة غربية. كل تفصيلة في 5tars صُممت لتناسب طبيعة السوق السعودي والخليجي — من اللهجة للثقافة للطريقة التجارية.</p>
+        </div>
+      </div>
+      <div class="value-item">
+        <div class="value-num">04</div>
+        <div class="value-content">
+          <h4>نكبر معك</h4>
+          <p>سواء كان عندك فرع واحد أو عشرة، 5tars تكبر معك. ابدأ بالباقة الأساسية وارتقِ متى شئت — بدون ضغط أو التزامات طويلة.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="container">
+    <h2>جاهز تجرب <em>5tars</em> بنفسك؟</h2>
+    <p>14 يوم مجاناً — لا بطاقة ائتمان، لا التزام. جرب وشوف الفرق بنفسك.</p>
+    <div class="cta-btns">
+      <a href="signup.html" class="btn-primary">ابدأ مجاناً الآن ←</a>
+      <a href="https://wa.me/966555867232" class="btn-secondary">💬 تحدث مع المؤسس مباشرة</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 5tars. جميع الحقوق محفوظة. |
+    <a href="index.html">الرئيسية</a> |
+    <a href="privacy-policy.html">سياسة الخصوصية</a> |
+    <a href="terms-of-service.html">شروط الاستخدام</a>
+  </p>
+</footer>
+
+<script>
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>

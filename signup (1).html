@@ -1,0 +1,655 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5tars — إنشاء حساب</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --blue:  #0B1F4E;
+  --blue2: #1A3A8F;
+  --blue3: #2251D3;
+  --blue4: #EEF3FF;
+  --gold:  #D4920A;
+  --gold2: #F5B429;
+  --gold3: #FFF0A0;
+  --white: #FFFFFF;
+  --bg:    #F5F8FF;
+  --text:  #0B1F4E;
+  --muted: #64748B;
+  --border:rgba(34,81,211,0.15);
+  --red:   #DC2626;
+  --green: #16A34A;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Cairo',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  direction:rtl;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+}
+
+/* SPLIT LAYOUT */
+.page{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  max-width:960px;
+  width:100%;
+  border-radius:24px;
+  overflow:hidden;
+  box-shadow:0 24px 80px rgba(11,31,78,0.18);
+  min-height:580px;
+}
+
+/* LEFT — BRAND PANEL */
+.brand-panel{
+  background:linear-gradient(160deg, var(--blue) 0%, var(--blue2) 100%);
+  padding:48px 40px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  position:relative;
+  overflow:hidden;
+}
+.brand-panel::before{
+  content:'★★★★★';
+  position:absolute;
+  font-size:140px;
+  color:rgba(255,255,255,0.03);
+  bottom:-20px; left:-10px;
+  letter-spacing:4px;
+  white-space:nowrap;
+  pointer-events:none;
+}
+.logo-wrap{
+  display:inline-flex;
+  flex-direction:column;
+  align-items:center;
+  background:rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:14px;
+  padding:10px 18px;
+  gap:3px;
+  width:fit-content;
+}
+.logo-num{
+  font-family:'Tajawal',sans-serif;
+  font-size:38px;font-weight:900;font-style:italic;
+  background:linear-gradient(180deg,var(--gold3),var(--gold2),var(--gold));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  line-height:1;display:inline-block;
+}
+.logo-word{
+  font-family:'Tajawal',sans-serif;
+  font-size:38px;font-weight:900;color:#fff;
+  line-height:1;margin-top:-6px;
+}
+.logo-stars{color:var(--gold2);font-size:11px;letter-spacing:5px;}
+
+.brand-tagline{
+  color:rgba(255,255,255,0.9);
+  font-size:22px;font-weight:900;
+  font-family:'Tajawal',sans-serif;
+  line-height:1.4;margin-top:32px;
+}
+.brand-tagline em{font-style:normal;color:var(--gold2);}
+
+.brand-features{
+  display:flex;flex-direction:column;gap:12px;margin-top:28px;
+}
+.brand-feature{
+  display:flex;align-items:center;gap:10px;
+  font-size:13px;color:rgba(255,255,255,0.8);
+}
+.brand-feature .ic{
+  width:28px;height:28px;border-radius:8px;
+  background:rgba(255,255,255,0.10);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;
+}
+
+.brand-footer{
+  font-size:11px;color:rgba(255,255,255,0.35);margin-top:auto;
+}
+
+/* RIGHT — FORM PANEL */
+.form-panel{
+  background:var(--white);
+  padding:48px 40px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+
+/* TABS */
+.auth-tabs{
+  display:flex;gap:0;
+  background:var(--bg);
+  border-radius:12px;padding:4px;
+  margin-bottom:32px;
+}
+.auth-tab{
+  flex:1;padding:10px;text-align:center;
+  font-size:14px;font-weight:700;
+  border-radius:9px;cursor:pointer;
+  color:var(--muted);transition:all 0.2s;border:none;background:none;
+  font-family:'Cairo',sans-serif;
+}
+.auth-tab.active{
+  background:var(--white);color:var(--blue);
+  box-shadow:0 2px 10px rgba(11,31,78,0.10);
+}
+
+.form-title{
+  font-family:'Tajawal',sans-serif;
+  font-size:22px;font-weight:900;
+  margin-bottom:6px;
+}
+.form-sub{
+  font-size:13px;color:var(--muted);margin-bottom:24px;
+}
+
+/* FORM FIELDS */
+.field{margin-bottom:16px;}
+.field label{
+  display:block;font-size:12px;font-weight:700;
+  color:var(--text);margin-bottom:6px;
+}
+.field input, .field select{
+  width:100%;padding:12px 14px;
+  border:1.5px solid var(--border);
+  border-radius:10px;font-family:'Cairo',sans-serif;
+  font-size:14px;color:var(--text);
+  background:var(--white);outline:none;
+  transition:all 0.2s;
+}
+.field input:focus, .field select:focus{
+  border-color:var(--blue3);
+  box-shadow:0 0 0 3px rgba(34,81,211,0.10);
+}
+.field input::placeholder{color:var(--muted);}
+
+/* SUBMIT */
+.btn-submit{
+  width:100%;padding:14px;
+  background:linear-gradient(135deg,var(--blue3),var(--blue2));
+  color:#fff;border:none;border-radius:12px;
+  font-family:'Cairo',sans-serif;font-size:15px;font-weight:900;
+  cursor:pointer;transition:all 0.25s;margin-top:8px;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.btn-submit:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(34,81,211,0.35);}
+.btn-submit:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+
+.btn-google{
+  width:100%;padding:12px;
+  background:var(--white);color:var(--text);
+  border:1.5px solid var(--border);border-radius:12px;
+  font-family:'Cairo',sans-serif;font-size:14px;font-weight:700;
+  cursor:pointer;transition:all 0.2s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-bottom:16px;
+}
+.btn-google:hover{border-color:var(--blue3);background:var(--blue4);}
+
+.divider{
+  display:flex;align-items:center;gap:12px;margin:16px 0;
+}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.divider span{font-size:12px;color:var(--muted);}
+
+/* ALERTS */
+.alert{
+  border-radius:10px;padding:12px 14px;
+  font-size:13px;line-height:1.6;margin-bottom:16px;
+  display:none;
+}
+.alert.show{display:block;}
+.alert-error{background:#FEF2F2;border:1px solid rgba(220,38,38,0.2);color:var(--red);}
+.alert-success{background:#F0FDF4;border:1px solid rgba(22,163,74,0.2);color:var(--green);}
+
+/* SPINNER */
+.spinner{
+  width:18px;height:18px;
+  border:2px solid rgba(255,255,255,0.3);
+  border-top-color:#fff;
+  border-radius:50%;
+  animation:spin 0.7s linear infinite;
+  display:none;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* SUCCESS STATE */
+.success-state{
+  display:none;text-align:center;padding:20px 0;
+}
+.success-state .check{
+  width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,#16A34A,#15803D);
+  display:flex;align-items:center;justify-content:center;
+  font-size:32px;margin:0 auto 20px;
+  box-shadow:0 8px 28px rgba(22,163,74,0.35);
+  animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes popIn{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
+.success-state h3{font-family:'Tajawal',sans-serif;font-size:20px;font-weight:900;margin-bottom:8px;}
+.success-state p{font-size:13px;color:var(--muted);line-height:1.7;}
+
+/* RESPONSIVE */
+@media(max-width:680px){
+  .page{grid-template-columns:1fr;}
+  .brand-panel{display:none;}
+  .form-panel{padding:32px 24px;}
+}
+</style>
+</head>
+<body>
+
+<!-- Loading overlay يظهر أثناء معالجة Google OAuth -->
+<div id="authLoading" style="display:none;position:fixed;inset:0;background:linear-gradient(135deg,#0B1F4E,#1A3A8F);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:16px;">
+  <div style="width:52px;height:52px;border:4px solid rgba(255,255,255,0.2);border-top-color:#F5B429;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+  <div style="color:#fff;font-size:16px;font-weight:700;">جاري تسجيل الدخول...</div>
+</div>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
+<script>
+// تحقق فوراً قبل أي شيء — إذا في code في URL يعني جاي من Google
+if (window.location.search.includes('code=') || window.location.hash.includes('access_token')) {
+  document.getElementById('authLoading').style.display = 'flex';
+}
+</script>
+
+<div class="page">
+
+  <!-- ══ BRAND PANEL ══ -->
+  <div class="brand-panel">
+    <div>
+      <div class="logo-wrap">
+        <div style="display:flex;align-items:baseline;direction:ltr;">
+          <span class="logo-num">5</span>
+          <span class="logo-word">tars</span>
+        </div>
+        <div class="logo-stars">★★★★★</div>
+      </div>
+      <div class="brand-tagline">
+        اجعل محلّك يصل<br>لـ <em>5 نجوم</em> بشكل آلي
+      </div>
+      <div class="brand-features">
+        <div class="brand-feature"><span class="ic">⚡</span>تنبيه واتساب فوري عند كل تقييم</div>
+        <div class="brand-feature"><span class="ic">🤖</span>ردود ذكية باللهجة العربية</div>
+        <div class="brand-feature"><span class="ic">📊</span>راقب جميع فروعك من مكان واحد</div>
+        <div class="brand-feature"><span class="ic">🛡️</span>احمِ سمعتك من التقييمات السلبية</div>
+        <div class="brand-feature"><span class="ic">🎁</span>14 يوم مجانية — بدون بطاقة</div>
+      </div>
+    </div>
+    <div class="brand-footer">© 2025 5tars · جميع الحقوق محفوظة</div>
+  </div>
+
+  <!-- ══ FORM PANEL ══ -->
+  <div class="form-panel">
+
+    <!-- TABS -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" onclick="switchTab('signup')">إنشاء حساب</button>
+      <button class="auth-tab" onclick="switchTab('login')">دخول</button>
+    </div>
+
+    <!-- ALERTS -->
+    <div class="alert alert-error" id="alertError"></div>
+    <div class="alert alert-success" id="alertSuccess"></div>
+
+    <!-- SUCCESS STATE -->
+    <div class="success-state" id="successState">
+      <div class="check">✓</div>
+      <h3 id="successTitle">تم إنشاء حسابك!</h3>
+      <p id="successMsg">تحقق من بريدك الإلكتروني وانقر رابط التأكيد للدخول لمنصة 5tars.</p>
+      <button class="btn-submit" style="margin-top:24px;" onclick="switchTab('login')">
+        دخول الآن ←
+      </button>
+    </div>
+
+    <!-- ═══ SIGNUP FORM ═══ -->
+    <div id="formSignup">
+      <div class="form-title">ابدأ تجربتك المجانية</div>
+      <div class="form-sub">14 يوم مجاناً — لا بطاقة ائتمان مطلوبة</div>
+
+      <!-- Google OAuth -->
+      <button class="btn-google" onclick="loginWithGoogle()">
+        <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/></svg>
+        التسجيل بـ Google
+      </button>
+
+      <div class="divider"><span>أو بالبريد الإلكتروني</span></div>
+
+      <div class="field">
+        <label>الاسم الكامل</label>
+        <input type="text" id="signupName" placeholder="محمد العمري">
+      </div>
+      <div class="field">
+        <label>البريد الإلكتروني</label>
+        <input type="email" id="signupEmail" placeholder="name@example.com" style="direction:ltr;text-align:right;">
+      </div>
+      <div class="field">
+        <label>رقم واتساب</label>
+        <input type="tel" id="signupPhone" placeholder="05xxxxxxxx">
+      </div>
+      <div class="field">
+        <label>نوع النشاط التجاري</label>
+        <select id="signupBusiness">
+          <option value="">اختر نوع النشاط</option>
+          <option value="restaurant">مطعم</option>
+          <option value="cafe">كافيه</option>
+          <option value="salon">صالون</option>
+          <option value="clinic">عيادة</option>
+          <option value="retail">متجر تجزئة</option>
+          <option value="other">أخرى</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>كلمة المرور</label>
+        <input type="password" id="signupPassword" placeholder="8 أحرف على الأقل" style="direction:ltr;text-align:right;">
+      </div>
+
+      <button class="btn-submit" id="btnSignup" onclick="handleSignup()">
+        <span id="signupBtnText">إنشاء الحساب مجاناً ←</span>
+        <div class="spinner" id="signupSpinner"></div>
+      </button>
+    </div>
+
+    <!-- ═══ LOGIN FORM ═══ -->
+    <div id="formLogin" style="display:none;">
+      <div class="form-title">أهلاً بك مجدداً</div>
+      <div class="form-sub">سجّل دخولك للوصول لمنصة 5tars</div>
+
+      <button class="btn-google" onclick="loginWithGoogle()">
+        <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/></svg>
+        دخول بـ Google
+      </button>
+
+      <div class="divider"><span>أو بالبريد الإلكتروني</span></div>
+
+      <div class="field">
+        <label>البريد الإلكتروني</label>
+        <input type="email" id="loginEmail" placeholder="name@example.com" style="direction:ltr;text-align:right;">
+      </div>
+      <div class="field">
+        <label>كلمة المرور</label>
+        <input type="password" id="loginPassword" placeholder="••••••••" style="direction:ltr;text-align:right;">
+      </div>
+
+      <div style="text-align:left;margin-bottom:16px;">
+        <a href="#" onclick="handleForgotPassword()" style="font-size:12px;color:var(--blue3);text-decoration:none;">نسيت كلمة المرور؟</a>
+      </div>
+
+      <button class="btn-submit" id="btnLogin" onclick="handleLogin()">
+        <span id="loginBtnText">دخول ←</span>
+        <div class="spinner" id="loginSpinner"></div>
+      </button>
+    </div>
+
+  </div><!-- end form-panel -->
+</div><!-- end page -->
+
+<script>
+// ══════════════════════════════════
+//  SUPABASE INIT
+// ══════════════════════════════════
+const { createClient } = supabase;
+const sb = createClient(
+  'https://xdmbwtnpadjeinclmffh.supabase.co',
+  'sb_publishable_MXzO5_juPmKitzZ4JQ5Ddw_vvLxcH1i',
+  {
+    auth: {
+      detectSessionInUrl: true,
+      persistSession: true,
+      autoRefreshToken: true,
+      storageKey: 'sb-xdmbwtnpadjeinclmffh-auth-token',
+      flowType: 'pkce'
+    }
+  }
+);
+
+// ══════════════════════════════════
+//  UI HELPERS
+// ══════════════════════════════════
+function showError(msg) {
+  const el = document.getElementById('alertError');
+  el.textContent = '⚠️ ' + msg;
+  el.classList.add('show');
+  document.getElementById('alertSuccess').classList.remove('show');
+}
+function showSuccess(msg) {
+  const el = document.getElementById('alertSuccess');
+  el.textContent = '✅ ' + msg;
+  el.classList.add('show');
+  document.getElementById('alertError').classList.remove('show');
+}
+function clearAlerts() {
+  document.getElementById('alertError').classList.remove('show');
+  document.getElementById('alertSuccess').classList.remove('show');
+}
+function setLoading(formType, loading) {
+  const btn = document.getElementById('btn' + (formType === 'signup' ? 'Signup' : 'Login'));
+  const txt = document.getElementById(formType + 'BtnText');
+  const spin = document.getElementById(formType + 'Spinner');
+  btn.disabled = loading;
+  txt.style.display = loading ? 'none' : 'inline';
+  spin.style.display = loading ? 'block' : 'none';
+}
+function switchTab(tab) {
+  const isSignup = tab === 'signup';
+  document.getElementById('formSignup').style.display = isSignup ? 'block' : 'none';
+  document.getElementById('formLogin').style.display = isSignup ? 'none' : 'block';
+  document.getElementById('successState').style.display = 'none';
+  document.querySelectorAll('.auth-tab').forEach((t,i) => {
+    t.classList.toggle('active', isSignup ? i===0 : i===1);
+  });
+  clearAlerts();
+}
+function showSuccessState(title, msg) {
+  document.getElementById('formSignup').style.display = 'none';
+  document.getElementById('formLogin').style.display = 'none';
+  document.getElementById('successState').style.display = 'block';
+  document.getElementById('successTitle').textContent = title;
+  document.getElementById('successMsg').textContent = msg;
+}
+
+// ══════════════════════════════════
+//  SIGNUP
+// ══════════════════════════════════
+async function handleSignup() {
+  clearAlerts();
+  const name     = document.getElementById('signupName').value.trim();
+  const email    = document.getElementById('signupEmail').value.trim();
+  const phone    = document.getElementById('signupPhone').value.trim();
+  const business = document.getElementById('signupBusiness').value;
+  const password = document.getElementById('signupPassword').value;
+
+  // Validation
+  if (!name)     return showError('الرجاء إدخال الاسم الكامل');
+  if (!email)    return showError('الرجاء إدخال البريد الإلكتروني');
+  if (!phone)    return showError('الرجاء إدخال رقم الواتساب');
+  if (!business) return showError('الرجاء اختيار نوع النشاط التجاري');
+  if (password.length < 8) return showError('كلمة المرور يجب أن تكون 8 أحرف على الأقل');
+
+  setLoading('signup', true);
+
+  try {
+    // 1. Create user in Supabase Auth
+    const { data, error } = await sb.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name:     name,
+          phone:         phone,
+          business_type: business,
+          plan:          'trial',
+          trial_ends:    new Date(Date.now() + 14*24*60*60*1000).toISOString()
+        }
+      }
+    });
+
+    if (error) throw error;
+
+    // 2. Insert into profiles table (if exists)
+    if (data.user) {
+      await sb.from('profiles').upsert({
+        id:            data.user.id,
+        full_name:     name,
+        phone:         phone,
+        business_type: business,
+        plan:          'trial',
+        trial_ends:    new Date(Date.now() + 14*24*60*60*1000).toISOString(),
+        created_at:    new Date().toISOString()
+      });
+    }
+
+    showSuccessState(
+      '🎉 تم إنشاء حسابك!',
+      'تحقق من بريدك الإلكتروني ' + email + ' وانقر رابط التأكيد للدخول لمنصة 5tars. التجربة المجانية 14 يوم تبدأ الآن!'
+    );
+
+  } catch (err) {
+    const msgs = {
+      'User already registered': 'هذا البريد الإلكتروني مسجل مسبقاً. جرب تسجيل الدخول.',
+      'Invalid email': 'البريد الإلكتروني غير صحيح',
+      'Password should be at least 6 characters': 'كلمة المرور قصيرة جداً'
+    };
+    showError(msgs[err.message] || err.message);
+  } finally {
+    setLoading('signup', false);
+  }
+}
+
+// ══════════════════════════════════
+//  LOGIN
+// ══════════════════════════════════
+async function handleLogin() {
+  clearAlerts();
+  const email    = document.getElementById('loginEmail').value.trim();
+  const password = document.getElementById('loginPassword').value;
+
+  if (!email)    return showError('الرجاء إدخال البريد الإلكتروني');
+  if (!password) return showError('الرجاء إدخال كلمة المرور');
+
+  setLoading('login', true);
+
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+
+    showSuccess('تم تسجيل الدخول بنجاح! جاري تحويلك...');
+    setTimeout(() => {
+      // Redirect to dashboard after login
+      window.location.href = 'dashboard.html';
+    }, 1200);
+
+  } catch (err) {
+    const msgs = {
+      'Invalid login credentials': 'البريد أو كلمة المرور غير صحيحة',
+      'Email not confirmed': 'الرجاء تأكيد بريدك الإلكتروني أولاً'
+    };
+    showError(msgs[err.message] || err.message);
+  } finally {
+    setLoading('login', false);
+  }
+}
+
+// ══════════════════════════════════
+//  GOOGLE OAUTH
+// ══════════════════════════════════
+async function loginWithGoogle() {
+  try {
+    const { error } = await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin + '/signup.html',
+        storageKey: 'sb-xdmbwtnpadjeinclmffh-auth-token'
+      }
+    });
+    if (error) throw error;
+  } catch (err) {
+    showError('تعذر التسجيل بـ Google. حاول مجدداً.');
+  }
+}
+
+// ══════════════════════════════════
+//  FORGOT PASSWORD
+// ══════════════════════════════════
+async function handleForgotPassword() {
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!email) return showError('أدخل بريدك الإلكتروني أولاً');
+
+  try {
+    const { error } = await sb.auth.resetPasswordForEmail(email, {
+      redirectTo: window.location.origin + '/reset-password.html'
+    });
+    if (error) throw error;
+    showSuccess('تم إرسال رابط إعادة تعيين كلمة المرور لبريدك الإلكتروني.');
+  } catch(err) {
+    showError('تعذر إرسال البريد. تحقق من العنوان وحاول مجدداً.');
+  }
+}
+
+// ══════════════════════════════════
+//  ENTER KEY SUPPORT
+// ══════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const signupVisible = document.getElementById('formSignup').style.display !== 'none';
+    if (signupVisible) handleSignup();
+    else handleLogin();
+  }
+});
+
+// ══════════════════════════════════
+//  HANDLE AUTH STATE
+// ══════════════════════════════════
+
+// فحص إذا في session موجودة أصلاً أو جاية من Google OAuth
+sb.auth.getSession().then(async ({ data: { session } }) => {
+  if (session) {
+    // احفظ الـ profile إذا مستخدم جديد
+    try {
+      const name = session.user.user_metadata?.full_name 
+        || session.user.user_metadata?.name 
+        || session.user.email;
+      await sb.from('profiles').upsert({
+        id: session.user.id,
+        full_name: name,
+        plan: 'trial',
+        trial_ends: new Date(Date.now() + 14*24*60*60*1000).toISOString()
+      }, { onConflict: 'id', ignoreDuplicates: true });
+    } catch(e) {}
+    window.location.replace('dashboard.html');
+  }
+});
+
+// يشتغل عند إتمام Google OAuth
+sb.auth.onAuthStateChange(async (event, session) => {
+  if ((event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') && session) {
+    try {
+      const name = session.user.user_metadata?.full_name 
+        || session.user.user_metadata?.name 
+        || session.user.email;
+      await sb.from('profiles').upsert({
+        id: session.user.id,
+        full_name: name,
+        plan: 'trial',
+        trial_ends: new Date(Date.now() + 14*24*60*60*1000).toISOString()
+      }, { onConflict: 'id', ignoreDuplicates: true });
+    } catch(e) {}
+    window.location.replace('dashboard.html');
+  }
+});
+</script>
+</body>
+</html>

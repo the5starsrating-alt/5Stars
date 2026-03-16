@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5tars — شروط الاستخدام</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue:#0B1F4E; --blue2:#1A3A8F; --blue3:#2251D3; --blue4:#EEF3FF;
+  --gold:#D4920A; --gold2:#F5B429; --bg:#F5F8FF; --text:#0B1F4E;
+  --muted:#64748B; --border:rgba(34,81,211,0.12); --white:#FFFFFF;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direction:rtl;}
+
+nav{background:rgba(11,31,78,0.97);backdrop-filter:blur(20px);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.08);}
+.logo{display:flex;align-items:center;gap:4px;text-decoration:none;}
+.logo-num{font-family:'Tajawal',sans-serif;font-size:26px;font-weight:900;font-style:italic;background:linear-gradient(180deg,#FFF0A0,#F5B429,#D4920A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.logo-word{font-family:'Tajawal',sans-serif;font-size:26px;font-weight:900;color:#fff;}
+.nav-back{color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;font-weight:600;transition:color 0.2s;}
+.nav-back:hover{color:var(--gold2);}
+
+.hero{background:linear-gradient(135deg,var(--blue),var(--blue2));padding:60px 24px;text-align:center;color:#fff;}
+.hero-eyebrow{display:inline-block;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);padding:6px 18px;border-radius:30px;font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:16px;}
+.hero h1{font-family:'Tajawal',sans-serif;font-size:clamp(28px,4vw,42px);font-weight:900;margin-bottom:12px;}
+.hero p{color:rgba(255,255,255,0.7);font-size:14px;}
+.hero .update{margin-top:16px;background:rgba(245,180,41,0.15);border:1px solid rgba(245,180,41,0.3);color:var(--gold2);display:inline-block;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;}
+
+.container{max-width:820px;margin:0 auto;padding:60px 24px;}
+
+.toc{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:40px;}
+.toc-title{font-size:14px;font-weight:900;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.toc ol{padding-right:20px;display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;}
+.toc ol li{font-size:13px;}
+.toc ol li a{color:var(--blue3);text-decoration:none;font-weight:600;}
+.toc ol li a:hover{text-decoration:underline;}
+
+.section{margin-bottom:48px;}
+.section-title{font-family:'Tajawal',sans-serif;font-size:22px;font-weight:900;margin-bottom:16px;display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:2px solid var(--blue4);}
+.section-title .num{width:32px;height:32px;background:linear-gradient(135deg,var(--blue3),var(--blue2));color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0;}
+p{font-size:14px;line-height:2;color:#3B5080;margin-bottom:14px;}
+ul,ol{padding-right:24px;margin-bottom:14px;}
+ul li,ol li{font-size:14px;line-height:2;color:#3B5080;margin-bottom:4px;}
+strong{color:var(--text);font-weight:700;}
+
+.info-box{background:var(--blue4);border:1px solid rgba(34,81,211,0.15);border-radius:12px;padding:16px 20px;margin:20px 0;}
+.info-box p{margin:0;color:var(--blue2);}
+.warn-box{background:#FFF8E7;border:1px solid rgba(212,146,10,0.2);border-radius:12px;padding:16px 20px;margin:20px 0;}
+.warn-box p{margin:0;color:#92400E;}
+.danger-box{background:#FEF2F2;border:1px solid rgba(220,38,38,0.2);border-radius:12px;padding:16px 20px;margin:20px 0;}
+.danger-box p{margin:0;color:#991B1B;}
+
+.plans-table{width:100%;border-collapse:collapse;margin:20px 0;border-radius:12px;overflow:hidden;box-shadow:0 1px 8px rgba(11,31,78,0.08);}
+.plans-table th{background:linear-gradient(135deg,var(--blue),var(--blue2));color:#fff;padding:12px 16px;text-align:right;font-size:13px;font-weight:700;}
+.plans-table td{padding:12px 16px;border-bottom:1px solid var(--border);font-size:13px;color:#3B5080;background:var(--white);}
+.plans-table tr:last-child td{border-bottom:none;}
+.plans-table tr:hover td{background:var(--blue4);}
+
+.contact-card{background:linear-gradient(135deg,var(--blue),var(--blue2));border-radius:16px;padding:32px;color:#fff;text-align:center;margin-top:40px;}
+.contact-card h3{font-family:'Tajawal',sans-serif;font-size:22px;font-weight:900;margin-bottom:8px;}
+.contact-card p{color:rgba(255,255,255,0.7);font-size:14px;margin-bottom:20px;}
+.contact-card a{color:var(--gold2);text-decoration:none;font-weight:700;}
+.btn-wa{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:var(--blue);padding:12px 28px;border-radius:12px;font-weight:900;font-size:14px;text-decoration:none;transition:all 0.2s;}
+.btn-wa:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,146,10,0.4);}
+
+footer{background:var(--blue);color:rgba(255,255,255,0.5);text-align:center;padding:24px;font-size:12px;}
+footer a{color:var(--gold2);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">
+    <span class="logo-num">5</span><span class="logo-word">tars</span>
+  </a>
+  <a href="index.html" class="nav-back">← العودة للرئيسية</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">📄 قانوني</div>
+  <h1>شروط الاستخدام</h1>
+  <p>يرجى قراءة هذه الشروط بعناية قبل استخدام المنصة</p>
+  <div class="update">آخر تحديث: مارس 2026</div>
+</div>
+
+<div class="container">
+
+  <div class="toc">
+    <div class="toc-title">📋 محتويات الشروط</div>
+    <ol>
+      <li><a href="#acceptance">قبول الشروط</a></li>
+      <li><a href="#service">وصف الخدمة</a></li>
+      <li><a href="#account">الحساب والمسؤولية</a></li>
+      <li><a href="#plans">الباقات والأسعار</a></li>
+      <li><a href="#payment">الدفع والاسترداد</a></li>
+      <li><a href="#prohibited">الاستخدام المحظور</a></li>
+      <li><a href="#ip">الملكية الفكرية</a></li>
+      <li><a href="#liability">حدود المسؤولية</a></li>
+      <li><a href="#termination">إنهاء الخدمة</a></li>
+      <li><a href="#law">القانون المنظم</a></li>
+    </ol>
+  </div>
+
+  <div class="info-box">
+    <p>📌 <strong>ملاحظة:</strong> باستخدامك لمنصة 5tars، فإنك توافق على هذه الشروط بالكامل. إذا كنت لا توافق على أي جزء منها، يرجى عدم استخدام المنصة.</p>
+  </div>
+
+  <!-- 1 -->
+  <div class="section" id="acceptance">
+    <div class="section-title"><span class="num">١</span> قبول الشروط</div>
+    <p>مرحباً بك في منصة <strong>5tars</strong> لإدارة تقييمات Google للأعمال التجارية. تُشغَّل هذه المنصة من قِبل شركة 5tars ("الشركة"، "نحن").</p>
+    <p>بإنشائك حساباً على المنصة أو استخدامك لأي من خدماتها، فإنك تقر وتوافق على الالتزام بهذه الشروط وأي سياسات مرتبطة بها، بما فيها سياسة الخصوصية.</p>
+    <p>هذه الشروط تُطبَّق على جميع مستخدمي المنصة، سواء كانوا يستخدمون النسخة المجانية أو الباقات المدفوعة.</p>
+  </div>
+
+  <!-- 2 -->
+  <div class="section" id="service">
+    <div class="section-title"><span class="num">٢</span> وصف الخدمة</div>
+    <p>تقدم منصة 5tars الخدمات التالية لأصحاب الأعمال التجارية:</p>
+    <ul>
+      <li>مراقبة تقييمات Google Business تلقائياً وإشعارات فورية</li>
+      <li>توليد ردود احترافية بالذكاء الاصطناعي على التقييمات</li>
+      <li>إرسال تنبيهات التقييمات عبر واتساب أو SMS</li>
+      <li>إنشاء QR Code ذكي لجمع التقييمات</li>
+      <li>نظام فلتر التقييمات (توجيه العملاء الراضين لـ Google والغير راضين لقناة خاصة)</li>
+      <li>تقارير تحليلية دورية</li>
+    </ul>
+    <p>نحتفظ بالحق في تعديل أو إضافة أو إيقاف أي ميزة من ميزات المنصة في أي وقت، مع إشعار مسبق قدر الإمكان.</p>
+  </div>
+
+  <!-- 3 -->
+  <div class="section" id="account">
+    <div class="section-title"><span class="num">٣</span> الحساب والمسؤولية</div>
+    <p>أنت مسؤول عن:</p>
+    <ul>
+      <li>الحفاظ على سرية بيانات تسجيل دخولك</li>
+      <li>جميع الأنشطة التي تجري من خلال حسابك</li>
+      <li>إبلاغنا فوراً عند الاشتباه في أي وصول غير مصرح به لحسابك</li>
+      <li>التأكد من صحة المعلومات التي تقدمها عند التسجيل</li>
+    </ul>
+    <p>يجب أن يكون عمرك 18 سنة أو أكثر لإنشاء حساب على المنصة. إذا كنت تنشئ حساباً لشركة، فأنت تضمن أنك مخوّل قانونياً بالتصرف نيابة عنها.</p>
+    <div class="warn-box">
+      <p>⚠️ لا تشارك كلمة المرور مع أي شخص، بما فيهم موظفو 5tars. لن نطلب منك كلمة مرورك أبداً.</p>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="section" id="plans">
+    <div class="section-title"><span class="num">٤</span> الباقات والأسعار</div>
+    <p>تقدم 5tars ثلاث باقات مدفوعة بعد انتهاء فترة التجربة المجانية (14 يوماً):</p>
+    <table class="plans-table">
+      <tr>
+        <th>الباقة</th>
+        <th>السعر الشهري</th>
+        <th>الفروع</th>
+        <th>المميزات الرئيسية</th>
+      </tr>
+      <tr>
+        <td><strong>أساسي</strong></td>
+        <td>49 ر.س</td>
+        <td>فرع واحد</td>
+        <td>مراقبة Google، تنبيه واتساب، قوالب ردود</td>
+      </tr>
+      <tr>
+        <td><strong>احترافي</strong></td>
+        <td>99 ر.س</td>
+        <td>حتى 3 فروع</td>
+        <td>كل الأساسي + ردود الذكاء الاصطناعي + فلتر التقييمات</td>
+      </tr>
+      <tr>
+        <td><strong>متقدم</strong></td>
+        <td>199 ر.س</td>
+        <td>غير محدود</td>
+        <td>كل الاحترافي + تحليلات متقدمة + دعم أولوية 24/7</td>
+      </tr>
+    </table>
+    <p>الأسعار محددة بالريال السعودي وتشمل ضريبة القيمة المضافة 15%.</p>
+  </div>
+
+  <!-- 5 -->
+  <div class="section" id="payment">
+    <div class="section-title"><span class="num">٥</span> الدفع والاسترداد</div>
+    <p><strong>الدفع:</strong> يتم الدفع شهرياً مسبقاً عبر بوابة Moyasar الآمنة. طرق الدفع المقبولة: مدى، Visa، Mastercard، Apple Pay، STC Pay، Tabby.</p>
+    <p><strong>التجديد التلقائي:</strong> تُجدَّد الباقات تلقائياً كل شهر ما لم تقم بإلغاء الاشتراك قبل موعد التجديد بـ 24 ساعة على الأقل.</p>
+    <p><strong>سياسة الاسترداد:</strong></p>
+    <ul>
+      <li>خلال 7 أيام من الاشتراك: استرداد كامل بدون شروط</li>
+      <li>بعد 7 أيام: لا يوجد استرداد للفترة المتبقية من الشهر الحالي</li>
+      <li>التجربة المجانية: لا يُطلب دفع وليس هناك ما يُسترد</li>
+    </ul>
+    <div class="info-box">
+      <p>💡 يمكنك إلغاء اشتراكك في أي وقت من إعدادات حسابك. ستستمر في الاستفادة من الخدمة حتى نهاية فترة الاشتراك المدفوعة.</p>
+    </div>
+  </div>
+
+  <!-- 6 -->
+  <div class="section" id="prohibited">
+    <div class="section-title"><span class="num">٦</span> الاستخدام المحظور</div>
+    <p>يُحظر عليك صراحةً استخدام المنصة في:</p>
+    <ul>
+      <li>نشر تقييمات مزيفة أو التلاعب بتقييمات Google بشكل غير مشروع</li>
+      <li>انتهاك سياسات Google Business أو شروط خدمة Google</li>
+      <li>إرسال رسائل إزعاج (Spam) لعملائك أو لأي أطراف أخرى</li>
+      <li>محاولة اختراق المنصة أو الوصول غير المصرح به لبيانات مستخدمين آخرين</li>
+      <li>استخدام المنصة لأغراض غير مشروعة أو مخالفة للأنظمة السعودية</li>
+      <li>إعادة بيع أو ترخيص الخدمة لأطراف ثالثة دون إذن كتابي</li>
+    </ul>
+    <div class="danger-box">
+      <p>🚫 مخالفة هذه البنود تُعرّض حسابك للإيقاف الفوري دون استرداد، وقد تعرّضك للمسؤولية القانونية.</p>
+    </div>
+  </div>
+
+  <!-- 7 -->
+  <div class="section" id="ip">
+    <div class="section-title"><span class="num">٧</span> الملكية الفكرية</div>
+    <p>جميع محتويات المنصة (الكود البرمجي، التصميم، الشعارات، الخوارزميات، النصوص) هي ملكية حصرية لشركة 5tars ومحمية بموجب قوانين الملكية الفكرية.</p>
+    <p>باستخدامك للمنصة، تحصل على رخصة محدودة وغير حصرية وغير قابلة للنقل لاستخدامها لأغراضك التجارية الخاصة فقط.</p>
+    <p><strong>بياناتك هي ملكك:</strong> التقييمات والبيانات التي تجمعها من خلال المنصة تظل ملكك أنت. 5tars تعمل كمعالج للبيانات نيابة عنك.</p>
+  </div>
+
+  <!-- 8 -->
+  <div class="section" id="liability">
+    <div class="section-title"><span class="num">٨</span> حدود المسؤولية</div>
+    <p>تُقدَّم المنصة "كما هي" (as-is) مع سعينا الدائم لتحسينها. لا نضمن:</p>
+    <ul>
+      <li>الخدمة دون انقطاع أو أخطاء في جميع الأوقات (هدفنا 99.5% uptime)</li>
+      <li>أن نتائج الذكاء الاصطناعي ستكون مثالية في جميع الحالات</li>
+      <li>أن وصولنا لـ Google API لن يتأثر بسياسات Google التي لا نتحكم فيها</li>
+    </ul>
+    <p>لا تتجاوز مسؤوليتنا القصوى في أي حادثة مجموع المبالغ التي دفعتها لنا خلال الأشهر الثلاثة السابقة.</p>
+    <p>لسنا مسؤولين عن أي أضرار غير مباشرة أو تبعية أو خسارة أرباح ناتجة عن استخدام المنصة أو عدم القدرة على استخدامها.</p>
+  </div>
+
+  <!-- 9 -->
+  <div class="section" id="termination">
+    <div class="section-title"><span class="num">٩</span> إنهاء الخدمة</div>
+    <p><strong>من قِبَلك:</strong> يمكنك إلغاء اشتراكك في أي وقت من إعدادات الحساب. بعد الإلغاء، ستستمر في الوصول للمنصة حتى نهاية الفترة المدفوعة.</p>
+    <p><strong>من قِبَلنا:</strong> نحتفظ بالحق في تعليق أو إنهاء حسابك دون إشعار مسبق في حالة:</p>
+    <ul>
+      <li>انتهاك شروط الاستخدام</li>
+      <li>التأخر في السداد لمدة تزيد عن 14 يوماً</li>
+      <li>الاشتباه في نشاط احتيالي أو ضار</li>
+    </ul>
+    <p>في حالة إغلاق المنصة بالكامل، سنُخطرك قبل 30 يوماً على الأقل ونُعيد لك رسوم الفترة غير المستخدمة.</p>
+  </div>
+
+  <!-- 10 -->
+  <div class="section" id="law">
+    <div class="section-title"><span class="num">١٠</span> القانون المنظم والنزاعات</div>
+    <p>تخضع هذه الشروط لقوانين المملكة العربية السعودية وتُفسَّر وفقاً لها. تختص المحاكم السعودية بالفصل في أي نزاعات تنشأ عن هذه الشروط.</p>
+    <p>في حالة وجود أي نزاع، نشجع على حله ودياً أولاً عبر التواصل المباشر معنا. إذا لم يُحل النزاع خلال 30 يوماً، يجوز لأي طرف اللجوء للقضاء.</p>
+    <p>إذا تبيّن أن أي بند من هذه الشروط غير قابل للتطبيق، يظل باقي البنود سارية المفعول.</p>
+    <div class="contact-card">
+      <h3>لديك استفسار حول الشروط؟</h3>
+      <p>تواصل معنا مباشرة وسنجيب على جميع استفساراتك</p>
+      <a href="https://wa.me/966555867232" class="btn-wa">💬 تواصل على واتساب</a>
+      <p style="margin-top:16px">أو راسلنا على: <a href="/cdn-cgi/l/email-protection#167a7371777a562362776465386577"><span class="__cf_email__" data-cfemail="412d2426202d0174352033326f3220">[email&#160;protected]</span></a></p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2026 5tars. جميع الحقوق محفوظة. | <a href="pri

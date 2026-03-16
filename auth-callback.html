@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5tars — جاري تسجيل الدخول...</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'Cairo', sans-serif;
+  background: linear-gradient(135deg, #0B1F4E, #1A3A8F);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+.box { text-align: center; padding: 40px; }
+.spinner {
+  width: 56px; height: 56px;
+  border: 4px solid rgba(255,255,255,0.2);
+  border-top-color: #F5B429;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 24px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+h2 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+p { font-size: 14px; color: rgba(255,255,255,0.6); }
+.error-box {
+  display: none;
+  background: rgba(220,38,38,0.15);
+  border: 1px solid rgba(220,38,38,0.3);
+  border-radius: 12px;
+  padding: 16px 24px;
+  margin-top: 20px;
+  font-size: 13px;
+  color: #FCA5A5;
+}
+.btn-retry {
+  display: none;
+  margin-top: 20px;
+  background: #F5B429;
+  color: #0B1F4E;
+  padding: 12px 28px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 14px;
+  text-decoration: none;
+}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="spinner" id="spinner"></div>
+  <h2 id="title">جاري تسجيل الدخول...</h2>
+  <p id="subtitle">يرجى الانتظار لحظة</p>
+  <div class="error-box" id="errorBox"></div>
+  <a href="signup.html" class="btn-retry" id="retryBtn">← حاول مرة أخرى</a>
+</div>
+
+<script>
+const { createClient } = supabase;
+const sb = createClient(
+  'https://xdmbwtnpadjeinclmffh.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkbWJ3dG5wYWRqZWluY2xtZmZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NDI1OTksImV4cCI6MjA4ODQxODU5OX0.fmWmQXlm0eHnj8I5PFxakW7xh13nnMQBN1yU6-z2aFw',
+  {
+    auth: {
+      detectSessionInUrl: true,
+      persistSession: true,
+      autoRefreshToken: true,
+      storageKey: 'sb-xdmbwtnpadjeinclmffh-auth-token'
+    }
+  }
+);
+
+function showError(msg) {
+  document.getElementById('spinner').style.display = 'none';
+  document.getElementById('title').textContent = 'حدث خطأ';
+  document.getElementById('subtitle').textContent = 'لم نتمكن من تسجيل دخولك';
+  document.getElementById('errorBox').textContent = msg;
+  document.getElementById('errorBox').style.display = 'block';
+  document.getElementById('retryBtn').style.display = 'inline-block';
+}
+
+// الاستماع لـ auth state - هذا الأضمن مع PKCE
+sb.auth.onAuthStateChange(async (event, session) => {
+  console.log('Auth event:', event, session ? 'has session' : 'no session');
+  
+  if (event === 'SIGNED_IN' && session) {
+    document.getElementById('subtitle').textContent = 'تم تسجيل الدخول! جاري التحويل...';
+    
+    const user = session.user;
+    const name = user.user_metadata?.full_name 
+      || user.user_metadata?.name 
+      || user.email;
+    const createdAt = new Date(user.created_at).getTime();
+    const isNewUser = (Date.now() - createdAt) < 60000; // أقل من دقيقة = جديد
+
+    // أنشئ أو حدّث الـ profile
+    try {
+      await sb.from('profiles').upsert({
+        id: user.id,
+        full_name: name,
+        plan: 'trial',
+        trial_ends: new Date(Date.now() + 14*24*60*60*1000).toISOString()
+      }, { onConflict: 'id', ignoreDuplicates: true });
+    } catch(e) { console.log('profile upsert:', e.message); }
+
+    // ضع علامة المستخدم الجديد
+    if (isNewUser) {
+      localStorage.setItem('5tars_new_user', '1');
+      document.getElementById('title').textContent = '🎉 أهلاً بك في 5tars!';
+      document.getElementById('subtitle').textContent = 'تجربتك المجانية 14 يوم بدأت الآن ✨';
+    }
+
+    // حوّله للوحة التحكم دائماً
+    setTimeout(() => {
+      window.location.href = 'dashboard.html';
+    }, isNewUser ? 2000 : 1000);
+  }
+  
+  if (event === 'SIGNED_OUT') {
+    showError('تم تسجيل الخروج. حاول مرة أخرى.');
+  }
+});
+
+// تحقق إذا في session موجودة أصلاً
+setTimeout(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    window.location.href = 'dashboard.html';
+  }
+}, 3000);
+
+// timeout نهائي
+setTimeout(() => {
+  const spinner = document.getElementById('spinner');
+  if (spinner.style.display !== 'none') {
+    showError('انتهت مهلة الانتظار. حاول مرة أخرى.');
+  }
+}, 15000);
+</script>
+</body>
+</html>

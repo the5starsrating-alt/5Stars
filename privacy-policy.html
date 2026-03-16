@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="shortcut icon" href="/favicon.ico">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5tars — سياسة الخصوصية</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue:#0B1F4E; --blue2:#1A3A8F; --blue3:#2251D3; --blue4:#EEF3FF;
+  --gold:#D4920A; --gold2:#F5B429; --bg:#F5F8FF; --text:#0B1F4E;
+  --muted:#64748B; --border:rgba(34,81,211,0.12); --white:#FFFFFF;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direction:rtl;}
+
+nav{background:rgba(11,31,78,0.97);backdrop-filter:blur(20px);padding:16px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(255,255,255,0.08);}
+.logo{display:flex;align-items:center;gap:4px;text-decoration:none;}
+.logo-num{font-family:'Tajawal',sans-serif;font-size:26px;font-weight:900;font-style:italic;background:linear-gradient(180deg,#FFF0A0,#F5B429,#D4920A);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.logo-word{font-family:'Tajawal',sans-serif;font-size:26px;font-weight:900;color:#fff;}
+.nav-back{color:rgba(255,255,255,0.7);text-decoration:none;font-size:13px;font-weight:600;transition:color 0.2s;}
+.nav-back:hover{color:var(--gold2);}
+
+.hero{background:linear-gradient(135deg,var(--blue),var(--blue2));padding:60px 24px;text-align:center;color:#fff;}
+.hero-eyebrow{display:inline-block;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);padding:6px 18px;border-radius:30px;font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:16px;}
+.hero h1{font-family:'Tajawal',sans-serif;font-size:clamp(28px,4vw,42px);font-weight:900;margin-bottom:12px;}
+.hero p{color:rgba(255,255,255,0.7);font-size:14px;}
+.hero .update{margin-top:16px;background:rgba(245,180,41,0.15);border:1px solid rgba(245,180,41,0.3);color:var(--gold2);display:inline-block;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;}
+
+.container{max-width:820px;margin:0 auto;padding:60px 24px;}
+
+.toc{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:40px;}
+.toc-title{font-size:14px;font-weight:900;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.toc ol{padding-right:20px;display:grid;grid-template-columns:1fr 1fr;gap:8px 24px;}
+.toc ol li{font-size:13px;}
+.toc ol li a{color:var(--blue3);text-decoration:none;font-weight:600;}
+.toc ol li a:hover{text-decoration:underline;}
+
+.section{margin-bottom:48px;}
+.section-title{font-family:'Tajawal',sans-serif;font-size:22px;font-weight:900;margin-bottom:16px;display:flex;align-items:center;gap:10px;padding-bottom:12px;border-bottom:2px solid var(--blue4);}
+.section-title .num{width:32px;height:32px;background:linear-gradient(135deg,var(--blue3),var(--blue2));color:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0;}
+p{font-size:14px;line-height:2;color:#3B5080;margin-bottom:14px;}
+ul,ol{padding-right:24px;margin-bottom:14px;}
+ul li,ol li{font-size:14px;line-height:2;color:#3B5080;margin-bottom:4px;}
+strong{color:var(--text);font-weight:700;}
+
+.info-box{background:var(--blue4);border:1px solid rgba(34,81,211,0.15);border-radius:12px;padding:16px 20px;margin:20px 0;}
+.info-box p{margin:0;color:var(--blue2);}
+.warn-box{background:#FFF8E7;border:1px solid rgba(212,146,10,0.2);border-radius:12px;padding:16px 20px;margin:20px 0;}
+.warn-box p{margin:0;color:#92400E;}
+
+.contact-card{background:linear-gradient(135deg,var(--blue),var(--blue2));border-radius:16px;padding:32px;color:#fff;text-align:center;margin-top:40px;}
+.contact-card h3{font-family:'Tajawal',sans-serif;font-size:22px;font-weight:900;margin-bottom:8px;}
+.contact-card p{color:rgba(255,255,255,0.7);font-size:14px;margin-bottom:20px;}
+.contact-card a{color:var(--gold2);text-decoration:none;font-weight:700;}
+.btn-wa{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:var(--blue);padding:12px 28px;border-radius:12px;font-weight:900;font-size:14px;text-decoration:none;transition:all 0.2s;}
+.btn-wa:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,146,10,0.4);}
+
+footer{background:var(--blue);color:rgba(255,255,255,0.5);text-align:center;padding:24px;font-size:12px;}
+footer a{color:var(--gold2);text-decoration:none;}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">
+    <span class="logo-num">5</span><span class="logo-word">tars</span>
+  </a>
+  <a href="index.html" class="nav-back">← العودة للرئيسية</a>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">🔒 الخصوصية أولاً</div>
+  <h1>سياسة الخصوصية</h1>
+  <p>نحن نحترم خصوصيتك ونلتزم بحماية بياناتك الشخصية</p>
+  <div class="update">آخر تحديث: مارس 2026</div>
+</div>
+
+<div class="container">
+
+  <div class="toc">
+    <div class="toc-title">📋 محتويات الصفحة</div>
+    <ol>
+      <li><a href="#collect">البيانات التي نجمعها</a></li>
+      <li><a href="#use">كيف نستخدم بياناتك</a></li>
+      <li><a href="#share">مشاركة البيانات</a></li>
+      <li><a href="#storage">تخزين البيانات وحمايتها</a></li>
+      <li><a href="#rights">حقوقك</a></li>
+      <li><a href="#cookies">ملفات تعريف الارتباط</a></li>
+      <li><a href="#children">خصوصية الأطفال</a></li>
+      <li><a href="#changes">التغييرات على هذه السياسة</a></li>
+      <li><a href="#contact">التواصل معنا</a></li>
+    </ol>
+  </div>
+
+  <div class="info-box">
+    <p>🌟 <strong>باختصار:</strong> نجمع فقط البيانات الضرورية لتشغيل خدمتنا، لا نبيع بياناتك لأي طرف ثالث، ولك الحق الكامل في حذف حسابك وبياناتك في أي وقت.</p>
+  </div>
+
+  <!-- 1 -->
+  <div class="section" id="collect">
+    <div class="section-title"><span class="num">١</span> البيانات التي نجمعها</div>
+    <p>عند استخدامك لمنصة 5tars، نقوم بجمع الأنواع التالية من البيانات:</p>
+    <p><strong>أ) بيانات التسجيل:</strong></p>
+    <ul>
+      <li>الاسم الكامل</li>
+      <li>عنوان البريد الإلكتروني</li>
+      <li>رقم الواتساب / رقم الجوال</li>
+      <li>نوع النشاط التجاري</li>
+      <li>كلمة المرور (مشفرة بالكامل، لا يمكن لأحد الاطلاع عليها)</li>
+    </ul>
+    <p><strong>ب) بيانات الاستخدام:</strong></p>
+    <ul>
+      <li>رابط Google Business الخاص بمنشأتك</li>
+      <li>التقييمات التي تصلك من Google</li>
+      <li>الردود التي تكتبها أو تنشئها بالذكاء الاصطناعي</li>
+      <li>إعدادات الإشعارات والتفضيلات</li>
+    </ul>
+    <p><strong>ج) بيانات تقنية تلقائية:</strong></p>
+    <ul>
+      <li>عنوان IP، نوع المتصفح، نظام التشغيل</li>
+      <li>وقت وتاريخ الزيارة</li>
+      <li>الصفحات التي تزورها داخل المنصة</li>
+    </ul>
+  </div>
+
+  <!-- 2 -->
+  <div class="section" id="use">
+    <div class="section-title"><span class="num">٢</span> كيف نستخدم بياناتك</div>
+    <p>نستخدم بياناتك <strong>حصراً</strong> للأغراض التالية:</p>
+    <ul>
+      <li>تشغيل وتحسين خدمات المنصة</li>
+      <li>إرسال إشعارات التقييمات عبر واتساب</li>
+      <li>توليد ردود ذكية بالذكاء الاصطناعي</li>
+      <li>إرسال التقارير الدورية</li>
+      <li>التواصل معك بشأن حسابك أو تحديثات الخدمة</li>
+      <li>تحسين جودة الخدمة وتطوير ميزات جديدة</li>
+    </ul>
+    <div class="warn-box">
+      <p>⚠️ <strong>لا نستخدم</strong> بياناتك للإعلانات المدفوعة، ولا نبيعها أو نأجرها لأي طرف ثالث تحت أي ظرف.</p>
+    </div>
+  </div>
+
+  <!-- 3 -->
+  <div class="section" id="share">
+    <div class="section-title"><span class="num">٣</span> مشاركة البيانات</div>
+    <p>قد نشارك بعض البيانات في الحالات التالية فقط:</p>
+    <ul>
+      <li><strong>مزودو الخدمة التقنية:</strong> مثل Supabase لقاعدة البيانات، وخدمات الإرسال — وهم ملتزمون بنفس معايير الخصوصية.</li>
+      <li><strong>المتطلبات القانونية:</strong> إذا طلبت الجهات القانونية المختصة ذلك وفق القوانين السعودية المعمول بها.</li>
+      <li><strong>حماية الحقوق:</strong> في حالات الاحتيال أو انتهاك شروط الاستخدام لحماية المنصة ومستخدميها.</li>
+    </ul>
+    <div class="info-box">
+      <p>✅ <strong>Google API:</strong> عند ربط حساب Google Business، نصل فقط إلى تقييماتك العامة وفق صلاحيات OAuth المحددة. لا نطلع على بيانات حسابك الشخصي على Google.</p>
+    </div>
+  </div>
+
+  <!-- 4 -->
+  <div class="section" id="storage">
+    <div class="section-title"><span class="num">٤</span> تخزين البيانات وحمايتها</div>
+    <p>نتخذ الإجراءات الأمنية التالية لحماية بياناتك:</p>
+    <ul>
+      <li>تشفير SSL/TLS 256-bit لجميع البيانات المنقولة</li>
+      <li>تشفير كلمات المرور باستخدام bcrypt — لا يمكن لأحد الاطلاع عليها</li>
+      <li>قواعد البيانات محمية بجدران الحماية وRLS (Row Level Security)</li>
+      <li>الوصول إلى البيانات مقيّد بالحد الأدنى الضروري</li>
+      <li>نسخ احتياطية دورية مشفرة</li>
+    </ul>
+    <p>يتم تخزين بياناتك على خوادم Supabase في مراكز بيانات موثوقة تتبع معايير SOC 2 وISO 27001.</p>
+    <p><strong>مدة الاحتفاظ بالبيانات:</strong> نحتفظ ببياناتك طالما حسابك نشط. عند حذف الحساب، يتم حذف جميع البيانات الشخصية خلال 30 يوماً.</p>
+  </div>
+
+  <!-- 5 -->
+  <div class="section" id="rights">
+    <div class="section-title"><span class="num">٥</span> حقوقك</div>
+    <p>بموجب أنظمة حماية البيانات، لديك الحقوق التالية:</p>
+    <ul>
+      <li>🔍 <strong>حق الاطلاع:</strong> طلب نسخة من بياناتك الشخصية المحفوظة لدينا</li>
+      <li>✏️ <strong>حق التصحيح:</strong> تعديل بياناتك غير الدقيقة أو غير المكتملة</li>
+      <li>🗑️ <strong>حق الحذف:</strong> طلب حذف بياناتك الشخصية ("الحق في النسيان")</li>
+      <li>🚫 <strong>حق الاعتراض:</strong> الاعتراض على معالجة بياناتك لأغراض معينة</li>
+      <li>📦 <strong>حق النقل:</strong> الحصول على بياناتك بصيغة قابلة للنقل</li>
+      <li>⏸️ <strong>حق التقييد:</strong> طلب تقييد معالجة بياناتك في حالات معينة</li>
+    </ul>
+    <p>لممارسة أي من هذه الحقوق، تواصل معنا عبر واتساب أو البريد الإلكتروني المذكور أدناه. سنرد خلال 7 أيام عمل.</p>
+  </div>
+
+  <!-- 6 -->
+  <div class="section" id="cookies">
+    <div class="section-title"><span class="num">٦</span> ملفات تعريف الارتباط (Cookies)</div>
+    <p>نستخدم ملفات تعريف الارتباط للأغراض التالية:</p>
+    <ul>
+      <li><strong>الضرورية:</strong> لتسجيل دخولك والحفاظ على جلسة عملك — لا يمكن تعطيلها</li>
+      <li><strong>الوظيفية:</strong> لتذكر تفضيلاتك وإعداداتك</li>
+      <li><strong>التحليلية:</strong> لفهم كيفية استخدام المنصة وتحسينها (بصورة مجمّعة ومجهولة الهوية)</li>
+    </ul>
+    <p>يمكنك التحكم في ملفات تعريف الارتباط من إعدادات متصفحك، مع العلم أن تعطيل بعضها قد يؤثر على تجربة استخدام المنصة.</p>
+  </div>
+
+  <!-- 7 -->
+  <div class="section" id="children">
+    <div class="section-title"><span class="num">٧</span> خصوصية الأطفال</div>
+    <p>منصة 5tars موجهة للأعمال التجارية وأصحاب المنشآت. <strong>لا نجمع عن قصد أي بيانات من أشخاص دون سن 18 عاماً.</strong></p>
+    <p>إذا علمنا بأن طفلاً دون سن 18 قد قدّم بياناتهم الشخصية، سنتخذ خطوات فورية لحذف هذه المعلومات من سجلاتنا.</p>
+  </div>
+
+  <!-- 8 -->
+  <div class="section" id="changes">
+    <div class="section-title"><span class="num">٨</span> التغييرات على هذه السياسة</div>
+    <p>قد نقوم بتحديث سياسة الخصوصية هذه من وقت لآخر. عند إجراء تغييرات جوهرية:</p>
+    <ul>
+      <li>نُخطرك عبر البريد الإلكتروني المسجل أو إشعار داخل المنصة</li>
+      <li>نعرض تاريخ "آخر تحديث" في أعلى هذه الصفحة</li>
+      <li>التغييرات تسري بعد 30 يوماً من الإشعار</li>
+    </ul>
+    <p>استمرارك في استخدام المنصة بعد سريان التغييرات يعني قبولك لها.</p>
+  </div>
+
+  <!-- 9 -->
+  <div class="section" id="contact">
+    <div class="section-title"><span class="num">٩</span> التواصل معنا</div>
+    <div class="contact-card">
+      <h3>لديك سؤال حول خصوصيتك؟</h3>
+      <p>فريقنا جاهز للإجابة على جميع استفساراتك خلال 24 ساعة</p>
+      <div style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;">
+        <a href="https://wa.me/966555867232" class="btn-wa">💬 واتساب</a>
+      </div>
+      <p>أو راسلنا على: <a href="/cdn-cgi/l/email-protection#1e6e6c77687f7d675e2b6a7f6c6d306d7f"><span class="__cf_email__" data-cfemail="2f5f5d46594e4c566f1a5b4e5d5c015c4e">[email&#160;protected]</span></a></p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2026 5tars. جميع الحقوق محفوظة. | <a href="t
