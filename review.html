@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>شاركنا رأيك</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{min-height:100vh;font-family:'Cairo',sans-serif;direction:rtl;background:linear-gradient(135deg,#0B1F4E 0%,#1A3A8F 100%);}
+.page{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+.card{background:#fff;border-radius:28px;padding:40px 32px;max-width:420px;width:100%;text-align:center;box-shadow:0 24px 80px rgba(11,31,78,0.3);}
+
+/* Logo */
+.logo{font-family:'Tajawal',sans-serif;font-size:28px;font-weight:900;margin-bottom:24px;direction:ltr;display:inline-block;}
+.logo span{background:linear-gradient(180deg,#FFF0A0,#F5B429,#8A5500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-style:italic;}
+
+/* Business Name */
+.biz-name{font-family:'Tajawal',sans-serif;font-size:22px;font-weight:900;color:#0B1F4E;margin-bottom:8px;}
+.biz-sub{font-size:13px;color:#64748B;margin-bottom:32px;}
+
+/* Stars */
+.stars-label{font-size:15px;font-weight:700;color:#0B1F4E;margin-bottom:16px;}
+.stars-row{display:flex;justify-content:center;gap:8px;margin-bottom:32px;}
+.star{font-size:44px;cursor:pointer;transition:transform 0.15s;filter:grayscale(1);opacity:0.3;line-height:1;}
+.star:hover,.star.active{filter:none;opacity:1;transform:scale(1.2);}
+.star.active{animation:bounce 0.3s ease;}
+@keyframes bounce{0%,100%{transform:scale(1.2)}50%{transform:scale(1.4)}}
+
+/* Buttons */
+.btn-happy{width:100%;background:linear-gradient(135deg,#F5B429,#D4920A);color:#0B1F4E;border:none;border-radius:16px;padding:18px;font-family:'Cairo',sans-serif;font-size:17px;font-weight:900;cursor:pointer;margin-bottom:12px;transition:all 0.25s;display:flex;align-items:center;justify-content:center;gap:10px;}
+.btn-happy:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(212,146,10,0.4);}
+.btn-sad{width:100%;background:#F8F9FA;color:#64748B;border:1.5px solid #E2E8F0;border-radius:16px;padding:16px;font-family:'Cairo',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:10px;}
+.btn-sad:hover{background:#F1F5F9;border-color:#CBD5E1;}
+
+/* Rating hint */
+.hint{font-size:12px;color:#94A3B8;margin-top:20px;}
+
+/* Complaint form */
+.complaint{display:none;margin-top:24px;text-align:right;}
+.complaint-title{font-size:16px;font-weight:900;color:#0B1F4E;margin-bottom:12px;}
+.complaint textarea{width:100%;border:1.5px solid #E2E8F0;border-radius:12px;padding:14px;font-family:'Cairo',sans-serif;font-size:13px;color:#374151;resize:none;outline:none;min-height:100px;}
+.complaint textarea:focus{border-color:#2251D3;}
+.complaint input{width:100%;border:1.5px solid #E2E8F0;border-radius:12px;padding:12px 14px;font-family:'Cairo',sans-serif;font-size:13px;color:#374151;outline:none;margin-top:8px;}
+.complaint input:focus{border-color:#2251D3;}
+.btn-send{width:100%;background:#0B1F4E;color:#fff;border:none;border-radius:12px;padding:14px;font-family:'Cairo',sans-serif;font-size:14px;font-weight:900;cursor:pointer;margin-top:12px;}
+
+/* Success screens */
+.success{display:none;text-align:center;}
+.success-icon{font-size:64px;margin-bottom:16px;}
+.success-title{font-family:'Tajawal',sans-serif;font-size:24px;font-weight:900;margin-bottom:8px;}
+.success-sub{font-size:14px;color:#64748B;line-height:1.7;margin-bottom:24px;}
+.btn-google{background:linear-gradient(135deg,#4285F4,#1A73E8);color:#fff;border:none;border-radius:14px;padding:16px 28px;font-family:'Cairo',sans-serif;font-size:15px;font-weight:900;cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none;}
+
+/* Divider */
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0;color:#94A3B8;font-size:12px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:#E2E8F0;}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="card">
+
+    <!-- Logo -->
+    <div><div class="logo"><span>5</span>tars ★</div></div>
+
+    <!-- Business name (loaded from Supabase) -->
+    <div class="biz-name" id="bizName">كيف كانت تجربتك؟</div>
+    <div class="biz-sub" id="bizSub">رأيك يهمنا كثيراً 🙏</div>
+
+    <!-- Main content -->
+    <div id="mainContent">
+      <!-- Stars -->
+      <div class="stars-label">قيّم تجربتك</div>
+      <div class="stars-row" id="starsRow">
+        <span class="star" onclick="setStar(1)">⭐</span>
+        <span class="star" onclick="setStar(2)">⭐</span>
+        <span class="star" onclick="setStar(3)">⭐</span>
+        <span class="star" onclick="setStar(4)">⭐</span>
+        <span class="star" onclick="setStar(5)">⭐</span>
+      </div>
+
+      <!-- Happy button -->
+      <button class="btn-happy" id="btnHappy" onclick="goGoogle()" style="display:none;">
+        😊 ممتازة — شارك تقييمك على Google
+      </button>
+
+      <!-- Divider -->
+      <div class="divider" id="divider" style="display:none;">أو</div>
+
+      <!-- Sad button -->
+      <button class="btn-sad" id="btnSad" onclick="showComplaint()" style="display:none;">
+        😞 أقل من ممتاز — أخبرنا كيف نتحسن
+      </button>
+
+      <div class="hint">تقييمك يساعدنا نقدم خدمة أفضل</div>
+    </div>
+
+    <!-- Complaint form -->
+    <div class="complaint" id="complaintForm">
+      <div class="complaint-title">💬 أخبرنا بتجربتك</div>
+      <textarea id="complaintText" placeholder="ما الذي لم يعجبك؟ سنتواصل معك لحل المشكلة فوراً..."></textarea>
+      <input type="tel" id="complaintPhone" placeholder="رقم جوالك (اختياري — للتواصل معك)">
+      <button class="btn-send" onclick="sendComplaint()">📨 أرسل ملاحظتك</button>
+    </div>
+
+    <!-- Success: Google -->
+    <div class="success" id="successGoogle">
+      <div class="success-icon">🌟</div>
+      <div class="success-title" style="color:#0B1F4E;">شكراً جزيلاً!</div>
+      <div class="success-sub">رأيك الإيجابي يساعد الآخرين على اكتشافنا.<br>اضغط الزر لمشاركة تقييمك على Google:</div>
+      <a class="btn-google" id="googleBtn" href="#" target="_blank">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+        اكتب تقييمك على Google ←
+      </a>
+    </div>
+
+    <!-- Success: Complaint sent -->
+    <div class="success" id="successComplaint">
+      <div class="success-icon">🙏</div>
+      <div class="success-title" style="color:#0B1F4E;">وصلتنا ملاحظتك!</div>
+      <div class="success-sub">شكراً لمشاركتنا تجربتك.<br>سنتواصل معك قريباً لحل أي مشكلة.</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const { createClient } = supabase;
+const sb = createClient(
+  'https://xdmbwtnpadjeinclmffh.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkbWJ3dG5wYWRqZWluY2xtZmZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NDI1OTksImV4cCI6MjA4ODQxODU5OX0.fmWmQXlm0eHnj8I5PFxakW7xh13nnMQBN1yU6-z2aFw'
+);
+
+let selectedStars = 0;
+let userId = null;
+let reviewUrl = '';
+let businessName = '';
+
+// Get user ID from URL
+const params = new URLSearchParams(window.location.search);
+userId = params.get('u');
+
+// Load business data
+async function loadBusiness() {
+  if (!userId) return;
+  try {
+    const { data } = await sb.from('profiles')
+      .select('full_name, google_review_url, google_maps_url')
+      .eq('id', userId)
+      .single();
+    
+    if (data) {
+      businessName = data.full_name || '';
+      reviewUrl = data.google_review_url || data.google_maps_url || '';
+      
+      if (businessName) {
+        document.getElementById('bizName').textContent = businessName;
+        document.getElementById('bizSub').textContent = `شاركنا رأيك في ${businessName} 🙏`;
+      }
+      if (reviewUrl) {
+        document.getElementById('googleBtn').href = reviewUrl;
+      }
+    }
+  } catch(e) {}
+}
+
+function setStar(n) {
+  selectedStars = n;
+  const stars = document.querySelectorAll('.star');
+  stars.forEach((s, i) => {
+    s.classList.toggle('active', i < n);
+  });
+
+  const btnHappy  = document.getElementById('btnHappy');
+  const btnSad    = document.getElementById('btnSad');
+  const divider   = document.getElementById('divider');
+
+  if (n >= 4) {
+    // Happy — go to Google
+    btnHappy.style.display = 'flex';
+    btnSad.style.display   = 'flex';
+    divider.style.display  = 'flex';
+  } else if (n > 0) {
+    // Unhappy — show complaint
+    btnHappy.style.display = 'none';
+    btnSad.style.display   = 'flex';
+    divider.style.display  = 'none';
+  }
+}
+
+function goGoogle() {
+  document.getElementById('mainContent').style.display = 'none';
+  document.getElementById('successGoogle').style.display = 'block';
+  
+  // Log positive review attempt
+  if (userId) {
+    sb.from('review_attempts').insert({
+      user_id: userId,
+      stars: selectedStars,
+      type: 'google',
+      created_at: new Date().toISOString()
+    }).then(()=>{}).catch(()=>{});
+  }
+}
+
+function showComplaint() {
+  document.getElementById('complaintForm').style.display = 'block';
+  document.getElementById('btnHappy').style.display = 'none';
+  document.getElementById('btnSad').style.display   = 'none';
+  document.getElementById('divider').style.display  = 'none';
+}
+
+async function sendComplaint() {
+  const text  = document.getElementById('complaintText').value.trim();
+  const phone = document.getElementById('complaintPhone').value.trim();
+  
+  if (!text) { alert('يرجى كتابة ملاحظتك'); return; }
+
+  // Save to Supabase
+  if (userId) {
+    await sb.from('complaints').insert({
+      user_id:      userId,
+      stars:        selectedStars,
+      complaint:    text,
+      phone:        phone,
+      business:     businessName,
+      created_at:   new Date().toISOString()
+    }).then(()=>{}).catch(()=>{});
+  }
+
+  document.getElementById('complaintForm').style.display = 'none';
+  document.getElementById('mainContent').style.display   = 'none';
+  document.getElementById('successComplaint').style.display = 'block';
+}
+
+loadBusiness();
+</script>
+</body>
+</html>

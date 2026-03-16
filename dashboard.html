@@ -720,8 +720,8 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
 
         <div class="qr-form">
           <div class="field">
-            <label>رابط Google Business الخاص بك</label>
-            <input type="url" id="googleLink" placeholder="https://g.page/r/YOUR_REVIEW_LINK" oninput="generateQR()">
+            <label>رابط صفحة التقييم <span style="font-size:11px;color:var(--muted);font-weight:400;">(يُولَّد تلقائياً)</span></label>
+            <input type="url" id="googleLink" placeholder="سيُولَّد تلقائياً بعد الربط" readonly style="background:var(--blue4);cursor:default;" oninput="generateQR()">
           </div>
           <div class="field">
             <label>اسم المشروع (يظهر في الـ QR)</label>
@@ -733,7 +733,7 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
           </div>
 
           <div style="background:var(--blue4);border-radius:10px;padding:14px;font-size:12px;color:var(--blue2);line-height:1.8;">
-            <strong>📌 كيف تحصل على رابط Google Business؟</strong><br>
+            <strong>📌 كيف تحصل على رابط Google Maps؟</strong><br>
             1. افتح Google Maps<br>
             2. ابحث عن مشروعك<br>
             3. اضغط "كتابة مراجعة"<br>
@@ -969,43 +969,50 @@ function showSection(name) {
 // ══════════════════════════════════
 let qrGenerated = false;
 function generateQR() {
-  // Priority: manual input > localStorage (saved from GB form) > Supabase profile
-  const savedReview  = localStorage.getItem('gb_review') || '';
-  const savedName    = localStorage.getItem('gb_name') || '';
-  const profileName  = currentProfile?.full_name || '';
-  const profileReview = currentProfile?.google_review_url || '';
-
-  const glField = document.getElementById('googleLink');
-  const bnField = document.getElementById('businessName');
-  const msgField = document.getElementById('qrMessage');
-
-  // Auto-fill from saved data
-  if (glField && !glField.value) glField.value = savedReview || profileReview || '';
-  if (bnField && !bnField.value) bnField.value = savedName  || profileName  || '';
-
-  const link    = glField?.value || savedReview || profileReview || 'https://www.the5starsrating.com';
-  const bizName = bnField?.value || savedName   || profileName   || '5tars';
-  const msg     = msgField?.value || 'شاركنا رأيك! ⭐';
-
+  // QR Code links to 5tars FILTER PAGE - not directly to Google
+  // Flow: Customer scans QR → Filter page → Happy=Google / Unhappy=Private form
+  
+  const savedName   = localStorage.getItem('gb_name') || '';
+  const profileName = currentProfile?.full_name || '';
+  const userId      = currentUser?.id || '';
+  
+  const bnField  = document.getElementById('businessName');
+  const glField  = document.getElementById('googleLink');
+  
+  // Business name
+  if (bnField && !bnField.value) bnField.value = savedName || profileName || '';
+  const bizName = bnField?.value || savedName || profileName || '5tars';
+  
+  // Filter page URL — links to 5tars smart filter
+  const filterUrl = userId 
+    ? `https://www.the5starsrating.com/review.html?u=${userId}`
+    : `https://www.the5starsrating.com/review.html`;
+  
+  // Show URL in readonly field
+  if (glField) glField.value = filterUrl;
+  
   const el = document.getElementById('qrcode');
   if (!el) return;
   el.innerHTML = '';
 
   const qrUrl = document.getElementById('qrUrl');
-  if (qrUrl) qrUrl.textContent = link.length > 45 ? link.substring(0,45)+'...' : link;
+  if (qrUrl) qrUrl.textContent = 'صفحة التقييم الذكية — 5tars';
 
-  // Update download filename with business name
   new QRCode(el, {
-    text: link,
+    text: filterUrl,
     width: 180, height: 180,
     colorDark: '#0B1F4E', colorLight: '#ffffff',
     correctLevel: QRCode.CorrectLevel.H
   });
   qrGenerated = true;
 
-  // Update QR label
+  // Update labels
   const label = document.getElementById('qrBusinessLabel');
   if (label) label.textContent = bizName;
+  
+  // Update download filename
+  const dlBtn = document.querySelector('[onclick="downloadQR()"]');
+  if (dlBtn) dlBtn.title = `تحميل QR - ${bizName}`;
 }
 
 function downloadQR() {
@@ -1013,7 +1020,8 @@ function downloadQR() {
   if (!canvas) return alert('أنشئ QR Code أولاً');
   const bizName = localStorage.getItem('gb_name') || currentProfile?.full_name || '5tars';
   const a = document.createElement('a');
-  a.download = `QR-${bizName}.png`;
+  const bizName2 = localStorage.getItem("gb_name") || currentProfile?.full_name || "5tars";
+  a.download = `QR-${bizName2}.png`;
   a.href = canvas.toDataURL();
   a.click();
 }

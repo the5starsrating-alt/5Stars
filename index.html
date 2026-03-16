@@ -249,6 +249,7 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
     <div class="hero-btns">
       <button class="btn-hero-primary" onclick="window.location.href='signup.html'">ابدأ تجربتك المجانية 14 يوم ←</button>
       <button class="btn-hero-secondary" onclick="document.getElementById('diagnosis').scrollIntoView({behavior:'smooth'})">🩺 شخّص مشروعك مجاناً</button>
+      <a href="promo-video.html" target="_blank" style="display:inline-flex;align-items:center;gap:8px;color:rgba(255,255,255,0.7);font-size:14px;font-weight:700;text-decoration:none;margin-top:8px;transition:color 0.2s;" onmouseover="this.style.color='#F5B429'" onmouseout="this.style.color='rgba(255,255,255,0.7)'">▶️ شاهد كيف يعمل (30 ثانية)</a>
     </div>
     <div class="hero-stats">
       <div class="hero-stat"><div class="hero-stat-num">0.6+</div><div class="hero-stat-label">متوسط زيادة<br>التقييم خلال شهر</div></div>
@@ -278,12 +279,13 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
         <p>أدخل اسم مشروعك وشوف تقدير سمعتك بناءً على متوسطات السوق — مجاناً وبدون تسجيل.</p>
         <div class="diagnosis-form">
           <input class="diagnosis-input" id="diagInput" type="text" placeholder="مثال: مطعم الوادي الرياض">
+          <input class="diagnosis-input" id="diagMapsUrl" type="url" placeholder="رابط Google Maps (اختياري): https://maps.app.goo.gl/...">
           <select class="diagnosis-input" id="diagType">
             <option value="">نوع النشاط</option>
             <option>مطعم</option><option>كافيه</option><option>صالون</option><option>عيادة</option><option>متجر</option>
           </select>
           <button class="btn-diagnosis" onclick="runDiagnosis()">🔍 شخّص مشروعي الآن — مجاناً</button>
-      <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:8px;text-align:center;">* النتائج تقديرية بناءً على متوسطات السوق السعودي</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:8px;text-align:center;">* النتائج تقديرية بناءً على متوسطات السوق السعودي</div>
         </div>
       </div>
       <div class="diagnosis-result" id="diagResult">
@@ -657,31 +659,44 @@ const obs=new IntersectionObserver((e)=>{e.forEach(i=>{if(i.isIntersecting)i.tar
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 window.addEventListener('scroll',()=>{document.querySelector('nav').classList.toggle('scrolled',window.scrollY>80);});
 function runDiagnosis(){
-  const name=document.getElementById('diagInput').value.trim();
+  const name = document.getElementById('diagInput').value.trim();
+  const mapsUrl = document.getElementById('diagMapsUrl')?.value.trim() || '';
   if(!name){alert('من فضلك أدخل اسم مشروعك');return;}
-  const btn=document.querySelector('.btn-diagnosis');
-  btn.textContent='⏳ جاري التحليل...';btn.disabled=true;
+  
+  const btn = document.querySelector('.btn-diagnosis');
+  btn.textContent = '⏳ جاري التحليل...'; btn.disabled = true;
+  
   setTimeout(()=>{
-    const score=Math.floor(Math.random()*30)+35;
-    const rating=(Math.random()*1.5+3.2).toFixed(1);
-    const replyRate=Math.floor(Math.random()*30)+15;
-    const visibility=Math.floor(Math.random()*30)+20;
-    document.getElementById('diagScore').textContent=score;
-    document.getElementById('diagRating').textContent=rating+' ⭐';
-    document.getElementById('diagReply').textContent=replyRate+'%';
-    document.getElementById('diagVisibility').textContent=visibility+'%';
-    document.getElementById('diagRatingBar').style.width=(parseFloat(rating)/5*100)+'%';
-    document.getElementById('diagReplyBar').style.width=replyRate+'%';
-    document.getElementById('diagVisBar').style.width=visibility+'%';
-    const lost=Math.floor((4.5-parseFloat(rating))*80);
+    const score     = Math.floor(Math.random()*30)+35;
+    const rating    = (Math.random()*1.5+3.2).toFixed(1);
+    const replyRate = Math.floor(Math.random()*30)+15;
+    const visibility= Math.floor(Math.random()*30)+20;
+    
+    document.getElementById('diagScore').textContent = score;
+    document.getElementById('diagRating').textContent = rating+' ⭐';
+    document.getElementById('diagReply').textContent = replyRate+'%';
+    document.getElementById('diagVisibility').textContent = visibility+'%';
+    document.getElementById('diagRatingBar').style.width = (parseFloat(rating)/5*100)+'%';
+    document.getElementById('diagReplyBar').style.width = replyRate+'%';
+    document.getElementById('diagVisBar').style.width = visibility+'%';
+    
+    const lost = Math.floor((4.5-parseFloat(rating))*80);
+    
+    // Maps link button
+    const mapsBtn = mapsUrl 
+      ? `<a href="${mapsUrl}" target="_blank" style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:10px 14px;border-radius:10px;text-decoration:none;font-size:12px;font-weight:700;margin-bottom:10px;">🗺️ افتح مشروعك على Google Maps ←</a>`
+      : '';
+    
     document.getElementById('diagItems').innerHTML=`
+      ${mapsBtn}
       <div class="diag-item bad"><span>🔴</span><span class="diag-item-text">تقييمك المقدّر ${rating} — أقل من متوسط المنافسين (4.5+) *</span></div>
       <div class="diag-item bad"><span>⚠️</span><span class="diag-item-text">نسبة ردودك ${replyRate}% — تخسر عملاء بسبب الصمت</span></div>
       <div class="diag-item bad"><span>💸</span><span class="diag-item-text">تخسر تقريباً ${lost}+ عميل شهرياً بسبب التقييم المنخفض</span></div>
       <div class="diag-item good"><span>✅</span><span class="diag-item-text">5tars تقدر ترفع تقييمك لـ 4.5+ خلال 60 يوم</span></div>
-      <a href="signup.html" style="display:block;text-align:center;background:linear-gradient(135deg,#F5B429,#D4920A);color:#0B1F4E;font-weight:900;font-size:13px;padding:12px;border-radius:10px;text-decoration:none;margin-top:8px;">أصلح سمعتك الآن — مجاناً 14 يوم ←</a>`;
-    btn.textContent='🔍 شخّص مشروعي الآن — مجاناً';btn.disabled=false;
-  },2000);
+      <a href="signup.html" style="display:block;text-align:center;background:linear-gradient(135deg,#F5B429,#D4920A);color:#0B1F4E;font-weight:900;font-size:13px;padding:12px;border-radius:10px;text-decoration:none;margin-top:10px;">أصلح سمعتك الآن — مجاناً 14 يوم ←</a>`;
+    
+    btn.textContent = '🔍 شخّص مشروعي الآن — مجاناً'; btn.disabled = false;
+  }, 2000);
 }
 document.getElementById('diagInput').addEventListener('keypress',(e)=>{if(e.key==='Enter')runDiagnosis();});
 </script>
