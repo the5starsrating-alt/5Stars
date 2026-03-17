@@ -88,77 +88,17 @@ body{font-family:'Cairo',sans-serif;background:#000;color:#fff;overflow:hidden;d
 .d4{animation-delay:0.7s;}
 .d5{animation-delay:0.9s;}
 </style>
-<script>
-// Background music using Web Audio API - ambient/corporate style
-let audioCtx, bgGain, isPlaying = false;
 
-function createBGMusic() {
-  try {
-    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    
-    bgGain = audioCtx.createGain();
-    bgGain.gain.setValueAtTime(0, audioCtx.currentTime);
-    bgGain.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + 2);
-    bgGain.connect(audioCtx.destination);
-    
-    // Chord progression: Am - F - C - G (loop)
-    const chords = [
-      [220, 277, 330], // Am
-      [174, 220, 261], // F  
-      [261, 330, 392], // C
-      [196, 247, 294], // G
-    ];
-    
-    let time = audioCtx.currentTime;
-    const duration = 30; // 30 seconds per loop
-    
-    for (let loop = 0; loop < 5; loop++) {
-      chords.forEach((chord, ci) => {
-        chord.forEach(freq => {
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = 'sine';
-          osc.frequency.value = freq;
-          gain.gain.setValueAtTime(0, time + ci * 1.5);
-          gain.gain.linearRampToValueAtTime(0.06, time + ci * 1.5 + 0.3);
-          gain.gain.setValueAtTime(0.06, time + ci * 1.5 + 1.0);
-          gain.gain.linearRampToValueAtTime(0, time + ci * 1.5 + 1.5);
-          osc.connect(gain);
-          gain.connect(bgGain);
-          osc.start(time + ci * 1.5);
-          osc.stop(time + ci * 1.5 + 1.6);
-        });
-      });
-      time += 6;
-    }
-    
-    isPlaying = true;
-    document.getElementById('muteBtn').textContent = '🔊';
-  } catch(e) { console.log('Audio not supported'); }
-}
-
-function playSound(type) {
-  try {
-    if (!audioCtx) return;
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    if (type === 'transition') {
-      osc.frequency.setValueAtTime(523, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(659, audioCtx.currentTime + 0.1);
-      gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
-      osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-    }
-  } catch(e) {}
-}
-</script>
 </head>
 <body>
 
+<!-- Background Music -->
+<audio id="bgMusic" loop>
+  <source src="joyinsound-motivational-documentary-background-music-403407.mp3" type="audio/mpeg">
+</audio>
+
 <button class="skip-btn" onclick="skipVideo()" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);color:#fff;padding:10px 20px;border-radius:24px;font-family:Cairo,sans-serif;font-size:14px;font-weight:700;cursor:pointer;z-index:200;position:fixed;top:20px;left:20px;">✕ تخطي</button>
-<button id="muteBtn" onclick="toggleMute()" style="position:fixed;top:20px;right:20px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);padding:8px 14px;border-radius:20px;font-size:13px;cursor:pointer;z-index:100;">🔊</button>
+
 <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
 
 <!-- SCENE 1: Logo Reveal -->
@@ -337,9 +277,6 @@ function showScene(i) {
       el.style.animation = '';
     });
   }
-  // Play sound on transition
-  if (i > 0) playSound('transition');
-  if (i === 6) playSound('star'); // Final CTA
 }
 
 function nextScene() {
@@ -362,36 +299,36 @@ function updateProgress() {
 
 function skipVideo() {
   clearTimeout(timer);
-  try {
-    if (bgGain) bgGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.5);
-  } catch(e) {}
+  const music = document.getElementById('bgMusic');
+  if (music) { music.pause(); music.currentTime = 0; }
   window.location.href = 'https://www.the5starsrating.com';
 }
 
 function finish() {
   clearTimeout(timer);
+  const music = document.getElementById('bgMusic');
+  if (music) { music.pause(); }
   window.location.href = 'https://www.the5starsrating.com/signup.html';
 }
 
-let muted = false;
-function toggleMute() {
-  muted = !muted;
-  document.getElementById('muteBtn').textContent = muted ? '🔇' : '🔊';
-  if (audioCtx) {
-    if (muted) audioCtx.suspend();
-    else audioCtx.resume();
+// Start music
+function startMusic() {
+  const music = document.getElementById('bgMusic');
+  if (music) {
+    music.volume = 0.35;
+    music.play().catch(()=>{});
   }
 }
 
-// Start music on first click
-document.addEventListener('click', () => {
-  if (!isPlaying) createBGMusic();
-}, {once: true});
+// Start on first click (browser policy)
+document.addEventListener('click', startMusic, {once: true});
+document.addEventListener('touchstart', startMusic, {once: true});
+// Try autoplay
+setTimeout(() => { startMusic(); }, 500);
 
 // Start
 showScene(0);
-// Auto-start music after 1 second
-setTimeout(() => { createBGMusic(); }, 800);
+
 updateProgress();
 timer = setTimeout(nextScene, durations[0]);
 </script>
