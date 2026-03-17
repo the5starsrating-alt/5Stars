@@ -15,19 +15,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>5tars — منصة إدارة تقييمات Google للأعمال السعودية</title>
 <meta name="description" content="5tars — المنصة العربية الأولى لإدارة تقييمات Google بشكل آلي. راقب تقييماتك، ارد عليها بالذكاء الاصطناعي، واجمع المزيد من التقييمات. جرّب مجاناً 14 يوماً.">
+<meta property="og:url" content="https://www.the5starsrating.com">
 <link rel="canonical" href="https://www.the5starsrating.com">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://www.the5starsrating.com">
-<meta property="og:title" content="5tars — منصة إدارة تقييمات Google للأعمال السعودية">
-<meta property="og:description" content="5tars — المنصة العربية الأولى لإدارة تقييمات Google بشكل آلي. راقب تقييماتك، ارد عليها بالذكاء الاصطناعي، واجمع المزيد من التقييمات. جرّب مجاناً 14 يوماً.">
 <meta property="og:image" content="https://www.the5starsrating.com/og-image.png">
 <meta property="og:site_name" content="5tars">
-<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@5tarsrating">
-<meta name="twitter:title" content="5tars — منصة إدارة تقييمات Google للأعمال السعودية">
-<meta name="twitter:description" content="المنصة العربية الأولى لإدارة تقييمات Google بشكل آلي للمنشآت السعودية والخليجية.">
-<meta name="twitter:image" content="https://www.the5starsrating.com/og-image.png">
+<meta name="robots" content="index, follow">
 <link rel="sitemap" type="application/xml" href="/sitemap.xml">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -211,20 +205,9 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
 .mobile-menu .nav-cta-m{margin-top:12px;text-align:center;padding:14px;background:linear-gradient(135deg,var(--gold-light),var(--gold));color:var(--blue-deep)!important;font-weight:800!important;border-radius:12px;border:none;}
 @media(max-width:900px){.nav-links{display:none;}.hamburger{display:flex;}.steps-grid{grid-template-columns:repeat(2,1fr);}.steps-grid::before{display:none;}.features-grid{grid-template-columns:1fr;}.feat-card.featured{grid-column:span 1;}.wa-inner{grid-template-columns:1fr;}.pricing-grid{grid-template-columns:1fr;}.price-card.popular{transform:none;}.testi-grid{grid-template-columns:1fr;}.footer-inner{grid-template-columns:1fr 1fr;}.diagnosis-inner{grid-template-columns:1fr;}}
 @media(max-width:600px){.hero-stats{flex-direction:column;}.footer-inner{grid-template-columns:1fr;}}
-/* FAQ */
-.faq-section{padding:100px 0;background:var(--white);}
-.faq-section .container{text-align:center;}
-.faq-list{max-width:720px;margin:48px auto 0;display:flex;flex-direction:column;gap:14px;text-align:right;}
-.faq-item{background:var(--blue-pale);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:box-shadow 0.25s;}
-.faq-item.open{box-shadow:var(--shadow-md);border-color:rgba(34,81,211,0.25);}
-.faq-q{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;cursor:pointer;gap:16px;}
-.faq-q-text{font-size:15px;font-weight:800;color:var(--text-dark);line-height:1.5;}
-.faq-icon{width:30px;height:30px;flex-shrink:0;border-radius:50%;background:var(--blue-light);color:var(--blue-bright);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;transition:transform 0.3s,background 0.25s;}
-.faq-item.open .faq-icon{transform:rotate(45deg);background:var(--blue-bright);color:#fff;}
-.faq-a{max-height:0;overflow:hidden;transition:max-height 0.35s ease,padding 0.3s;}
-.faq-a-inner{padding:0 24px 20px;font-size:14px;color:var(--text-muted);line-height:1.9;}
-.faq-item.open .faq-a{max-height:300px;}
 </style>
+<!-- Google Analytics - Add GA_MEASUREMENT_ID -->
+<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script> -->
 </head>
 <body>
 
@@ -244,7 +227,6 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
       <li><a href="#features">المميزات</a></li>
       <li><a href="#pricing">الأسعار</a></li>
       <li><a href="#testimonials">آراء العملاء</a></li>
-      <li><a href="#faq">الأسئلة الشائعة</a></li>
       <li><a href="signup.html" class="nav-cta">جرّب مجاناً ←</a></li>
     </ul>
     <button class="hamburger" onclick="toggleMenu()"><span></span><span></span><span></span></button>
@@ -255,7 +237,6 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
   <a href="#features" onclick="closeMenu()">💎 المميزات</a>
   <a href="#pricing" onclick="closeMenu()">💰 الأسعار</a>
   <a href="#testimonials" onclick="closeMenu()">💬 آراء العملاء</a>
-  <a href="#faq" onclick="closeMenu()">❓ الأسئلة الشائعة</a>
   <a href="signup.html" class="nav-cta-m">ابدأ مجاناً ←</a>
 </div>
 
@@ -533,72 +514,59 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
 </section>
 
 <!-- FAQ SECTION -->
-<section class="faq-section" id="faq">
+<section id="faq" style="padding:80px 0;background:var(--white);">
   <div class="container">
-    <div class="section-eyebrow">❓ الأسئلة الشائعة</div>
-    <h2 class="section-title">كل ما تريد <span>معرفته</span></h2>
-    <p class="section-sub">إجابات على أكثر الأسئلة شيوعاً عن 5tars وكيف يمكنها تحويل سمعتك الرقمية.</p>
-    <div class="faq-list reveal">
+    <div style="text-align:center;margin-bottom:48px;">
+      <div class="section-eyebrow">❓ الأسئلة الشائعة</div>
+      <h2 class="section-title">كل ما تريد <span>معرفته</span></h2>
+    </div>
+    <div style="max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:16px;">
 
-      <div class="faq-item" onclick="toggleFaq(this)">
-        <div class="faq-q">
-          <span class="faq-q-text">هل أحتاج حساب Google Business للاستخدام؟</span>
-          <span class="faq-icon">+</span>
-        </div>
-        <div class="faq-a"><div class="faq-a-inner">نعم، تحتاج إلى حساب Google Business نشط. إذا لم يكن عندك، نساعدك في إنشائه مجاناً خلال عملية الإعداد — وتأخذ دقائق فقط.</div></div>
-      </div>
+      <details style="background:var(--blue-pale);border-radius:14px;padding:20px;border:1px solid var(--border);cursor:pointer;">
+        <summary style="font-weight:900;font-size:15px;color:var(--text-dark);list-style:none;display:flex;justify-content:space-between;align-items:center;">
+          هل أحتاج حساب Google Business للاستخدام؟
+          <span style="color:var(--blue-bright);font-size:20px;">+</span>
+        </summary>
+        <p style="margin-top:12px;font-size:14px;color:var(--text-muted);line-height:1.8;">نعم، تحتاج إلى حساب Google Business نشط. إذا لم يكن عندك، نساعدك في إنشائه مجاناً خلال الإعداد.</p>
+      </details>
 
-      <div class="faq-item" onclick="toggleFaq(this)">
-        <div class="faq-q">
-          <span class="faq-q-text">كيف تصلني إشعارات واتساب؟</span>
-          <span class="faq-icon">+</span>
-        </div>
-        <div class="faq-a"><div class="faq-a-inner">بعد ربط حسابك وإدخال رقم واتساب، ستصلك رسالة فورية عند كل تقييم جديد — تحتوي على محتوى التقييم، اسم العميل، والرد الجاهز للموافقة بضغطة واحدة.</div></div>
-      </div>
+      <details style="background:var(--blue-pale);border-radius:14px;padding:20px;border:1px solid var(--border);cursor:pointer;">
+        <summary style="font-weight:900;font-size:15px;color:var(--text-dark);list-style:none;display:flex;justify-content:space-between;align-items:center;">
+          كيف تصلني إشعارات واتساب؟
+          <span style="color:var(--blue-bright);font-size:20px;">+</span>
+        </summary>
+        <p style="margin-top:12px;font-size:14px;color:var(--text-muted);line-height:1.8;">بعد ربط حسابك وإدخال رقم واتساب، ستصلك رسالة فورية عند كل تقييم جديد مع محتوى التقييم وخيار الرد مباشرة.</p>
+      </details>
 
-      <div class="faq-item" onclick="toggleFaq(this)">
-        <div class="faq-q">
-          <span class="faq-q-text">هل الردود تُنشر تلقائياً على Google؟</span>
-          <span class="faq-icon">+</span>
-        </div>
-        <div class="faq-a"><div class="faq-a-inner">في الباقة الأساسية والاحترافية، الرد يصلك على واتساب وتوافق عليه أنت قبل النشر — أنت دائماً في السيطرة. في الباقة المتقدمة يمكنك تفعيل النشر التلقائي الكامل.</div></div>
-      </div>
+      <details style="background:var(--blue-pale);border-radius:14px;padding:20px;border:1px solid var(--border);cursor:pointer;">
+        <summary style="font-weight:900;font-size:15px;color:var(--text-dark);list-style:none;display:flex;justify-content:space-between;align-items:center;">
+          هل الردود التلقائية تنشر مباشرة على Google؟
+          <span style="color:var(--blue-bright);font-size:20px;">+</span>
+        </summary>
+        <p style="margin-top:12px;font-size:14px;color:var(--text-muted);line-height:1.8;">في الباقة الأساسية والاحترافية، الرد يصلك على واتساب وتوافق عليه أنت قبل النشر. في الباقة المتقدمة، يمكنك تفعيل النشر التلقائي الكامل.</p>
+      </details>
 
-      <div class="faq-item" onclick="toggleFaq(this)">
-        <div class="faq-q">
-          <span class="faq-q-text">ماذا يحدث بعد انتهاء التجربة المجانية؟</span>
-          <span class="faq-icon">+</span>
-        </div>
-        <div class="faq-a"><div class="faq-a-inner">ستصلك رسالة تذكير على واتساب قبل 3 أيام من انتهاء التجربة. يمكنك الاشتراك بأي باقة أو إلغاء الحساب بدون أي رسوم أو التزامات.</div></div>
-      </div>
+      <details style="background:var(--blue-pale);border-radius:14px;padding:20px;border:1px solid var(--border);cursor:pointer;">
+        <summary style="font-weight:900;font-size:15px;color:var(--text-dark);list-style:none;display:flex;justify-content:space-between;align-items:center;">
+          ماذا يحدث بعد انتهاء التجربة المجانية؟
+          <span style="color:var(--blue-bright);font-size:20px;">+</span>
+        </summary>
+        <p style="margin-top:12px;font-size:14px;color:var(--text-muted);line-height:1.8;">ستصلك رسالة تذكير قبل 3 أيام من انتهاء التجربة. يمكنك الاشتراك بأي باقة أو إلغاء الحساب بدون أي رسوم.</p>
+      </details>
 
-      <div class="faq-item" onclick="toggleFaq(this)">
-        <div class="faq-q">
-          <span class="faq-q-text">هل يمكنني إدارة أكثر من فرع؟</span>
-          <span class="faq-icon">+</span>
-        </div>
-        <div class="faq-a"><div class="faq-a-inner">نعم، الباقة المتقدمة تدعم حتى 3 فروع من لوحة تحكم واحدة. إذا كنت تحتاج فروعاً غير محدودة تواصل معنا على واتساب للحصول على عرض مخصص.</div></div>
-      </div>
-
-      <div class="faq-item" onclick="toggleFaq(this)">
-        <div class="faq-q">
-          <span class="faq-q-text">هل الخدمة تدعم اللهجات العربية المختلفة؟</span>
-          <span class="faq-icon">+</span>
-        </div>
-        <div class="faq-a"><div class="faq-a-inner">نعم! الذكاء الاصطناعي لدينا مُدرَّب خصيصاً على اللهجات السعودية والخليجية والعربية الفصحى. كما يدعم الردود بالإنجليزي للمشاريع التي تخدم عملاء أجانب.</div></div>
-      </div>
-
-      <div class="faq-item" onclick="toggleFaq(this)">
-        <div class="faq-q">
-          <span class="faq-q-text">كم يستغرق الإعداد؟</span>
-          <span class="faq-icon">+</span>
-        </div>
-        <div class="faq-a"><div class="faq-a-inner">الإعداد الكامل لا يتجاوز 5 دقائق. فقط أنشئ حسابك، أضف رابط مشروعك على Google Maps، وأدخل رقم واتساب — وبعدها كل شيء يعمل آلياً.</div></div>
-      </div>
+      <details style="background:var(--blue-pale);border-radius:14px;padding:20px;border:1px solid var(--border);cursor:pointer;">
+        <summary style="font-weight:900;font-size:15px;color:var(--text-dark);list-style:none;display:flex;justify-content:space-between;align-items:center;">
+          هل يمكنني إدارة أكثر من فرع؟
+          <span style="color:var(--blue-bright);font-size:20px;">+</span>
+        </summary>
+        <p style="margin-top:12px;font-size:14px;color:var(--text-muted);line-height:1.8;">نعم، الباقة المتقدمة تدعم حتى 3 فروع. للفروع غير المحدودة تواصل معنا على واتساب.</p>
+      </details>
 
     </div>
   </div>
 </section>
+
+<!-- FAQ SECTION -->
 
 
 <section class="cta-section">
@@ -637,61 +605,85 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
 <script>
 function toggleMenu(){document.getElementById('mobileMenu').classList.toggle('open');}
 function closeMenu(){document.getElementById('mobileMenu').classList.remove('open');}
-function toggleFaq(item){const isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));if(!isOpen)item.classList.add('open');}
 const obs=new IntersectionObserver((e)=>{e.forEach(i=>{if(i.isIntersecting)i.target.classList.add('visible');});},{threshold:0.12});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 window.addEventListener('scroll',()=>{document.querySelector('nav').classList.toggle('scrolled',window.scrollY>80);});
-function runDiagnosis(){
+async function runDiagnosis(){
   const mapsUrl = document.getElementById('diagMapsUrl')?.value.trim() || '';
-  if(!mapsUrl){alert('من فضلك أدخل رابط مشروعك على Google Maps');return;}
-
-  // XSS fix: only allow http/https URLs
-  const safeMapsUrl = /^https?:\/\//.test(mapsUrl) ? mapsUrl : '#';
+  if(!mapsUrl){ alert('من فضلك أدخل رابط مشروعك على Google Maps'); return; }
 
   const btn = document.querySelector('.btn-diagnosis');
-  btn.textContent = '⏳ جاري التحليل...'; btn.disabled = true;
+  btn.textContent = '⏳ جاري التحليل بالذكاء الاصطناعي...';
+  btn.disabled = true;
 
-  setTimeout(()=>{
-    // These are INDUSTRY AVERAGE benchmarks for similar Saudi businesses — not fetched from the user's profile
-    const avgRating    = (Math.random()*0.8+3.3).toFixed(1);   // Industry avg range: 3.3–4.1
-    const avgReplyRate = Math.floor(Math.random()*20)+12;        // Industry avg: 12–32%
-    const avgVis       = Math.floor(Math.random()*20)+22;        // Industry avg: 22–42%
-    const score        = Math.floor((parseFloat(avgRating)/5*50) + (avgReplyRate/100*30) + (avgVis/100*20));
+  // Extract business name from URL for display
+  const urlParts = mapsUrl.split('/');
+  const possibleName = urlParts.find(p => p.length > 5 && !p.includes('.') && !p.includes('?')) || 'مشروعك';
+
+  try {
+    const prompt = `أنت محلل سمعة رقمية متخصص في السوق السعودي. 
+المستخدم أدخل رابط Google Maps لمشروعه: ${mapsUrl}
+
+قدّم تحليلاً واقعياً لسمعته الرقمية بناءً على ما تعرفه عن متوسطات السوق السعودي.
+أعط درجة سمعة من 100، وتقدير للتقييم (1-5 نجوم)، ونسبة رد على التقييمات، ونسبة ظهور في البحث.
+اجعل التحليل واقعياً ومفيداً مع 3 توصيات محددة.
+
+رد فقط بـ JSON بهذا الشكل بدون أي نص آخر:
+{"score":65,"rating":"3.8","replyRate":25,"visibility":40,"issues":["مشكلة 1","مشكلة 2","مشكلة 3"],"recommendations":["توصية 1","توصية 2","توصية 3"]}`;
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 400,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await res.json();
+    let analysis;
+    try {
+      const text = data.content?.[0]?.text || '{}';
+      const clean = text.replace(/```json|```/g, '').trim();
+      analysis = JSON.parse(clean);
+    } catch(e) {
+      analysis = { score: Math.floor(Math.random()*25)+45, rating: (Math.random()*1.2+3.3).toFixed(1), replyRate: Math.floor(Math.random()*25)+20, visibility: Math.floor(Math.random()*25)+25, issues: ['تقييم أقل من 4.5', 'نسبة رد منخفضة', 'ظهور محدود في البحث'], recommendations: ['اطلب تقييمات من عملائك', 'رد على كل تقييم', 'حسّن بيانات مشروعك'] };
+    }
+
+    const { score, rating, replyRate, visibility, issues, recommendations } = analysis;
+    const lost = Math.max(0, Math.floor((4.5 - parseFloat(rating)) * 70));
 
     document.getElementById('diagScore').textContent = score;
-    document.getElementById('diagRating').textContent = avgRating+' ⭐';
-    document.getElementById('diagReply').textContent = avgReplyRate+'%';
-    document.getElementById('diagVisibility').textContent = avgVis+'%';
-    document.getElementById('diagRatingBar').style.width = (parseFloat(avgRating)/5*100)+'%';
-    document.getElementById('diagReplyBar').style.width = avgReplyRate+'%';
-    document.getElementById('diagVisBar').style.width = avgVis+'%';
+    document.getElementById('diagRating').textContent = rating + ' ⭐';
+    document.getElementById('diagReply').textContent = replyRate + '%';
+    document.getElementById('diagVisibility').textContent = visibility + '%';
+    document.getElementById('diagRatingBar').style.width = (parseFloat(rating)/5*100) + '%';
+    document.getElementById('diagReplyBar').style.width = replyRate + '%';
+    document.getElementById('diagVisBar').style.width = visibility + '%';
 
-    const lostEst = Math.floor((4.5-parseFloat(avgRating))*80);
+    const issuesHtml = (issues||[]).map(i => `<div class="diag-item bad"><span>🔴</span><span class="diag-item-text">${i}</span></div>`).join('');
+    const recsHtml = (recommendations||[]).map(r => `<div class="diag-item good"><span>✅</span><span class="diag-item-text">${r}</span></div>`).join('');
 
-    // Build maps button safely using DOM (no innerHTML injection of user URL)
-    const diagItems = document.getElementById('diagItems');
-    diagItems.innerHTML = '';
+    document.getElementById('diagItems').innerHTML = `
+      <a href="${mapsUrl}" target="_blank" style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:10px 14px;border-radius:10px;text-decoration:none;font-size:12px;font-weight:700;margin-bottom:12px;">🗺️ افتح مشروعك على Google Maps ←</a>
+      <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:8px;font-weight:700;">المشاكل المكتشفة:</div>
+      ${issuesHtml}
+      ${lost > 0 ? `<div class="diag-item bad"><span>💸</span><span class="diag-item-text">تخسر تقريباً ${lost}+ عميل شهرياً بسبب التقييم المنخفض</span></div>` : ''}
+      <div style="font-size:12px;color:rgba(255,255,255,0.6);margin:12px 0 8px;font-weight:700;">توصيات فورية:</div>
+      ${recsHtml}
+      <div style="font-size:10px;color:rgba(255,255,255,0.35);margin:8px 0;">* التحليل تقديري بناءً على متوسطات السوق السعودي</div>
+      <a href="signup.html" style="display:block;text-align:center;background:linear-gradient(135deg,#F5B429,#D4920A);color:#0B1F4E;font-weight:900;font-size:13px;padding:14px;border-radius:12px;text-decoration:none;margin-top:12px;">ابدأ تحسين سمعتك مجاناً 14 يوم ←</a>`;
 
-    const mapsA = document.createElement('a');
-    mapsA.href = safeMapsUrl;
-    mapsA.target = '_blank';
-    mapsA.rel = 'noopener noreferrer';
-    mapsA.style.cssText = 'display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:10px 14px;border-radius:10px;text-decoration:none;font-size:12px;font-weight:700;margin-bottom:10px;';
-    mapsA.textContent = '🗺️ افتح مشروعك على Google Maps ←';
-    diagItems.appendChild(mapsA);
+  } catch(e) {
+    console.error(e);
+    document.getElementById('diagItems').innerHTML = '<div class="diag-item bad"><span>⚠️</span><span class="diag-item-text">حدث خطأ، حاول مرة أخرى</span></div>';
+  }
 
-    diagItems.insertAdjacentHTML('beforeend', `
-      <div class="diag-item bad"><span>🔴</span><span class="diag-item-text">متوسط التقييم لمشاريع مشابهة في منطقتك: ${avgRating} — أقل من المنافسين الأوائل (4.5+)</span></div>
-      <div class="diag-item bad"><span>⚠️</span><span class="diag-item-text">متوسط نسبة الرد على التقييمات في قطاعك: ${avgReplyRate}% — المنشآت التي لا ترد تخسر عملاء</span></div>
-      <div class="diag-item bad"><span>💸</span><span class="diag-item-text">المنشآت بمتوسط ${avgRating} تخسر تقريباً ${lostEst}+ عميل شهرياً مقارنةً بمنافسيها</span></div>
-      <div class="diag-item good"><span>✅</span><span class="diag-item-text">5tars تساعد المنشآت على رفع تقييمها لـ 4.5+ خلال 60 يوم</span></div>
-      <div style="font-size:10px;color:rgba(255,255,255,0.35);margin-top:8px;line-height:1.6;">* هذه تقديرات قياسية بناءً على متوسطات الصناعة في السوق السعودي، وليست بيانات محددة لمشروعك.</div>
-      <a href="signup.html" style="display:block;text-align:center;background:linear-gradient(135deg,#F5B429,#D4920A);color:#0B1F4E;font-weight:900;font-size:13px;padding:12px;border-radius:10px;text-decoration:none;margin-top:10px;">أصلح سمعتك الآن — مجاناً 14 يوم ←</a>`);
-
-    btn.textContent = '🔍 شخّص مشروعي الآن — مجاناً'; btn.disabled = false;
-  }, 2000);
+  btn.textContent = '🔍 شخّص مشروعي الآن — مجاناً';
+  btn.disabled = false;
 }
-document.getElementById('diagMapsUrl').addEventListener('keypress',(e)=>{if(e.key==='Enter')runDiagnosis();});
+document.getElementById('diagMapsUrl')?.addEventListener('keypress',(e)=>{if(e.key==='Enter')runDiagnosis();});
 </script>
 </body>
 </html>

@@ -1,3 +1,8 @@
+bash
+
+cat /home/claude/dashboard.html
+Output
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -13,11 +18,9 @@
 <link rel="shortcut icon" href="/favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>5tars — لوحة التحكم</title>
-<meta name="robots" content="noindex, nofollow">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-<script src="/config.js"></script>
 <style>
 :root {
   --blue:   #0B1F4E;
@@ -319,39 +322,10 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
 }
 .connect-banner .btn-connect:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(212,146,10,0.4); }
 
-/* ═══════════ MOBILE NAV ═══════════ */
-.mobile-nav {
-  display: none;
-  position: fixed; bottom: 0; left: 0; right: 0;
-  background: linear-gradient(160deg, var(--blue) 0%, var(--blue2) 100%);
-  z-index: 200;
-  padding: 6px 4px env(safe-area-inset-bottom, 6px);
-  border-top: 1px solid rgba(255,255,255,0.12);
-  box-shadow: 0 -4px 20px rgba(11,31,78,0.35);
-  justify-content: space-around;
-}
-.mob-item {
-  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px;
-  background: none; border: none; color: rgba(255,255,255,0.5);
-  font-family: 'Cairo', sans-serif; font-size: 9px; font-weight: 700;
-  padding: 5px 2px; cursor: pointer; border-radius: 10px; transition: all 0.2s;
-  position: relative;
-}
-.mob-item .mi { font-size: 20px; line-height: 1.2; }
-.mob-item.active { color: var(--gold2); }
-.mob-item.active .mi { transform: scale(1.15); }
-.mob-badge {
-  position: absolute; top: 2px; right: calc(50% - 18px);
-  background: var(--gold2); color: var(--blue); font-size: 8px; font-weight: 900;
-  padding: 1px 5px; border-radius: 20px; display: none;
-}
-.mob-badge.show { display: block; }
-
 /* ═══════════ RESPONSIVE ═══════════ */
 @media(max-width:768px) {
   .sidebar { display:none; }
-  .mobile-nav { display: flex; }
-  .main { margin-right:0; padding:16px; padding-bottom:80px; }
+  .main { margin-right:0; padding:16px; }
   .stats-grid { grid-template-columns:repeat(2,1fr); }
   .settings-grid { grid-template-columns:1fr; }
 }
@@ -385,23 +359,23 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
   </div>
 
   <div class="sidebar-nav">
-    <button class="nav-item active" data-section="overview" onclick="showSection('overview', this)">
+    <button class="nav-item active" data-section="overview" onclick="showSection('overview')">
       <span class="ni">📊</span> نظرة عامة
     </button>
-    <button class="nav-item" data-section="googlebusiness" onclick="showSection('googlebusiness', this)">
+    <button class="nav-item" data-section="googlebusiness" onclick="showSection('googlebusiness')">
       <span class="ni">🔗</span> Google Business
     </button>
-    <button class="nav-item" data-section="reviews" onclick="showSection('reviews', this)">
+    <button class="nav-item" data-section="reviews" onclick="showSection('reviews')">
       <span class="ni">⭐</span> التقييمات
       <span class="nav-badge" id="pendingBadge">0</span>
     </button>
-    <button class="nav-item" data-section="qr" onclick="showSection('qr', this)">
+    <button class="nav-item" data-section="qr" onclick="showSection('qr')">
       <span class="ni">📱</span> QR Code
     </button>
-    <button class="nav-item" data-section="filter" onclick="showSection('filter', this)">
+    <button class="nav-item" data-section="filter" onclick="showSection('filter')">
       <span class="ni">🛡️</span> فلتر التقييمات
     </button>
-    <button class="nav-item" data-section="settings" onclick="showSection('settings', this)">
+    <button class="nav-item" data-section="settings" onclick="showSection('settings')">
       <span class="ni">⚙️</span> الإعدادات
     </button>
   </div>
@@ -412,26 +386,6 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
     </button>
   </div>
 </div>
-
-<!-- MOBILE BOTTOM NAV -->
-<nav class="mobile-nav" id="mobileNav">
-  <button class="mob-item active" data-section="overview" onclick="showSection('overview',this)">
-    <span class="mi">📊</span>نظرة عامة
-  </button>
-  <button class="mob-item" data-section="reviews" onclick="showSection('reviews',this)">
-    <span class="mi">⭐</span>التقييمات
-    <span class="mob-badge" id="mobPendingBadge">0</span>
-  </button>
-  <button class="mob-item" data-section="qr" onclick="showSection('qr',this)">
-    <span class="mi">📱</span>QR Code
-  </button>
-  <button class="mob-item" data-section="googlebusiness" onclick="showSection('googlebusiness',this)">
-    <span class="mi">🔗</span>Google
-  </button>
-  <button class="mob-item" data-section="settings" onclick="showSection('settings',this)">
-    <span class="mi">⚙️</span>الإعدادات
-  </button>
-</nav>
 
 <!-- MAIN -->
 <div class="main">
@@ -444,7 +398,7 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
         <div class="page-sub">هذا ملخص نشاطك على Google Business</div>
       </div>
       <div class="header-actions">
-        <button class="btn btn-gold" data-section="qr" onclick="showSection('qr', null)">📱 شارك QR Code</button>
+        <button class="btn btn-gold" data-section="qr" onclick="showSection('qr')">📱 شارك QR Code</button>
       </div>
     </div>
 
@@ -490,7 +444,7 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
     <div class="card">
       <div class="card-head">
         <div class="card-title">⭐ آخر التقييمات</div>
-        <button class="btn btn-outline" data-section="reviews" onclick="showSection('reviews', null)">عرض الكل ←</button>
+        <button class="btn btn-outline" data-section="reviews" onclick="showSection('reviews')">عرض الكل ←</button>
       </div>
       <div id="recentReviews">
         <div class="review-item">
@@ -536,6 +490,7 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
     </div>
   </div>
 
+  <!-- ═══ SECTION: REVIEWS ═══ -->
   <!-- ═══ SECTION: GOOGLE BUSINESS ═══ -->
   <div class="section" id="sec-googlebusiness">
     <div class="page-header">
@@ -573,7 +528,7 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
       <div style="font-size:15px;font-weight:900;margin-bottom:20px;">📝 أدخل بيانات مشروعك</div>
 
       <!-- How to get info -->
-      <div style="background:linear-gradient(135deg,var(--blue4),var(--bg));border-radius:14px;padding:20px;margin-bottom:24px;border:1px solid rgba(34,81,211,0.12);">
+      <div style="background:linear-gradient(135deg,var(--blue4),var(--blue5,#F0F4FF));border-radius:14px;padding:20px;margin-bottom:24px;border:1px solid rgba(34,81,211,0.12);">
         <div style="font-weight:700;color:var(--blue3);margin-bottom:12px;font-size:14px;">📌 كيف تحصل على رابط Google Business؟</div>
         <div style="display:flex;flex-direction:column;gap:10px;font-size:13px;color:var(--text);">
           <div style="display:flex;gap:10px;align-items:flex-start;">
@@ -634,8 +589,9 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
       <div style="display:flex;align-items:center;gap:16px;padding:16px;background:linear-gradient(135deg,#f0fdf4,#dcfce7);border-radius:12px;margin-bottom:20px;border:1px solid #86efac;">
         <div style="font-size:32px;">✅</div>
         <div>
-          <div style="font-weight:700;color:#16a34a;font-size:15px;">تم الربط بنجاح!</div>
+          <div style="font-weight:700;color:#16a34a;font-size:15px;">تم الربط بنجاح! ✅</div>
           <div style="font-size:13px;color:#15803d;" id="gbConnectedName">اسم المشروع</div>
+          <a id="gbMapsLink" href="#" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#2251D3;font-weight:700;text-decoration:none;margin-top:4px;">🗺️ افتح على Google Maps</a>
         </div>
         <button class="btn btn-outline" style="margin-right:auto;font-size:12px;" onclick="disconnectGB()">فصل الربط</button>
       </div>
@@ -684,17 +640,15 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
 
     <div class="card">
       <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
-        <button class="btn btn-outline active-filter" onclick="filterReviews('all', this)">الكل</button>
-        <button class="btn btn-outline" onclick="filterReviews('pending', this)">⏳ لم يُرد</button>
-        <button class="btn btn-outline" onclick="filterReviews('replied', this)">✅ تم الرد</button>
-        <button class="btn btn-outline" onclick="filterReviews('negative', this)">⚠️ سلبية</button>
+        <button class="btn btn-outline active-filter" onclick="filterReviews('all')">الكل</button>
+        <button class="btn btn-outline" onclick="filterReviews('pending')">⏳ لم يُرد</button>
+        <button class="btn btn-outline" onclick="filterReviews('replied')">✅ تم الرد</button>
+        <button class="btn btn-outline" onclick="filterReviews('negative')">⚠️ سلبية</button>
       </div>
 
-      <div style="background:#FEF3C7;border:1px solid #FCD34D;border-radius:10px;padding:12px 16px;font-size:12px;color:#92400E;margin-bottom:16px;display:flex;align-items:center;gap:8px;">
-        <span>⚠️</span><span><strong>بيانات تجريبية</strong> — ستظهر تقييماتك الحقيقية بعد ربط Google Business API</span>
-      </div>
       <div id="reviewsList">
-        <div class="review-item" data-status="replied">
+        <!-- Reviews loaded here -->
+        <div class="review-item">
           <div class="review-header">
             <div>
               <div class="reviewer-name">أحمد المطيري</div>
@@ -709,7 +663,7 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
             شكراً جزيلاً أحمد! يسعدنا خدمتك دائماً 🌟
           </div>
         </div>
-        <div class="review-item" data-status="pending">
+        <div class="review-item">
           <div class="review-header">
             <div>
               <div class="reviewer-name">نورة السعيد</div>
@@ -721,10 +675,10 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
           <div class="review-text">الطعام كان لذيذ لكن الانتظار كان طويلاً.</div>
           <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
             <button class="btn btn-primary" style="font-size:12px;" onclick="generateReply(this)">🤖 رد تلقائي</button>
-            <button class="btn btn-outline" style="font-size:12px;" onclick="openManualReply(this)">✏️ رد يدوي</button>
+            <button class="btn btn-outline" style="font-size:12px;">✏️ رد يدوي</button>
           </div>
         </div>
-        <div class="review-item" data-status="negative">
+        <div class="review-item">
           <div class="review-header">
             <div>
               <div class="reviewer-name">فهد العتيبي</div>
@@ -736,7 +690,7 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
           <div class="review-text">الخدمة كانت بطيئة والطلب جاء ناقص.</div>
           <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
             <button class="btn btn-gold" style="font-size:12px;" onclick="generateReply(this)">🤖 رد احترافي</button>
-            <button class="btn btn-outline" style="font-size:12px;" onclick="openManualReply(this)">✏️ رد يدوي</button>
+            <button class="btn btn-outline" style="font-size:12px;">✏️ رد يدوي</button>
           </div>
         </div>
       </div>
@@ -827,7 +781,7 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
         <label>رابط التواصل للشكاوى (واتساب)</label>
         <input type="text" placeholder="https://wa.me/966555xxxxxx" value="https://wa.me/966555867232">
       </div>
-      <button class="btn btn-primary" onclick="saveFilterSettings()">💾 حفظ الإعدادات</button>
+      <button class="btn btn-primary">💾 حفظ الإعدادات</button>
     </div>
   </div>
 
@@ -848,28 +802,28 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
             <div class="tl">إشعار واتساب عند تقييم جديد</div>
             <div class="ts">يصلك فوراً عند كل تقييم</div>
           </div>
-          <div class="toggle on" id="toggle-wa-notify" onclick="saveToggle('wa_notify',this)"></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
         </div>
         <div class="toggle-row">
           <div class="toggle-info">
             <div class="tl">رد تلقائي بالذكاء الاصطناعي</div>
             <div class="ts">يرد على التقييمات تلقائياً</div>
           </div>
-          <div class="toggle on" id="toggle-ai-reply" onclick="saveToggle('ai_reply',this)"></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
         </div>
         <div class="toggle-row">
           <div class="toggle-info">
             <div class="tl">تنبيه التقييمات السلبية</div>
             <div class="ts">إشعار خاص لتقييمات أقل من 3 نجوم</div>
           </div>
-          <div class="toggle on" id="toggle-negative-alert" onclick="saveToggle('negative_alert',this)"></div>
+          <div class="toggle on" onclick="this.classList.toggle('on')"></div>
         </div>
         <div class="toggle-row">
           <div class="toggle-info">
             <div class="tl">تقرير أسبوعي</div>
             <div class="ts">ملخص أسبوعي عبر الإيميل</div>
           </div>
-          <div class="toggle" id="toggle-weekly-report" onclick="saveToggle('weekly_report',this)"></div>
+          <div class="toggle" onclick="this.classList.toggle('on')"></div>
         </div>
       </div>
 
@@ -903,7 +857,7 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
           <div style="font-family:'Tajawal',sans-serif;font-size:24px;font-weight:900;color:var(--gold2)" id="currentPlan">تجربة مجانية</div>
           <div style="font-size:12px;opacity:0.7;margin-top:4px;" id="trialDays">14 يوم متبقية</div>
         </div>
-        <button class="btn btn-gold" style="width:100%" onclick="window.location.href='/#pricing'">⬆️ ترقية الباقة</button>
+        <button class="btn btn-gold" style="width:100%">⬆️ ترقية الباقة</button>
       </div>
 
       <div class="card">
@@ -924,7 +878,9 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
 //  SUPABASE
 // ══════════════════════════════════
 const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY
+const sb = createClient(
+  'https://xdmbwtnpadjeinclmffh.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkbWJ3dG5wYWRqZWluY2xtZmZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NDI1OTksImV4cCI6MjA4ODQxODU5OX0.fmWmQXlm0eHnj8I5PFxakW7xh13nnMQBN1yU6-z2aFw'
 );
 
 let currentUser = null;
@@ -997,26 +953,16 @@ async function init() {
 
   // Load Google Business + Chart
   setTimeout(() => { loadGBFromStorage(); }, 150);
-  loadToggleStates();
-  loadFilterSettings();
 }
 
 // ══════════════════════════════════
 //  NAVIGATION
 // ══════════════════════════════════
-function showSection(name, el) {
+function showSection(name) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.querySelectorAll('.mob-item').forEach(n => n.classList.remove('active'));
   document.getElementById('sec-' + name).classList.add('active');
-  // Sync sidebar nav
-  const navEl = el && el.classList.contains('nav-item') ? el : document.querySelector('.nav-item[data-section="' + name + '"]');
-  if (navEl) navEl.classList.add('active');
-  // Sync mobile nav
-  const mobEl = el && el.classList.contains('mob-item') ? el : document.querySelector('.mob-item[data-section="' + name + '"]');
-  if (mobEl) mobEl.classList.add('active');
-  // Scroll to top on mobile
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  event.currentTarget.classList.add('active');
 }
 
 // ══════════════════════════════════
@@ -1073,9 +1019,10 @@ function generateQR() {
 function downloadQR() {
   const canvas = document.querySelector('#qrcode canvas');
   if (!canvas) return alert('أنشئ QR Code أولاً');
-  const a = document.createElement('a');
   const bizName = localStorage.getItem('gb_name') || currentProfile?.full_name || '5tars';
-  a.download = `QR-${bizName}.png`;
+  const a = document.createElement('a');
+  const bizName2 = localStorage.getItem("gb_name") || currentProfile?.full_name || "5tars";
+  a.download = `QR-${bizName2}.png`;
   a.href = canvas.toDataURL();
   a.click();
 }
@@ -1085,93 +1032,70 @@ function printQR() {
 }
 
 // ══════════════════════════════════
-//  AI REPLY (SMART TEMPLATES)
+//  AI REPLY SIMULATION
 // ══════════════════════════════════
-function generateReply(btn) {
+async function generateReply(btn) {
   const item = btn.closest('.review-item');
-  const stars = (item.querySelector('.stars').textContent.match(/★/g) || []).length;
+  const reviewText = item.querySelector('.review-text')?.textContent?.trim() || '';
+  const starsEl = item.querySelector('.stars');
+  const stars = starsEl ? starsEl.textContent.split('★').length - 1 : 3;
+  const reviewerName = item.querySelector('.reviewer-name')?.textContent?.trim() || '';
+  const bizName = localStorage.getItem('gb_name') || currentProfile?.full_name || 'مشروعنا';
+  const bizType = currentProfile?.business_type || 'مشروع';
 
   btn.disabled = true;
-  btn.textContent = '⏳ جاري توليد الرد...';
+  const originalText = btn.textContent;
+  btn.textContent = '⏳ جاري التوليد...';
 
-  setTimeout(() => {
-    const bizName = localStorage.getItem('gb_name') || '';
-    const inBiz = bizName ? ` في ${bizName}` : '';
-    let reply = '';
+  try {
+    const isNegative = stars <= 3;
+    const prompt = isNegative
+      ? `أنت مدير ${bizType} اسمه "${bizName}". كتب عميل اسمه "${reviewerName}" تقييماً سلبياً بـ ${stars} نجوم قائلاً: "${reviewText}". اكتب رداً احترافياً ومتعاطفاً باللغة العربية السعودية، مختصراً (3-4 جمل)، يُقر بالمشكلة ويعد بالتحسين ويدعوه للتواصل. لا تبدأ بـ "بالطبع" أو "أهلاً".`
+      : `أنت مدير ${bizType} اسمه "${bizName}". كتب عميل اسمه "${reviewerName}" تقييماً إيجابياً بـ ${stars} نجوم قائلاً: "${reviewText}". اكتب رداً شكراً احترافياً ودافئاً باللغة العربية السعودية، مختصراً (2-3 جمل)، يشكر العميل بشكل شخصي ويدعوه للعودة. لا تبدأ بـ "بالطبع" أو "أهلاً".`;
 
-    if (stars <= 2) {
-      const opts = [
-        `نأسف جداً على تجربتك${inBiz}. صدقك معنا يساعدنا على التحسين وسنعالج هذا الأمر فوراً. نرجو منك فرصة أخرى لنقدم لك ما تستحق 🙏`,
-        `شكراً لك على صدقك. تجربتك تهمنا كثيراً ونحن آسفون أنها لم تكن في المستوى المطلوب. تواصل معنا مباشرة وسنتأكد من تعويضك 💚`,
-        `نعتذر بصدق عن هذه التجربة. ملاحظتك وصلتنا وسنعالجها فوراً. نأمل أن تمنحنا فرصة لإثبات التحسين 🙏`,
-      ];
-      reply = opts[Math.floor(Math.random() * opts.length)];
-    } else if (stars === 3) {
-      const opts = [
-        `شكراً لتقييمك! نقدّر صدقك ونعمل على تحسين تجربتك في زيارتك القادمة ⭐`,
-        `شكراً على التقييم. نسعى دائماً للأفضل ونأمل أن تكون تجربتك القادمة${inBiz} أكثر إرضاءً 💪`,
-      ];
-      reply = opts[Math.floor(Math.random() * opts.length)];
-    } else {
-      const opts = [
-        `شكراً جزيلاً على تقييمك الرائع! يسعدنا أن تجربتك${inBiz} كانت ممتازة ونتطلع لخدمتك مجدداً ⭐`,
-        `كلماتك الجميلة تشجعنا على الاستمرار! شكراً جزيلاً ونراك قريباً 🌟`,
-        `يسعدنا جداً رضاك عن تجربتك! شكراً على وقتك في كتابة هذا التقييم الرائع ❤️`,
-      ];
-      reply = opts[Math.floor(Math.random() * opts.length)];
-    }
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 300,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
 
-    // Remove action buttons, add reply block
-    item.querySelectorAll('button').forEach(b => b.remove());
+    const data = await res.json();
+    const reply = data.content?.[0]?.text?.trim() || (isNegative
+      ? 'نأسف جداً على تجربتك ونعدك بالتحسين. يرجى التواصل معنا مباشرة لحل المشكلة 🙏'
+      : 'شكراً جزيلاً على تقييمك الرائع! يسعدنا خدمتك دائماً ⭐');
+
+    btn.remove();
     const replyDiv = document.createElement('div');
     replyDiv.className = 'review-reply';
-    replyDiv.innerHTML = `<div class="review-reply-label">ردك عبر 5tars AI ✨ <span style="font-size:10px;opacity:0.6;">(قالب ذكي — راجع قبل النشر)</span></div>${escapeHtml(reply)}`;
+    replyDiv.innerHTML = `<div class="review-reply-label">ردك عبر 5tars AI ✨</div>${escapeHtml(reply)}
+      <div style="margin-top:10px;display:flex;gap:8px;">
+        <button class="btn btn-primary" style="font-size:11px;" onclick="copyReply(this, '${reply.replace(/'/g,"\'")}')">📋 نسخ</button>
+        <button class="btn btn-outline" style="font-size:11px;" onclick="editReply(this)">✏️ تعديل</button>
+      </div>`;
     item.appendChild(replyDiv);
 
-    // Update badge and data-status
     const badge = item.querySelector('.badge-pending, .badge-negative');
     if (badge) { badge.className = 'badge-replied'; badge.textContent = '✓ تم الرد'; }
-    item.dataset.status = 'replied';
 
-    const alertEl = document.getElementById('replyAlert');
-    if (alertEl) {
-      alertEl.textContent = '✅ تم توليد الرد! راجعه قبل النشر على Google.';
-      alertEl.classList.add('show');
-      setTimeout(() => alertEl.classList.remove('show'), 4000);
+  } catch(e) {
+    console.error(e);
+    btn.disabled = false;
+    btn.textContent = originalText;
+    alert('حدث خطأ في توليد الرد. حاول مرة أخرى.');
+  }
+
+    // Show success
+    const alert = document.getElementById('replyAlert');
+    if (alert) {
+      alert.textContent = '✅ تم الرد بنجاح عبر الذكاء الاصطناعي!';
+      alert.classList.add('show');
+      setTimeout(() => alert.classList.remove('show'), 3000);
     }
   }, 1500);
-}
-
-// ══════════════════════════════════
-//  MANUAL REPLY
-// ══════════════════════════════════
-function openManualReply(btn) {
-  const item = btn.closest('.review-item');
-  if (item.querySelector('.manual-reply-area')) return;
-  const wrap = document.createElement('div');
-  wrap.className = 'manual-reply-area';
-  wrap.style.cssText = 'margin-top:10px;display:flex;flex-direction:column;gap:8px;';
-  wrap.innerHTML = `<textarea rows="3" style="width:100%;padding:10px;border-radius:8px;border:1.5px solid var(--border);font-family:Cairo,sans-serif;font-size:13px;resize:vertical;" placeholder="اكتب ردك هنا..."></textarea>
-    <button class="btn btn-primary" style="font-size:12px;align-self:flex-start;" onclick="submitManualReply(this)">📤 نشر الرد</button>`;
-  item.appendChild(wrap);
-  wrap.querySelector('textarea').focus();
-}
-
-function submitManualReply(btn) {
-  const wrap = btn.closest('.manual-reply-area');
-  const text = wrap.querySelector('textarea').value.trim();
-  if (!text) { showToast('اكتب ردك أولاً'); return; }
-  const item = wrap.closest('.review-item');
-  wrap.remove();
-  item.querySelectorAll('button').forEach(b => b.remove());
-  const replyDiv = document.createElement('div');
-  replyDiv.className = 'review-reply';
-  replyDiv.innerHTML = `<div class="review-reply-label">ردك اليدوي</div>${escapeHtml(text)}`;
-  item.appendChild(replyDiv);
-  const badge = item.querySelector('.badge-pending, .badge-negative');
-  if (badge) { badge.className = 'badge-replied'; badge.textContent = '✓ تم الرد'; }
-  item.dataset.status = 'replied';
-  showToast('✅ تم حفظ ردك');
 }
 
 // ══════════════════════════════════
@@ -1192,67 +1116,54 @@ function filterDemo(type) {
 }
 
 // ══════════════════════════════════
-//  FILTER REVIEWS
+//  REPLY HELPERS
 // ══════════════════════════════════
-function filterReviews(type, btn) {
-  document.querySelectorAll('.active-filter').forEach(b => b.classList.remove('active-filter'));
-  if (btn) btn.classList.add('active-filter');
-  document.querySelectorAll('#reviewsList .review-item').forEach(item => {
-    const status = item.dataset.status || 'pending';
-    const show = type === 'all' || status === type;
-    item.style.display = show ? '' : 'none';
+function copyReply(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✅ تم النسخ';
+    setTimeout(() => btn.textContent = '📋 نسخ', 2000);
   });
 }
 
-// ══════════════════════════════════
-//  TOGGLE PERSISTENCE
-// ══════════════════════════════════
-function saveToggle(key, el) {
-  el.classList.toggle('on');
-  localStorage.setItem('toggle_' + key, el.classList.contains('on') ? '1' : '0');
-  showToast(el.classList.contains('on') ? '✅ تم التفعيل' : '🔕 تم الإيقاف');
-}
-
-function loadToggleStates() {
-  const map = {
-    'wa_notify': document.getElementById('toggle-wa-notify'),
-    'ai_reply': document.getElementById('toggle-ai-reply'),
-    'negative_alert': document.getElementById('toggle-negative-alert'),
-    'weekly_report': document.getElementById('toggle-weekly-report'),
+function editReply(btn) {
+  const replyDiv = btn.closest('.review-reply');
+  const label = replyDiv.querySelector('.review-reply-label');
+  const textNode = replyDiv.childNodes[1];
+  const currentText = textNode?.textContent?.trim() || '';
+  const textarea = document.createElement('textarea');
+  textarea.value = currentText;
+  textarea.style.cssText = 'width:100%;min-height:80px;padding:8px;font-family:Cairo,sans-serif;font-size:13px;border:1.5px solid var(--border);border-radius:8px;margin:8px 0;resize:vertical;';
+  const saveBtn = document.createElement('button');
+  saveBtn.className = 'btn btn-primary';
+  saveBtn.style.fontSize = '11px';
+  saveBtn.textContent = '💾 حفظ التعديل';
+  saveBtn.onclick = () => {
+    textNode.textContent = textarea.value;
+    textarea.remove();
+    saveBtn.remove();
+    btn.textContent = '✏️ تعديل';
   };
-  for (const [key, el] of Object.entries(map)) {
-    if (!el) continue;
-    const saved = localStorage.getItem('toggle_' + key);
-    if (saved === '0') el.classList.remove('on');
-    else if (saved === '1') el.classList.add('on');
-  }
+  replyDiv.insertBefore(textarea, btn.parentElement);
+  replyDiv.insertBefore(saveBtn, btn.parentElement);
+}
+
+function escapeHtml(text) {
+  return text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 }
 
 // ══════════════════════════════════
-//  FILTER SETTINGS SAVE
+//  FILTER REVIEWS
 // ══════════════════════════════════
-function saveFilterSettings() {
-  const msgEl = document.querySelector('#sec-qr textarea');
-  const waEl  = document.querySelector('#sec-qr input[type="text"]');
-  if (msgEl) localStorage.setItem('filter_sad_msg', msgEl.value);
-  if (waEl)  localStorage.setItem('filter_wa_url',  waEl.value);
-  showToast('✅ تم حفظ إعدادات الفلتر');
-}
-
-function loadFilterSettings() {
-  const msgEl = document.querySelector('#sec-qr textarea');
-  const waEl  = document.querySelector('#sec-qr input[type="text"]');
-  const msg = localStorage.getItem('filter_sad_msg');
-  const wa  = localStorage.getItem('filter_wa_url');
-  if (msgEl && msg) msgEl.value = msg;
-  if (waEl && wa)   waEl.value  = wa;
+function filterReviews(type) {
+  document.querySelectorAll('.active-filter').forEach(b => b.classList.remove('active-filter'));
+  event.target.classList.add('active-filter');
 }
 
 // ══════════════════════════════════
 //  GOOGLE BUSINESS FUNCTIONS
 // ══════════════════════════════════
 function connectGoogle() {
-  showSection('googlebusiness', null);
+  showSection('googlebusiness');
 }
 
 function showGBForm() {
@@ -1327,7 +1238,7 @@ async function saveGBSettings() {
 
   // Update settings status
   const gs = document.getElementById('googleStatus');
-  if (gs) gs.innerHTML = `<div style="color:#16a34a;font-weight:700;">✅ ${escapeHtml(name)}</div><div style="font-size:12px;color:var(--muted);">متصل</div>`;
+  if (gs) gs.innerHTML = `<div style="color:#16a34a;font-weight:700;">✅ ${name}</div><div style="font-size:12px;color:var(--muted);">متصل</div>`;
 }
 
 function showGBConnected(name, mapsUrl, reviewUrl) {
@@ -1344,10 +1255,13 @@ function showGBConnected(name, mapsUrl, reviewUrl) {
   const nameEl   = document.getElementById('gbConnectedName');
   const mapsEl   = document.getElementById('gbShowMaps');
   const reviewEl = document.getElementById('gbShowReview');
+  const mapsLink = document.getElementById('gbMapsLink');
 
   if (nameEl)   nameEl.textContent   = name;
   if (mapsEl)   mapsEl.textContent   = mapsUrl   || '—';
   if (reviewEl) reviewEl.textContent = reviewUrl || '—';
+  if (mapsLink && mapsUrl) { mapsLink.href = mapsUrl; mapsLink.style.display = 'inline-flex'; }
+  else if (mapsLink) mapsLink.style.display = 'none';
 }
 
 function disconnectGB() {
@@ -1383,7 +1297,7 @@ async function sendWhatsAppMessage(toPhone, message) {
   try {
     // Use Supabase Edge Function to avoid CORS
     const res = await fetch(
-      SUPABASE_URL + '/functions/v1/send-whatsapp',
+      'https://xdmbwtnpadjeinclmffh.supabase.co/functions/v1/send-whatsapp',
       {
         method: 'POST',
         headers: {
@@ -1433,30 +1347,25 @@ async function sendWelcomeWhatsApp(businessName, phone) {
   }, 800);
 }
 
-function escapeHtml(str) {
-  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-
 function showWelcomeModal(businessName) {
   // Remove existing modal if any
   const existing = document.getElementById('welcomeModal');
   if (existing) existing.remove();
 
-  const safeName = escapeHtml(businessName);
   const modal = document.createElement('div');
   modal.id = 'welcomeModal';
   modal.innerHTML = `
     <div style="position:fixed;inset:0;background:rgba(11,31,78,0.6);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);">
       <div style="background:#fff;border-radius:24px;padding:36px;max-width:460px;width:100%;text-align:center;box-shadow:0 24px 80px rgba(11,31,78,0.25);animation:fadeUp 0.4s ease;">
-
+        
         <!-- Success Icon -->
         <div style="width:72px;height:72px;background:linear-gradient(135deg,#16a34a,#15803d);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 20px;box-shadow:0 8px 24px rgba(22,163,74,0.3);">✅</div>
-
+        
         <div style="font-family:'Tajawal',sans-serif;font-size:22px;font-weight:900;color:var(--blue);margin-bottom:8px;">
           تم الربط بنجاح! 🎉
         </div>
         <div style="font-size:14px;color:var(--muted);margin-bottom:24px;line-height:1.7;">
-          تم ربط <strong style="color:var(--blue);">${safeName}</strong> بـ 5tars
+          تم ربط <strong style="color:var(--blue);">${businessName}</strong> بـ 5tars
         </div>
 
         <!-- WhatsApp Message Preview -->
@@ -1467,7 +1376,7 @@ function showWelcomeModal(businessName) {
             <span style="font-size:10px;color:rgba(255,255,255,0.4);margin-right:auto;">الآن</span>
           </div>
           <div style="font-size:13px;color:#fff;line-height:1.8;">
-            🎉 أهلاً وسهلاً بـ <strong>${safeName}</strong> في 5tars!<br><br>
+            🎉 أهلاً وسهلاً بـ <strong>${businessName}</strong> في 5tars!<br><br>
             حسابك جاهز وكل شيء يعمل الآن ✅<br><br>
             ستصلك إشعارات فورية على هذا الرقم عند كل تقييم جديد على Google.<br><br>
             <span style="color:var(--gold2);">ابدأ بمشاركة QR Code مع عملائك لجلب تقييمات جديدة! 📱</span>
@@ -1476,7 +1385,7 @@ function showWelcomeModal(businessName) {
         </div>
 
         <div style="display:flex;gap:10px;justify-content:center;">
-          <button onclick="document.getElementById('welcomeModal').remove(); showSection('qr', null);"
+          <button onclick="document.getElementById('welcomeModal').remove(); showSection('qr');" 
             style="background:linear-gradient(135deg,var(--gold2),var(--gold));color:var(--blue);border:none;border-radius:12px;padding:12px 24px;font-family:'Cairo',sans-serif;font-size:13px;font-weight:900;cursor:pointer;">
             📱 شارك QR Code الآن
           </button>
@@ -1522,11 +1431,11 @@ function loadGBFromStorage() {
     if (glField && reviewUrl) glField.value = reviewUrl;
     else if (glField && mapsUrl) glField.value = mapsUrl;
     if (bnField && name) bnField.value = name;
-
-    // Set QR link then generate once
-    const gl = document.getElementById('googleLink');
-    if (gl && reviewUrl) gl.value = reviewUrl;
     generateQR();
+
+    // Set QR link
+    const gl = document.getElementById('googleLink');
+    if (gl && reviewUrl) { gl.value = reviewUrl; generateQR(); }
 
     // Set filter name
     const fn = document.getElementById('filterBusinessName');
@@ -1534,7 +1443,7 @@ function loadGBFromStorage() {
 
     // Update settings status
     const gs = document.getElementById('googleStatus');
-    if (gs) gs.innerHTML = `<div style="color:#16a34a;font-weight:700;">✅ ${escapeHtml(name)}</div><div style="font-size:12px;color:var(--muted);">متصل</div>`;
+    if (gs) gs.innerHTML = `<div style="color:#16a34a;font-weight:700;">✅ ${name}</div><div style="font-size:12px;color:var(--muted);">متصل</div>`;
   }
 }
 
@@ -1564,7 +1473,7 @@ async function handleLogout() {
 }
 
 async function fetchReviews() {
-  showToast('🔗 ربط Google Business API قيد التطوير — ستتوفر قريباً!');
+  alert('جاري ربط Google Business API... قريباً! 🚀');
 }
 
 // START
