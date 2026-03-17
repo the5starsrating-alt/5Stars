@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>5tars — فيديو تعريفي</title>
+<meta name="robots" content="noindex, nofollow">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8R9SJ30X5L"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-8R9SJ30X5L');
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -249,7 +257,7 @@ body{font-family:'Cairo',sans-serif;background:#000;color:#fff;overflow:hidden;d
       </div>
       <div class="sub-text" style="margin-top:8px;">ابدأ تجربتك المجانية الآن — 14 يوم بدون بطاقة</div>
     </div>
-    <button class="price-cta anim-up d4" onclick="window.open('https://www.the5starsrating.com/signup.html','_blank')">
+    <button class="price-cta anim-up d4" onclick="window.open('/signup.html','_blank')">
       ابدأ مجاناً ←
     </button>
   </div>
@@ -301,14 +309,14 @@ function skipVideo() {
   clearTimeout(timer);
   const music = document.getElementById('bgMusic');
   if (music) { music.pause(); music.currentTime = 0; }
-  window.location.href = 'https://www.the5starsrating.com';
+  window.location.href = '/';
 }
 
 function finish() {
   clearTimeout(timer);
   const music = document.getElementById('bgMusic');
   if (music) { music.pause(); }
-  window.location.href = 'https://www.the5starsrating.com/signup.html';
+  window.location.href = '/signup.html';
 }
 
 // Start music

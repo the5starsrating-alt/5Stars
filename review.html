@@ -2,10 +2,19 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8R9SJ30X5L"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-8R9SJ30X5L');
+</script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>شاركنا رأيك</title>
+<meta name="robots" content="noindex, nofollow">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="/config.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{min-height:100vh;font-family:'Cairo',sans-serif;direction:rtl;background:linear-gradient(135deg,#0B1F4E 0%,#1A3A8F 100%);}
@@ -128,9 +137,7 @@ html,body{min-height:100vh;font-family:'Cairo',sans-serif;direction:rtl;backgrou
 
 <script>
 const { createClient } = supabase;
-const sb = createClient(
-  'https://xdmbwtnpadjeinclmffh.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkbWJ3dG5wYWRqZWluY2xtZmZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NDI1OTksImV4cCI6MjA4ODQxODU5OX0.fmWmQXlm0eHnj8I5PFxakW7xh13nnMQBN1yU6-z2aFw'
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY
 );
 
 let selectedStars = 0;
@@ -146,22 +153,26 @@ userId = params.get('u');
 async function loadBusiness() {
   if (!userId) return;
   try {
-    const { data } = await sb.from('profiles')
+    const { data, error } = await sb.from('profiles')
       .select('full_name, google_review_url, google_maps_url')
       .eq('id', userId)
       .single();
-    
-    if (data) {
-      businessName = data.full_name || '';
-      reviewUrl = data.google_review_url || data.google_maps_url || '';
-      
-      if (businessName) {
-        document.getElementById('bizName').textContent = businessName;
-        document.getElementById('bizSub').textContent = `شاركنا رأيك في ${businessName} 🙏`;
-      }
-      if (reviewUrl) {
-        document.getElementById('googleBtn').href = reviewUrl;
-      }
+
+    if (error || !data) return;
+
+    businessName = data.full_name || '';
+    reviewUrl = data.google_review_url || data.google_maps_url || '';
+
+    if (businessName) {
+      document.getElementById('bizName').textContent = businessName;
+      document.getElementById('bizSub').textContent = `شاركنا رأيك في ${businessName} 🙏`;
+    }
+    if (reviewUrl) {
+      document.getElementById('googleBtn').href = reviewUrl;
+      document.getElementById('googleBtn').removeAttribute('aria-disabled');
+    } else {
+      // No review URL — hide the Google button, show message only
+      document.getElementById('googleBtn').style.display = 'none';
     }
   } catch(e) {}
 }
@@ -191,9 +202,18 @@ function setStar(n) {
 }
 
 function goGoogle() {
-  document.getElementById('mainContent').style.display = 'none';
-  document.getElementById('successGoogle').style.display = 'block';
-  
+  // Guard: if no review URL, don't show broken success screen
+  if (!reviewUrl) {
+    document.getElementById('mainContent').style.display = 'none';
+    document.getElementById('successGoogle').style.display = 'block';
+    document.getElementById('googleBtn').style.display = 'none';
+    document.getElementById('successGoogle').querySelector('.success-sub').textContent =
+      'شكراً على تقييمك الإيجابي! سيتمكن الفريق من التواصل معك قريباً.';
+  } else {
+    document.getElementById('mainContent').style.display = 'none';
+    document.getElementById('successGoogle').style.display = 'block';
+  }
+
   // Log positive review attempt
   if (userId) {
     sb.from('review_attempts').insert({
@@ -201,7 +221,7 @@ function goGoogle() {
       stars: selectedStars,
       type: 'google',
       created_at: new Date().toISOString()
-    }).then(()=>{}).catch(()=>{});
+    }).catch(()=>{});
   }
 }
 
@@ -215,19 +235,43 @@ function showComplaint() {
 async function sendComplaint() {
   const text  = document.getElementById('complaintText').value.trim();
   const phone = document.getElementById('complaintPhone').value.trim();
-  
-  if (!text) { alert('يرجى كتابة ملاحظتك'); return; }
+  const btn   = document.querySelector('.btn-send');
+
+  if (!text) {
+    document.getElementById('complaintText').style.borderColor = '#EF4444';
+    document.getElementById('complaintText').placeholder = 'يرجى كتابة ملاحظتك أولاً...';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = '⏳ جاري الإرسال...';
 
   // Save to Supabase
   if (userId) {
-    await sb.from('complaints').insert({
-      user_id:      userId,
-      stars:        selectedStars,
-      complaint:    text,
-      phone:        phone,
-      business:     businessName,
-      created_at:   new Date().toISOString()
-    }).then(()=>{}).catch(()=>{});
+    const { error } = await sb.from('complaints').insert({
+      user_id:    userId,
+      stars:      selectedStars,
+      complaint:  text,
+      phone:      phone,
+      business:   businessName,
+      created_at: new Date().toISOString()
+    });
+
+    if (error) {
+      btn.disabled = false;
+      btn.textContent = '📨 أرسل ملاحظتك';
+      document.getElementById('complaintText').style.borderColor = '#EF4444';
+      // Show inline error instead of hiding the form
+      let errEl = document.getElementById('sendError');
+      if (!errEl) {
+        errEl = document.createElement('div');
+        errEl.id = 'sendError';
+        errEl.style.cssText = 'color:#EF4444;font-size:12px;margin-top:8px;text-align:center;';
+        btn.insertAdjacentElement('afterend', errEl);
+      }
+      errEl.textContent = 'حدث خطأ في الإرسال. يرجى المحاولة مجدداً.';
+      return;
+    }
   }
 
   document.getElementById('complaintForm').style.display = 'none';

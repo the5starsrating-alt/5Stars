@@ -15,6 +15,17 @@
 <title>من نحن — 5tars</title>
 <meta name="description" content="قصة 5tars — منصة سعودية ولدت من مشكلة حقيقية يعيشها كل صاحب مشروع في المنطقة.">
 <link rel="canonical" href="https://www.the5starsrating.com/about.html">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.the5starsrating.com/about.html">
+<meta property="og:title" content="من نحن — 5tars">
+<meta property="og:description" content="قصة 5tars — منصة سعودية ولدت من مشكلة حقيقية يعيشها كل صاحب مشروع في المنطقة.">
+<meta property="og:image" content="https://www.the5starsrating.com/og-image.png">
+<meta property="og:site_name" content="5tars">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="من نحن — 5tars">
+<meta name="twitter:description" content="قصة 5tars — منصة سعودية ولدت من مشكلة حقيقية يعيشها كل صاحب مشروع في المنطقة.">
+<meta name="twitter:image" content="https://www.the5starsrating.com/og-image.png">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -196,8 +207,8 @@ footer a{color:var(--gold2);text-decoration:none;}
           <a href="https://wa.me/966555867232" class="whatsapp">
             💬 تواصل على واتساب
           </a>
-          <a href="/cdn-cgi/l/email-protection#aedac6cb9bdddacfdcdddccfdac7c0c9eec9c3cfc7c280cdc1c3">
-            ✉️ <span class="__cf_email__" data-cfemail="c4b0aca1f1b7b0a5b6b7b6a5b0adaaa384a3a9a5ada8eaa7aba9">[email&#160;protected]</span>
+          <a href="mailto:the5starsrating@gmail.com">
+            ✉️ the5starsrating@gmail.com
           </a>
           <a href="https://www.the5starsrating.com">
             🌐 the5starsrating.com
@@ -358,5 +369,13 @@ footer a{color:var(--gold2);text-decoration:none;}
   </p>
 </footer>
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-c
+<script>
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+</script>
+</body>
+</html>
