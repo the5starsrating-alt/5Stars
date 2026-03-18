@@ -1054,18 +1054,14 @@ async function generateReply(btn) {
       ? `أنت مدير ${bizType} اسمه "${bizName}". كتب عميل اسمه "${reviewerName}" تقييماً سلبياً بـ ${stars} نجوم قائلاً: "${reviewText}". اكتب رداً احترافياً ومتعاطفاً باللغة العربية السعودية، مختصراً (3-4 جمل)، يُقر بالمشكلة ويعد بالتحسين ويدعوه للتواصل. لا تبدأ بـ "بالطبع" أو "أهلاً".`
       : `أنت مدير ${bizType} اسمه "${bizName}". كتب عميل اسمه "${reviewerName}" تقييماً إيجابياً بـ ${stars} نجوم قائلاً: "${reviewText}". اكتب رداً شكراً احترافياً ودافئاً باللغة العربية السعودية، مختصراً (2-3 جمل)، يشكر العميل بشكل شخصي ويدعوه للعودة. لا تبدأ بـ "بالطبع" أو "أهلاً".`;
 
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch(SUPABASE_URL + '/functions/v1/claude-proxy', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 300,
-        messages: [{ role: 'user', content: prompt }]
-      })
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+      body: JSON.stringify({ prompt, model: 'claude-haiku-4-5-20251001', max_tokens: 300 })
     });
 
     const data = await res.json();
-    const reply = data.content?.[0]?.text?.trim() || (isNegative
+    const reply = data.text?.trim() || (isNegative
       ? 'نأسف جداً على تجربتك ونعدك بالتحسين. يرجى التواصل معنا مباشرة لحل المشكلة 🙏'
       : 'شكراً جزيلاً على تقييمك الرائع! يسعدنا خدمتك دائماً ⭐');
 

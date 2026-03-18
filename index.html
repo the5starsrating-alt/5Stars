@@ -632,20 +632,16 @@ async function runDiagnosis(){
 رد فقط بـ JSON بهذا الشكل بدون أي نص آخر:
 {"score":65,"rating":"3.8","replyRate":25,"visibility":40,"issues":["مشكلة 1","مشكلة 2","مشكلة 3"],"recommendations":["توصية 1","توصية 2","توصية 3"]}`;
 
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch(SUPABASE_URL + '/functions/v1/claude-proxy', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-api-key': ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 400,
-        messages: [{ role: 'user', content: prompt }]
-      })
+      headers: { 'Content-Type': 'application/json', 'apikey': SUPABASE_ANON_KEY },
+      body: JSON.stringify({ prompt, model: 'claude-haiku-4-5-20251001', max_tokens: 400 })
     });
 
     const data = await res.json();
     let analysis;
     try {
-      const text = data.content?.[0]?.text || '{}';
+      const text = data.text || '{}';
       const clean = text.replace(/```json|```/g, '').trim();
       analysis = JSON.parse(clean);
     } catch(e) {
