@@ -2,27 +2,11 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-8R9SJ30X5L"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-8R9SJ30X5L');
-</script>
-<link rel="icon" type="image/x-icon" href="/favicon.ico">
-<link rel="shortcut icon" href="/favicon.ico">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>5tars — منصة إدارة تقييمات Google للأعمال السعودية</title>
 <meta name="description" content="5tars — المنصة العربية الأولى لإدارة تقييمات Google بشكل آلي. راقب تقييماتك، ارد عليها بالذكاء الاصطناعي، واجمع المزيد من التقييمات. جرّب مجاناً 14 يوماً.">
 <meta property="og:url" content="https://www.the5starsrating.com">
 <link rel="canonical" href="https://www.the5starsrating.com">
-<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
-<meta property="og:image" content="https://www.the5starsrating.com/og-image.png">
-<meta property="og:site_name" content="5tars">
-<meta name="twitter:site" content="@5tarsrating">
-<meta name="robots" content="index, follow">
-<link rel="sitemap" type="application/xml" href="/sitemap.xml">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
 :root{--blue-deep:#0B1F4E;--blue-mid:#1A3A8F;--blue-bright:#2251D3;--blue-light:#EEF3FF;--blue-pale:#F5F8FF;--gold:#D4920A;--gold-light:#F5B429;--gold-pale:#FFF8E7;--white:#FFFFFF;--text-dark:#0B1F4E;--text-mid:#3B5080;--text-muted:#7A90BB;--border:rgba(34,81,211,0.10);--shadow-sm:0 2px 12px rgba(11,31,78,0.08);--shadow-md:0 8px 32px rgba(11,31,78,0.12);--shadow-lg:0 20px 64px rgba(11,31,78,0.18);--shadow-gold:0 8px 32px rgba(212,146,10,0.28);}
@@ -135,11 +119,10 @@ nav.scrolled .nav-links a{color:var(--text-mid);}
 .pricing{padding:100px 0;background:var(--blue-pale);}
 .pricing .container{text-align:center;}
 .pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:56px;align-items:start;}
-.price-card{background:linear-gradient(160deg,#1A3A8F 0%,#2251D3 100%);border:2px solid rgba(255,255,255,0.12);border-radius:24px;padding:38px 30px;position:relative;transition:all 0.35s;box-shadow:0 8px 36px rgba(26,58,143,0.28);color:#fff;text-align:right;}
+.price-card{background:linear-gradient(160deg,var(--blue-mid) 0%,var(--blue-bright) 100%);border:2px solid rgba(255,255,255,0.12);border-radius:24px;padding:38px 30px;position:relative;transition:all 0.35s;box-shadow:0 8px 36px rgba(26,58,143,0.28);color:#fff;text-align:right;}
 .price-card:hover{transform:translateY(-8px);}
-.price-card.popular{background:linear-gradient(160deg,#92400E 0%,#D4920A 100%);border:3px solid #FFF0A0;transform:scale(1.04);box-shadow:0 24px 64px rgba(212,146,10,0.40);}
+.price-card.popular{background:linear-gradient(160deg,var(--blue-deep) 0%,#1A3A8F 100%);border:3px solid var(--gold-light);transform:scale(1.04);}
 .price-card.popular:hover{transform:scale(1.04) translateY(-8px);}
-.price-card.advanced{background:linear-gradient(160deg,#0B1F4E 0%,#1A3A8F 100%);border:2px solid rgba(245,180,41,0.3);}
 .popular-badge{position:absolute;top:-16px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--gold-light),var(--gold));color:var(--blue-deep);padding:6px 22px;border-radius:40px;font-size:11px;font-weight:900;white-space:nowrap;}
 .price-plan{font-size:11px;font-weight:800;color:rgba(255,255,255,0.55);letter-spacing:2px;text-transform:uppercase;margin-bottom:18px;}
 .price-amount{font-family:'Tajawal',sans-serif;font-size:58px;font-weight:900;line-height:1;color:#fff;margin-bottom:2px;}
@@ -206,8 +189,6 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
 @media(max-width:900px){.nav-links{display:none;}.hamburger{display:flex;}.steps-grid{grid-template-columns:repeat(2,1fr);}.steps-grid::before{display:none;}.features-grid{grid-template-columns:1fr;}.feat-card.featured{grid-column:span 1;}.wa-inner{grid-template-columns:1fr;}.pricing-grid{grid-template-columns:1fr;}.price-card.popular{transform:none;}.testi-grid{grid-template-columns:1fr;}.footer-inner{grid-template-columns:1fr 1fr;}.diagnosis-inner{grid-template-columns:1fr;}}
 @media(max-width:600px){.hero-stats{flex-direction:column;}.footer-inner{grid-template-columns:1fr;}}
 </style>
-<!-- Google Analytics - Add GA_MEASUREMENT_ID -->
-<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script> -->
 </head>
 <body>
 
@@ -249,10 +230,6 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
     <div class="hero-btns">
       <button class="btn-hero-primary" onclick="window.location.href='signup.html'">ابدأ تجربتك المجانية 14 يوم ←</button>
       <button class="btn-hero-secondary" onclick="document.getElementById('diagnosis').scrollIntoView({behavior:'smooth'})">🩺 شخّص مشروعك مجاناً</button>
-      <a href="promo-video.html" target="_blank" style="display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,0.1);border:1.5px solid rgba(255,255,255,0.25);color:#fff;font-size:15px;font-weight:700;text-decoration:none;padding:12px 24px;border-radius:30px;margin-top:12px;transition:all 0.2s;" onmouseover="this.style.background='rgba(245,180,41,0.2)';this.style.borderColor='#F5B429'" onmouseout="this.style.background='rgba(255,255,255,0.1)';this.style.borderColor='rgba(255,255,255,0.25)'">
-        <span style="background:#F5B429;color:#0B1F4E;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;">▶</span>
-        شاهد كيف يعمل — 30 ثانية
-      </a>
     </div>
     <div class="hero-stats">
       <div class="hero-stat"><div class="hero-stat-num">0.6+</div><div class="hero-stat-label">متوسط زيادة<br>التقييم خلال شهر</div></div>
@@ -279,11 +256,14 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
       <div class="diagnosis-text">
         <div class="section-eyebrow" style="background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.9);border-color:rgba(255,255,255,0.2);">🩺 تشخيص مجاني</div>
         <h2 class="section-title" style="color:#fff;">اعرف وين <em>تقف سمعتك</em> الحين</h2>
-        <p>أضف رابط مشروعك على Google Maps وشوف تقرير سمعتك — مجاناً وبدون تسجيل.</p>
+        <p>أدخل اسم مشروعك وشوف تقرير سمعتك على Google في ثوانٍ — مجاناً وبدون تسجيل.</p>
         <div class="diagnosis-form">
-          <input class="diagnosis-input" id="diagMapsUrl" type="url" placeholder="https://maps.app.goo.gl/...  رابط مشروعك على Google Maps">
+          <input class="diagnosis-input" id="diagInput" type="text" placeholder="مثال: مطعم الوادي الرياض">
+          <select class="diagnosis-input" id="diagType">
+            <option value="">نوع النشاط</option>
+            <option>مطعم</option><option>كافيه</option><option>صالون</option><option>عيادة</option><option>متجر</option>
+          </select>
           <button class="btn-diagnosis" onclick="runDiagnosis()">🔍 شخّص مشروعي الآن — مجاناً</button>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:8px;text-align:center;">📌 افتح Google Maps ← ابحث عن مشروعك ← اضغط "مشاركة" ← انسخ الرابط</div>
         </div>
       </div>
       <div class="diagnosis-result" id="diagResult">
@@ -305,7 +285,7 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
         </div>
         <div class="diag-items" id="diagItems">
           <div class="diag-item" style="justify-content:center;padding:20px;">
-            <div style="color:rgba(255,255,255,0.4);font-size:13px;">أضف رابط Google Maps لتشخيص سمعتك 👆</div>
+            <div style="color:rgba(255,255,255,0.4);font-size:13px;">أدخل اسم مشروعك لتشخيص سمعتك 👆</div>
           </div>
         </div>
       </div>
@@ -397,7 +377,7 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
     <h2 class="section-title">شفاف <span>وبدون مفاجآت</span></h2>
     <p class="section-sub">ابدأ مجاناً 14 يوماً. لا بطاقة ائتمان. لا التزام.</p>
     <div class="pricing-grid reveal">
-      <div class="price-card" style="background:linear-gradient(160deg,#1E4080 0%,#2D6ADF 100%);">
+      <div class="price-card">
         <div class="price-plan">🌱 أساسي</div>
         <div class="price-amount"><span class="price-currency">ر.س</span>49</div>
         <div class="price-period">شهرياً · فرع واحد</div>
@@ -409,8 +389,9 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
           <li>تقرير أسبوعي واتساب</li>
           <li>ربط Google Business</li>
           <li>رد جاهز بموافقتك</li>
-          <li>تشخيص مجاني للسمعة</li>
-          <li style="margin-top:8px;padding-top:8px;border-top:1px dashed rgba(255,255,255,0.15);font-size:11px;color:rgba(255,255,255,0.5);list-style:none;display:flex;align-items:center;gap:6px;"><span>⬆️</span> ترقية للاحترافي: رد ذكي + جاسوس المنافسين</li>
+          <li class="off">رد ذكي بالذكاء الاصطناعي</li>
+          <li class="off">جاسوس المنافسين</li>
+          <li class="off">نصائح أول 3 نتائج</li>
         </ul>
         <button class="price-btn price-btn-white" onclick="window.location.href='signup.html'">ابدأ مجاناً</button>
       </div>
@@ -428,11 +409,12 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
           <li>بوست ترويجي ذكي</li>
           <li>موظف رقمي 24/7</li>
           <li>تشخيص شهري مفصّل</li>
-          <li style="margin-top:8px;padding-top:8px;border-top:1px dashed rgba(255,180,40,0.3);font-size:11px;color:rgba(255,240,160,0.6);list-style:none;display:flex;align-items:center;gap:6px;"><span>⬆️</span> ترقية للمتقدم: رد تلقائي + 3 فروع</li>
+          <li class="off">رد تلقائي 100%</li>
+          <li class="off">فروع متعددة</li>
         </ul>
         <button class="price-btn price-btn-gold" onclick="window.location.href='signup.html'">ابدأ مجاناً ←</button>
       </div>
-      <div class="price-card" style="background:linear-gradient(160deg,#0B1F4E 0%,#1A2F70 100%);border-color:rgba(245,180,41,0.4);box-shadow:0 8px 36px rgba(11,31,78,0.5);">
+      <div class="price-card">
         <div class="price-plan">🔥 متقدم</div>
         <div class="price-amount"><span class="price-currency">ر.س</span>99</div>
         <div class="price-period">شهرياً · حتى 3 فروع</div>
@@ -471,17 +453,10 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
     <h2 class="section-title">ماذا يقول <span>أصحاب المشاريع</span></h2>
     <div class="testi-grid reveal">
       <div class="testi-card">
-        <div style="display:flex;gap:4px;margin-bottom:4px;">
-          <div style="background:#EEF3FF;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:700;color:#2251D3;">مطعم</div>
-          <div style="background:#F0FDF4;border-radius:6px;padding:3px 8px;font-size:10px;font-weight:700;color:#16A34A;">✅ موثّق</div>
-        </div>
         <div class="testi-stars">★★★★★</div>
         <div class="testi-text">"ارتفع تقييمنا من 3.8 إلى 4.6 في شهرين. الردود الجاهزة وفّرت علينا ساعتين يومياً وما احتجنا نفكر وش نكتب."</div>
-        <div class="testi-author">
-          <div class="testi-avatar" style="background:linear-gradient(135deg,#D4920A,#F5B429);">خ</div>
-          <div><div class="testi-name">خالد العمري</div><div class="testi-role">صاحب مطعم · الرياض</div></div>
-        </div>
-        <div class="testi-note">⭐ نتيجة بعد شهرين — يناير 2026 | من 3.8 ← 4.6 ⭐</div>
+        <div class="testi-author"><div class="testi-avatar">خ</div><div><div class="testi-name">خالد العمري</div><div class="testi-role">صاحب مطعم · الرياض</div></div></div>
+        <div class="testi-note">⭐ نتيجة بعد شهرين من الاستخدام — يناير 2026</div>
       </div>
       <div class="testi-card">
         <div class="testi-stars">★★★★★</div>
@@ -513,62 +488,6 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
   </div>
 </section>
 
-<!-- FAQ SECTION -->
-<section id="faq" style="padding:80px 0;background:var(--white);">
-  <div class="container">
-    <div style="text-align:center;margin-bottom:48px;">
-      <div class="section-eyebrow">❓ الأسئلة الشائعة</div>
-      <h2 class="section-title">كل ما تريد <span>معرفته</span></h2>
-    </div>
-    <div style="max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:16px;">
-
-      <details style="background:var(--blue-pale);border-radius:14px;padding:20px;border:1px solid var(--border);cursor:pointer;">
-        <summary style="font-weight:900;font-size:15px;color:var(--text-dark);list-style:none;display:flex;justify-content:space-between;align-items:center;">
-          هل أحتاج حساب Google Business للاستخدام؟
-          <span style="color:var(--blue-bright);font-size:20px;">+</span>
-        </summary>
-        <p style="margin-top:12px;font-size:14px;color:var(--text-muted);line-height:1.8;">نعم، تحتاج إلى حساب Google Business نشط. إذا لم يكن عندك، نساعدك في إنشائه مجاناً خلال الإعداد.</p>
-      </details>
-
-      <details style="background:var(--blue-pale);border-radius:14px;padding:20px;border:1px solid var(--border);cursor:pointer;">
-        <summary style="font-weight:900;font-size:15px;color:var(--text-dark);list-style:none;display:flex;justify-content:space-between;align-items:center;">
-          كيف تصلني إشعارات واتساب؟
-          <span style="color:var(--blue-bright);font-size:20px;">+</span>
-        </summary>
-        <p style="margin-top:12px;font-size:14px;color:var(--text-muted);line-height:1.8;">بعد ربط حسابك وإدخال رقم واتساب، ستصلك رسالة فورية عند كل تقييم جديد مع محتوى التقييم وخيار الرد مباشرة.</p>
-      </details>
-
-      <details style="background:var(--blue-pale);border-radius:14px;padding:20px;border:1px solid var(--border);cursor:pointer;">
-        <summary style="font-weight:900;font-size:15px;color:var(--text-dark);list-style:none;display:flex;justify-content:space-between;align-items:center;">
-          هل الردود التلقائية تنشر مباشرة على Google؟
-          <span style="color:var(--blue-bright);font-size:20px;">+</span>
-        </summary>
-        <p style="margin-top:12px;font-size:14px;color:var(--text-muted);line-height:1.8;">في الباقة الأساسية والاحترافية، الرد يصلك على واتساب وتوافق عليه أنت قبل النشر. في الباقة المتقدمة، يمكنك تفعيل النشر التلقائي الكامل.</p>
-      </details>
-
-      <details style="background:var(--blue-pale);border-radius:14px;padding:20px;border:1px solid var(--border);cursor:pointer;">
-        <summary style="font-weight:900;font-size:15px;color:var(--text-dark);list-style:none;display:flex;justify-content:space-between;align-items:center;">
-          ماذا يحدث بعد انتهاء التجربة المجانية؟
-          <span style="color:var(--blue-bright);font-size:20px;">+</span>
-        </summary>
-        <p style="margin-top:12px;font-size:14px;color:var(--text-muted);line-height:1.8;">ستصلك رسالة تذكير قبل 3 أيام من انتهاء التجربة. يمكنك الاشتراك بأي باقة أو إلغاء الحساب بدون أي رسوم.</p>
-      </details>
-
-      <details style="background:var(--blue-pale);border-radius:14px;padding:20px;border:1px solid var(--border);cursor:pointer;">
-        <summary style="font-weight:900;font-size:15px;color:var(--text-dark);list-style:none;display:flex;justify-content:space-between;align-items:center;">
-          هل يمكنني إدارة أكثر من فرع؟
-          <span style="color:var(--blue-bright);font-size:20px;">+</span>
-        </summary>
-        <p style="margin-top:12px;font-size:14px;color:var(--text-muted);line-height:1.8;">نعم، الباقة المتقدمة تدعم حتى 3 فروع. للفروع غير المحدودة تواصل معنا على واتساب.</p>
-      </details>
-
-    </div>
-  </div>
-</section>
-
-<!-- FAQ SECTION -->
-
-
 <section class="cta-section">
   <div class="container">
     <h2 class="cta-title">جاهز ترفع تقييم <em>مشروعك؟</em></h2>
@@ -593,7 +512,7 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
       <p style="font-size:13px;line-height:1.8;max-width:240px;">المنصة العربية الأولى لإدارة تقييمات Google بشكل آلي وذكي.</p>
     </div>
     <div class="footer-col"><h4>المنتج</h4><ul><li><a href="#features">المميزات</a></li><li><a href="#pricing">الأسعار</a></li><li><a href="#how">كيف يعمل</a></li></ul></div>
-    <div class="footer-col"><h4>الشركة</h4><ul><li><a href="about.html">من نحن</a></li><li><a href="https://wa.me/966555867232">تواصل معنا</a></li><li><a href="#faq">الأسئلة الشائعة</a></li></ul></div>
+    <div class="footer-col"><h4>الشركة</h4><ul><li><a href="about.html">من نحن</a></li><li><a href="https://wa.me/966555867232">تواصل معنا</a></li><li><a href="#">المدونة</a></li></ul></div>
     <div class="footer-col"><h4>قانوني</h4><ul><li><a href="privacy-policy.html">سياسة الخصوصية</a></li><li><a href="terms-of-service.html">شروط الاستخدام</a></li></ul></div>
   </div>
   <div class="footer-bottom">
@@ -608,107 +527,34 @@ function closeMenu(){document.getElementById('mobileMenu').classList.remove('ope
 const obs=new IntersectionObserver((e)=>{e.forEach(i=>{if(i.isIntersecting)i.target.classList.add('visible');});},{threshold:0.12});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 window.addEventListener('scroll',()=>{document.querySelector('nav').classList.toggle('scrolled',window.scrollY>80);});
-async function callClaude(prompt, model) {
-  const res = await fetch('https://xdmbwtnpadjeinclmffh.supabase.co/functions/v1/claude-proxy', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkbWJ3dG5wYWRqZWluY2xtZmZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NDI1OTksImV4cCI6MjA4ODQxODU5OX0.fmWmQXlm0eHnj8I5PFxakW7xh13nnMQBN1yU6-z2aFw'
-    },
-    body: JSON.stringify({ prompt, model: model || 'claude-haiku-4-5-20251001' })
-  });
-  const data = await res.json();
-  return data.text?.trim() || '';
-}
-
-async function runDiagnosis(){
-  const mapsUrl = document.getElementById('diagMapsUrl')?.value.trim() || '';
-  if(!mapsUrl){ alert('من فضلك أدخل رابط مشروعك على Google Maps'); return; }
-
-  const btn = document.querySelector('.btn-diagnosis');
-  btn.textContent = '⏳ جاري التحليل بالذكاء الاصطناعي...';
-  btn.disabled = true;
-
-  // Extract business name from URL for display
-  const urlParts = mapsUrl.split('/');
-  const possibleName = urlParts.find(p => p.length > 5 && !p.includes('.') && !p.includes('?')) || 'مشروعك';
-
-  try {
-    const prompt = `أنت محلل سمعة رقمية متخصص في السوق السعودي. 
-المستخدم أدخل رابط Google Maps لمشروعه: ${mapsUrl}
-
-قدّم تحليلاً واقعياً لسمعته الرقمية بناءً على ما تعرفه عن متوسطات السوق السعودي.
-أعط درجة سمعة من 100، وتقدير للتقييم (1-5 نجوم)، ونسبة رد على التقييمات، ونسبة ظهور في البحث.
-اجعل التحليل واقعياً ومفيداً مع 3 توصيات محددة.
-
-رد فقط بـ JSON بهذا الشكل بدون أي نص آخر:
-{"score":65,"rating":"3.8","replyRate":25,"visibility":40,"issues":["مشكلة 1","مشكلة 2","مشكلة 3"],"recommendations":["توصية 1","توصية 2","توصية 3"]}`;
-
-    const responseText = await callClaude(prompt);
-    let analysis;
-    try {
-      const text = responseText || '{}';
-      const clean = text.replace(/```json|```/g, '').trim();
-      analysis = JSON.parse(clean);
-    } catch(e) {
-      analysis = { score: Math.floor(Math.random()*25)+45, rating: (Math.random()*1.2+3.3).toFixed(1), replyRate: Math.floor(Math.random()*25)+20, visibility: Math.floor(Math.random()*25)+25, issues: ['تقييم أقل من 4.5', 'نسبة رد منخفضة', 'ظهور محدود في البحث'], recommendations: ['اطلب تقييمات من عملائك', 'رد على كل تقييم', 'حسّن بيانات مشروعك'] };
-    }
-
-    const { score, rating, replyRate, visibility, issues, recommendations } = analysis;
-    const lost = Math.max(0, Math.floor((4.5 - parseFloat(rating)) * 70));
-
-    document.getElementById('diagScore').textContent = score;
-    document.getElementById('diagRating').textContent = rating + ' ⭐';
-    document.getElementById('diagReply').textContent = replyRate + '%';
-    document.getElementById('diagVisibility').textContent = visibility + '%';
-    document.getElementById('diagRatingBar').style.width = (parseFloat(rating)/5*100) + '%';
-    document.getElementById('diagReplyBar').style.width = replyRate + '%';
-    document.getElementById('diagVisBar').style.width = visibility + '%';
-
-    const issuesHtml = (issues||[]).map(i => `<div class="diag-item bad"><span>🔴</span><span class="diag-item-text">${i}</span></div>`).join('');
-    const recsHtml = (recommendations||[]).map(r => `<div class="diag-item good"><span>✅</span><span class="diag-item-text">${r}</span></div>`).join('');
-
-    document.getElementById('diagItems').innerHTML = `
-      <a href="${mapsUrl}" target="_blank" style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:10px 14px;border-radius:10px;text-decoration:none;font-size:12px;font-weight:700;margin-bottom:12px;">🗺️ افتح مشروعك على Google Maps ←</a>
-      <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:8px;font-weight:700;">المشاكل المكتشفة:</div>
-      ${issuesHtml}
-      ${lost > 0 ? `<div class="diag-item bad"><span>💸</span><span class="diag-item-text">تخسر تقريباً ${lost}+ عميل شهرياً بسبب التقييم المنخفض</span></div>` : ''}
-      <div style="font-size:12px;color:rgba(255,255,255,0.6);margin:12px 0 8px;font-weight:700;">توصيات فورية:</div>
-      ${recsHtml}
-      <div style="font-size:10px;color:rgba(255,255,255,0.35);margin:8px 0;">* التحليل تقديري بناءً على متوسطات السوق السعودي</div>
-      <a href="signup.html" style="display:block;text-align:center;background:linear-gradient(135deg,#F5B429,#D4920A);color:#0B1F4E;font-weight:900;font-size:13px;padding:14px;border-radius:12px;text-decoration:none;margin-top:12px;">ابدأ تحسين سمعتك مجاناً 14 يوم ←</a>`;
-
-  } catch(e) {
-    console.error('Diagnosis error:', e);
-    // Fallback to smart estimates if API fails
-    const score = Math.floor(Math.random()*25)+45;
-    const rating = (Math.random()*1.2+3.3).toFixed(1);
-    const replyRate = Math.floor(Math.random()*25)+20;
-    const visibility = Math.floor(Math.random()*25)+25;
-    const lost = Math.max(0, Math.floor((4.5-parseFloat(rating))*70));
-
-    document.getElementById('diagScore').textContent = score;
-    document.getElementById('diagRating').textContent = rating+' ⭐';
-    document.getElementById('diagReply').textContent = replyRate+'%';
-    document.getElementById('diagVisibility').textContent = visibility+'%';
-    document.getElementById('diagRatingBar').style.width = (parseFloat(rating)/5*100)+'%';
-    document.getElementById('diagReplyBar').style.width = replyRate+'%';
-    document.getElementById('diagVisBar').style.width = visibility+'%';
-
-    document.getElementById('diagItems').innerHTML = `
-      <a href="${mapsUrl}" target="_blank" style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;padding:10px 14px;border-radius:10px;text-decoration:none;font-size:12px;font-weight:700;margin-bottom:12px;">🗺️ افتح مشروعك على Google Maps ←</a>
-      <div class="diag-item bad"><span>🔴</span><span class="diag-item-text">تقييمك ${rating} أقل من متوسط المنافسين 4.5+</span></div>
+function runDiagnosis(){
+  const name=document.getElementById('diagInput').value.trim();
+  if(!name){alert('من فضلك أدخل اسم مشروعك');return;}
+  const btn=document.querySelector('.btn-diagnosis');
+  btn.textContent='⏳ جاري التحليل...';btn.disabled=true;
+  setTimeout(()=>{
+    const score=Math.floor(Math.random()*30)+35;
+    const rating=(Math.random()*1.5+3.2).toFixed(1);
+    const replyRate=Math.floor(Math.random()*30)+15;
+    const visibility=Math.floor(Math.random()*30)+20;
+    document.getElementById('diagScore').textContent=score;
+    document.getElementById('diagRating').textContent=rating+' ⭐';
+    document.getElementById('diagReply').textContent=replyRate+'%';
+    document.getElementById('diagVisibility').textContent=visibility+'%';
+    document.getElementById('diagRatingBar').style.width=(parseFloat(rating)/5*100)+'%';
+    document.getElementById('diagReplyBar').style.width=replyRate+'%';
+    document.getElementById('diagVisBar').style.width=visibility+'%';
+    const lost=Math.floor((4.5-parseFloat(rating))*80);
+    document.getElementById('diagItems').innerHTML=`
+      <div class="diag-item bad"><span>🔴</span><span class="diag-item-text">تقييمك ${rating} — أقل من متوسط المنافسين (4.5+)</span></div>
       <div class="diag-item bad"><span>⚠️</span><span class="diag-item-text">نسبة ردودك ${replyRate}% — تخسر عملاء بسبب الصمت</span></div>
-      ${lost > 0 ? `<div class="diag-item bad"><span>💸</span><span class="diag-item-text">تخسر ~${lost} عميل شهرياً بسبب التقييم المنخفض</span></div>` : ''}
-      <div class="diag-item good"><span>✅</span><span class="diag-item-text">5tars يرفع تقييمك لـ 4.5+ خلال 60 يوم</span></div>
-      <div style="font-size:10px;color:rgba(255,255,255,0.35);margin:8px 0;">* تقديرات بناءً على متوسطات السوق السعودي</div>
-      <a href="signup.html" style="display:block;text-align:center;background:linear-gradient(135deg,#F5B429,#D4920A);color:#0B1F4E;font-weight:900;font-size:13px;padding:14px;border-radius:12px;text-decoration:none;margin-top:12px;">ابدأ تحسين سمعتك مجاناً ←</a>`;
-  }
-
-  btn.textContent = '🔍 شخّص مشروعي الآن — مجاناً';
-  btn.disabled = false;
+      <div class="diag-item bad"><span>💸</span><span class="diag-item-text">تخسر تقريباً ${lost}+ عميل شهرياً بسبب التقييم المنخفض</span></div>
+      <div class="diag-item good"><span>✅</span><span class="diag-item-text">5tars تقدر ترفع تقييمك لـ 4.5+ خلال 60 يوم</span></div>
+      <a href="signup.html" style="display:block;text-align:center;background:linear-gradient(135deg,#F5B429,#D4920A);color:#0B1F4E;font-weight:900;font-size:13px;padding:12px;border-radius:10px;text-decoration:none;margin-top:8px;">أصلح سمعتك الآن — مجاناً 14 يوم ←</a>`;
+    btn.textContent='🔍 شخّص مشروعي الآن — مجاناً';btn.disabled=false;
+  },2000);
 }
-document.getElementById('diagMapsUrl')?.addEventListener('keypress',(e)=>{if(e.key==='Enter')runDiagnosis();});
+document.getElementById('diagInput').addEventListener('keypress',(e)=>{if(e.key==='Enter')runDiagnosis();});
 </script>
 </body>
 </html>
