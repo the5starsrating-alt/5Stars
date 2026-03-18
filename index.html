@@ -608,7 +608,6 @@ function closeMenu(){document.getElementById('mobileMenu').classList.remove('ope
 const obs=new IntersectionObserver((e)=>{e.forEach(i=>{if(i.isIntersecting)i.target.classList.add('visible');});},{threshold:0.12});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 window.addEventListener('scroll',()=>{document.querySelector('nav').classList.toggle('scrolled',window.scrollY>80);});
-const GOOGLE_PLACES_KEY = "REMOVED_API_KEY";
 
 async function callClaude(prompt, model) {
   const res = await fetch('https://xdmbwtnpadjeinclmffh.supabase.co/functions/v1/claude-proxy', {
