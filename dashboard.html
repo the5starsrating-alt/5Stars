@@ -1044,7 +1044,7 @@ async function callClaude(prompt, model) {
     body: JSON.stringify({ prompt, model: model || 'claude-haiku-4-5-20251001' })
   });
   const data = await res.json();
-  return data.text?.trim() || '';
+  return data.content?.[0]?.text?.trim() || '';
 }
 
 async function generateReply(btn) {
