@@ -1,10 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
-const ALLOWED_ORIGIN = 'https://www.the5starsrating.com';
-
+// All calls come from the same production domain
 const corsHeaders = {
-  'Access-Control-Allow-Origin': ALLOWED_ORIGIN,
+  'Access-Control-Allow-Origin': 'https://www.the5starsrating.com',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
@@ -14,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    // ── Auth: require valid Supabase JWT ──
+    // ── Auth: require Supabase JWT (user session OR anon key for public diagnosis) ──
     const authHeader = req.headers.get('Authorization');
     if (!authHeader?.startsWith('Bearer ')) {
       return new Response(JSON.stringify({ error: 'Unauthorized' }), {
@@ -22,19 +21,28 @@ serve(async (req) => {
       });
     }
 
-    const supabaseUrl     = Deno.env.get('SUPABASE_URL')!;
-    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
-    const userClient      = createClient(supabaseUrl, supabaseAnonKey, {
-      global: { headers: { Authorization: authHeader } }
-    });
-    const { data: { user }, error: authError } = await userClient.auth.getUser();
+    // Decode JWT payload (base64) to check role without full verification
+    let isAnonKey = false;
+    try {
+      const payload = JSON.parse(atob(authHeader.split(' ')[1].split('.')[1]));
+      isAnonKey = payload.role === 'anon';
+    } catch (_) { /* invalid JWT — will fail getUser below */ }
 
-    if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    // For user sessions: verify via getUser()
+    if (!isAnonKey) {
+      const supabaseUrl     = Deno.env.get('SUPABASE_URL')!;
+      const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+      const userClient      = createClient(supabaseUrl, supabaseAnonKey, {
+        global: { headers: { Authorization: authHeader } }
       });
+      const { data: { user }, error: authError } = await userClient.auth.getUser();
+      if (authError || !user) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
     }
-    // ─────────────────────────────────────
+    // ─────────────────────────────────────────────────────────────────────────
 
     const { prompt, model = 'claude-haiku-4-5-20251001', max_tokens = 400 } = await req.json();
 
@@ -44,8 +52,11 @@ serve(async (req) => {
       });
     }
 
-    // Limit prompt size to prevent abuse
-    if (prompt.length > 4000) {
+    // Anon (public diagnosis): stricter limits
+    const promptLimit  = isAnonKey ? 2000 : 4000;
+    const tokensLimit  = isAnonKey ? 250  : max_tokens;
+
+    if (prompt.length > promptLimit) {
       return new Response(JSON.stringify({ error: 'prompt too long' }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
@@ -61,7 +72,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         model,
-        max_tokens,
+        max_tokens: tokensLimit,
         messages: [{ role: 'user', content: prompt }]
       })
     });
