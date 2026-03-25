@@ -473,6 +473,11 @@ async function handleSignup() {
   setLoading('signup', true);
 
   try {
+    // Determine plan (gift link overrides default trial)
+    const assignedPlan = giftPlan || 'trial';
+    const trialDays    = giftPlan === 'trial_30' ? 30 : 14;
+    const normalizedPlan = assignedPlan === 'trial_30' ? 'trial' : assignedPlan;
+
     // 1. Create user in Supabase Auth
     const { data, error } = await sb.auth.signUp({
       email,
@@ -483,8 +488,8 @@ async function handleSignup() {
           full_name:     name,
           phone:         phone,
           business_type: business,
-          plan:          'trial',
-          trial_ends:    new Date(Date.now() + 14*24*60*60*1000).toISOString()
+          plan:          normalizedPlan,
+          trial_ends:    new Date(Date.now() + trialDays*24*60*60*1000).toISOString()
         }
       }
     });
@@ -498,8 +503,8 @@ async function handleSignup() {
         full_name:     name,
         phone:         phone,
         business_type: business,
-        plan:          'trial',
-        trial_ends:    new Date(Date.now() + 14*24*60*60*1000).toISOString(),
+        plan:          normalizedPlan,
+        trial_ends:    new Date(Date.now() + trialDays*24*60*60*1000).toISOString(),
         created_at:    new Date().toISOString()
       });
     }
@@ -593,6 +598,35 @@ async function handleForgotPassword() {
     showError('تعذر إرسال البريد. تحقق من العنوان وحاول مجدداً.');
   }
 }
+
+// ══════════════════════════════════
+//  GIFT LINK HANDLER
+// ══════════════════════════════════
+const PROMO_SEED = 'fiveStars2026';
+let giftPlan = null;
+
+(function detectGiftLink() {
+  try {
+    const token = new URLSearchParams(window.location.search).get('gift');
+    if (!token) return;
+    const data = JSON.parse(atob(decodeURIComponent(token)));
+    if (data.seed !== PROMO_SEED) return;
+    if (data.exp < Date.now()) {
+      // Expired
+      const banner = document.createElement('div');
+      banner.style.cssText = 'background:#FEF2F2;border:1px solid rgba(220,38,38,0.2);color:#DC2626;border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:16px;text-align:center;';
+      banner.textContent = '⏰ رابط الدعوة هذا انتهت صلاحيته. تواصل مع من أرسله.';
+      document.querySelector('.form-panel')?.prepend(banner);
+      return;
+    }
+    giftPlan = data.plan;
+    const planLabel = { lifetime_friend: '🌟 صديق — مدى الحياة', lifetime: '♾️ مدى الحياة', trial_30: '✅ تجربة مجانية 30 يوم' }[data.plan] || data.plan;
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background:linear-gradient(135deg,#FFF0A0,#FEF3C7);border:2px solid #F5B429;border-radius:12px;padding:14px 16px;font-size:13px;margin-bottom:16px;text-align:center;direction:rtl;';
+    banner.innerHTML = `🎁 <strong>هدية خاصة!</strong> سيحصل حسابك على خطة <strong>${planLabel}</strong> مجاناً عند التسجيل.`;
+    document.querySelector('.form-panel')?.prepend(banner);
+  } catch (_) { /* ignore invalid tokens */ }
+})();
 
 // ══════════════════════════════════
 //  NOTIFY OWNER ON NEW SIGNUP
