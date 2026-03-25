@@ -287,6 +287,43 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
 .toast.success { background:var(--green); }
 .toast.error   { background:var(--red); }
 
+/* ═══ COST TRACKER ═══ */
+.cost-panel { background:var(--card); border:1px solid var(--border); border-radius:20px; padding:24px; margin-bottom:28px; }
+.cost-total-box {
+  background:linear-gradient(135deg,var(--blue),var(--blue2)); color:#fff;
+  border-radius:12px; padding:12px 20px; text-align:center; min-width:140px;
+}
+.cost-total-label { font-size:10px; opacity:0.7; }
+.cost-total-amount { font-family:'Tajawal',sans-serif; font-size:26px; font-weight:900; }
+.cost-total-period { font-size:10px; opacity:0.6; }
+.subs-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; margin-top:16px; }
+.sub-card { border:1px solid var(--border); border-radius:12px; padding:14px 16px; position:relative; transition:0.2s; }
+.sub-card:hover { box-shadow:0 4px 16px rgba(11,31,78,0.07); }
+.sub-card-head { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.sub-card-icon { font-size:26px; }
+.sub-card-name { font-size:14px; font-weight:900; }
+.sub-card-cost { font-size:22px; font-weight:900; color:var(--blue3); }
+.sub-card-period { font-size:11px; color:var(--muted); }
+.renewal-soon { font-size:11px; color:var(--orange); font-weight:700; margin-top:6px; }
+.renewal-ok   { font-size:11px; color:var(--green);  margin-top:6px; }
+.sub-card-delete { position:absolute; top:10px; left:10px; background:none; border:none; cursor:pointer; font-size:15px; opacity:0.3; transition:0.2s; }
+.sub-card-delete:hover { opacity:1; color:var(--red); }
+.api-status-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; }
+.api-chip { display:flex; align-items:center; gap:7px; border:1px solid var(--border); border-radius:30px; padding:7px 16px; font-size:12px; font-weight:700; background:var(--bg); transition:0.3s; }
+.api-chip.ok   { border-color:#16A34A; background:#DCFCE7; color:#15803D; }
+.api-chip.warn { border-color:#EA580C; background:#FFF7ED; color:#C2410C; }
+.api-chip.err  { border-color:#DC2626; background:#FEF2F2; color:#B91C1C; }
+.add-sub-form { background:var(--bg); border-radius:12px; padding:16px; margin-top:16px; display:none; }
+.add-sub-form.show { display:block; }
+.sub-form-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px; }
+.sub-lbl { font-size:11px; font-weight:700; color:var(--muted); margin-bottom:4px; }
+.sub-inp { width:100%; padding:8px 12px; border:1.5px solid var(--border); border-radius:8px; font-family:'Cairo',sans-serif; font-size:12px; color:var(--text); outline:none; background:#fff; transition:0.2s; }
+.sub-inp:focus { border-color:var(--blue3); }
+.btn-add-sub { padding:8px 18px; background:var(--blue3); color:#fff; border:none; border-radius:8px; font-family:'Cairo',sans-serif; font-size:12px; font-weight:700; cursor:pointer; margin-top:10px; transition:0.2s; }
+.btn-add-sub:hover { background:var(--blue2); }
+.btn-dashed { padding:8px 16px; background:transparent; border:1.5px dashed var(--border); color:var(--muted); border-radius:10px; font-family:'Cairo',sans-serif; font-size:12px; font-weight:700; cursor:pointer; transition:0.2s; }
+.btn-dashed:hover { border-color:var(--blue3); color:var(--blue3); }
+
 /* ═══ ACCESS DENIED ═══ */
 #accessDenied {
   display:none; position:fixed; inset:0;
@@ -468,9 +505,63 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
     </div>
   </div>
 
+  <!-- COST TRACKER -->
+  <div class="section-head">
+    <div class="section-title">💰 التكاليف والاشتراكات</div>
+    <button class="btn-dashed" onclick="toggleAddSub()">+ إضافة اشتراك</button>
+  </div>
+  <div class="cost-panel">
+    <!-- API Status -->
+    <div style="font-size:11px;font-weight:900;color:var(--muted);letter-spacing:1px;margin-bottom:10px;">حالة الخدمات</div>
+    <div class="api-status-row">
+      <div class="api-chip" id="chipAnthropic">⏳ فحص Anthropic...</div>
+      <div class="api-chip ok">✅ Supabase نشط</div>
+      <div class="api-chip ok">✅ Vercel نشط</div>
+    </div>
+
+    <!-- Totals + Subs -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:24px;margin-bottom:12px;flex-wrap:wrap;gap:12px;">
+      <div style="font-size:11px;font-weight:900;color:var(--muted);letter-spacing:1px;">الاشتراكات الشهرية</div>
+      <div class="cost-total-box">
+        <div class="cost-total-label">الإجمالي الشهري</div>
+        <div class="cost-total-amount" id="costTotal">—</div>
+        <div class="cost-total-period">ريال / شهر</div>
+      </div>
+    </div>
+
+    <div class="subs-grid" id="subsGrid">
+      <div style="color:var(--muted);font-size:13px;padding:20px 0;" id="subsEmpty">
+        لا توجد اشتراكات مضافة — اضغط "+ إضافة اشتراك" لتتبع تكاليفك
+      </div>
+    </div>
+
+    <!-- Add Form -->
+    <div class="add-sub-form" id="addSubForm">
+      <div style="font-size:13px;font-weight:900;margin-bottom:14px;">➕ إضافة اشتراك جديد</div>
+      <div class="sub-form-grid">
+        <div><div class="sub-lbl">اسم الخدمة</div><input class="sub-inp" id="subName" placeholder="مثال: Anthropic"></div>
+        <div><div class="sub-lbl">أيقونة (إيموجي)</div><input class="sub-inp" id="subIcon" placeholder="🤖" maxlength="4"></div>
+        <div><div class="sub-lbl">التكلفة (ريال)</div><input type="number" class="sub-inp" id="subCost" placeholder="0" min="0"></div>
+        <div><div class="sub-lbl">الدورة</div>
+          <select class="sub-inp" id="subPeriod">
+            <option value="monthly">شهري</option>
+            <option value="yearly">سنوي (سيُقسّم على 12)</option>
+            <option value="one-time">مرة واحدة</option>
+          </select>
+        </div>
+        <div><div class="sub-lbl">تاريخ التجديد</div><input type="date" class="sub-inp" id="subRenewal"></div>
+        <div><div class="sub-lbl">ملاحظة</div><input class="sub-inp" id="subNote" placeholder="اختياري"></div>
+      </div>
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn-add-sub" onclick="addSubscription()">💾 حفظ</button>
+        <button class="btn-cancel" onclick="toggleAddSub()">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
   <!-- API KEYS PANEL -->
   <div class="section-head">
-    <div class="section-title">إدارة المفاتيح والخدمات</div>
+    <div class="section-title">🔑 إدارة المفاتيح والخدمات</div>
   </div>
   <div class="keys-grid">
     <div class="key-card">
@@ -839,6 +930,121 @@ function renderPromoHistory() {
   `).join('');
 }
 
+// ══ COST TRACKER ══
+const SUBS_KEY = 'owner_subscriptions_v2';
+
+function loadSubs() { try { return JSON.parse(localStorage.getItem(SUBS_KEY) || '[]'); } catch(e) { return []; } }
+function saveSubs(arr) { localStorage.setItem(SUBS_KEY, JSON.stringify(arr)); }
+
+function toggleAddSub() {
+  const f = document.getElementById('addSubForm');
+  f.classList.toggle('show');
+  if (f.classList.contains('show')) document.getElementById('subName').focus();
+}
+
+function addSubscription() {
+  const name    = document.getElementById('subName').value.trim();
+  const icon    = document.getElementById('subIcon').value.trim() || '💳';
+  const cost    = parseFloat(document.getElementById('subCost').value) || 0;
+  const period  = document.getElementById('subPeriod').value;
+  const renewal = document.getElementById('subRenewal').value;
+  const note    = document.getElementById('subNote').value.trim();
+  if (!name) { showToast('أدخل اسم الخدمة', 'error'); return; }
+  const subs = loadSubs();
+  subs.push({ id: Date.now(), name, icon, cost, period, renewal, note });
+  saveSubs(subs);
+  renderSubs();
+  // Reset form
+  ['subName','subIcon','subCost','subRenewal','subNote'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('subPeriod').value = 'monthly';
+  document.getElementById('addSubForm').classList.remove('show');
+  showToast('تمت إضافة الاشتراك ✓', 'success');
+}
+
+function deleteSubscription(id) {
+  const subs = loadSubs().filter(s => s.id !== id);
+  saveSubs(subs);
+  renderSubs();
+  showToast('تم الحذف', '');
+}
+
+function renderSubs() {
+  const subs = loadSubs();
+  const grid = document.getElementById('subsGrid');
+  const empty = document.getElementById('subsEmpty');
+  const totalEl = document.getElementById('costTotal');
+  if (!subs.length) {
+    grid.innerHTML = '';
+    if (empty) { empty.style.display = 'block'; grid.appendChild(empty); }
+    totalEl.textContent = '0';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  const now = new Date();
+  let monthlyTotal = 0;
+  grid.innerHTML = subs.map(s => {
+    const monthlyCost = s.period === 'yearly' ? s.cost / 12 : (s.period === 'one-time' ? 0 : s.cost);
+    monthlyTotal += monthlyCost;
+    let renewalHtml = '';
+    if (s.renewal) {
+      const renewDate = new Date(s.renewal);
+      const daysLeft = Math.ceil((renewDate - now) / 86400000);
+      if (daysLeft < 0) {
+        renewalHtml = `<div class="renewal-soon">⚠️ انتهى منذ ${Math.abs(daysLeft)} يوم</div>`;
+      } else if (daysLeft <= 14) {
+        renewalHtml = `<div class="renewal-soon">⚠️ يتجدد خلال ${daysLeft} يوم — ${renewDate.toLocaleDateString('ar-SA')}</div>`;
+      } else {
+        renewalHtml = `<div class="renewal-ok">✓ يتجدد ${renewDate.toLocaleDateString('ar-SA')}</div>`;
+      }
+    }
+    const periodLabel = { monthly:'شهري', yearly:'سنوي', 'one-time':'مرة واحدة' }[s.period] || s.period;
+    return `
+      <div class="sub-card">
+        <button class="sub-card-delete" onclick="deleteSubscription(${s.id})" title="حذف">🗑️</button>
+        <div class="sub-card-head">
+          <div class="sub-card-icon">${escHtml(s.icon)}</div>
+          <div>
+            <div class="sub-card-name">${escHtml(s.name)}</div>
+            ${s.note ? `<div style="font-size:10px;color:var(--muted);">${escHtml(s.note)}</div>` : ''}
+          </div>
+        </div>
+        <div style="display:flex;align-items:baseline;gap:6px;">
+          <div class="sub-card-cost">${s.cost.toLocaleString()}</div>
+          <div class="sub-card-period">ر.س / ${periodLabel}</div>
+        </div>
+        ${renewalHtml}
+      </div>`;
+  }).join('');
+  totalEl.textContent = Math.round(monthlyTotal).toLocaleString();
+}
+
+async function checkApiStatus() {
+  const chip = document.getElementById('chipAnthropic');
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { chip.textContent = '⚠️ غير مسجّل دخول'; chip.className = 'api-chip warn'; return; }
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/claude-proxy`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+session.access_token },
+      body: JSON.stringify({ prompt:'ping', model:'claude-haiku-4-5-20251001', max_tokens:5 })
+    });
+    const d = await res.json();
+    if (d.success) {
+      chip.textContent = '✅ Anthropic نشط';
+      chip.className = 'api-chip ok';
+    } else if (d.error?.error?.message?.includes('credit')) {
+      chip.textContent = '⚠️ Anthropic — رصيد منخفض';
+      chip.className = 'api-chip warn';
+    } else {
+      chip.textContent = '❌ Anthropic — خطأ';
+      chip.className = 'api-chip err';
+    }
+  } catch(e) {
+    chip.textContent = '❌ Anthropic — لا يستجيب';
+    chip.className = 'api-chip err';
+  }
+}
+
 // ══ LOGOUT ══
 async function handleLogout() {
   await sb.auth.signOut();
@@ -855,6 +1061,8 @@ sb.auth.getSession().then(({ data: { session } }) => {
   document.getElementById('ownerName').textContent = user.user_metadata?.full_name || user.email || 'المالك';
   document.getElementById('mainContent').style.display = 'block';
   renderPromoHistory();
+  renderSubs();
+  checkApiStatus();
   loadData();
 });
 </script>
