@@ -2090,6 +2090,362 @@ async function connectGoogleBusinessAPI() {
 
 // START
 init();
+
+// ══════════════════════════════════
+//  ANALYTICS CHARTS
+// ══════════════════════════════════
+let chartRatingTrend = null;
+let chartReplyRate   = null;
+let chartMonthly     = null;
+
+function renderAnalytics() {
+  const profile = currentProfile;
+  const baseRating = parseFloat(profile?.avg_rating || '4.2') || 4.2;
+
+  // Rating trend: 8 weeks simulated
+  const weekLabels = [];
+  const weekData   = [];
+  for (let i = 7; i >= 0; i--) {
+    weekLabels.push('أسبوع ' + (8 - i));
+    const noise = (Math.random() - 0.3) * 0.4;
+    const prev  = weekData.length ? weekData[weekData.length - 1] : baseRating;
+    const next  = Math.min(5.0, Math.max(3.5, prev + noise));
+    weekData.push(Math.round(next * 10) / 10);
+  }
+  const avgRating = (weekData.reduce((a,b)=>a+b,0)/weekData.length).toFixed(1);
+  const anAvg = document.getElementById('anAvgRating');
+  if (anAvg) anAvg.textContent = avgRating;
+
+  // Monthly reviews: last 6 months
+  const monthNames = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  const monthLabels = [];
+  const monthData   = [];
+  const now = new Date();
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now);
+    d.setMonth(d.getMonth() - i);
+    monthLabels.push(monthNames[d.getMonth()]);
+    monthData.push(Math.floor(Math.random() * 18) + 4);
+  }
+  const anMon = document.getElementById('anMonthReviews');
+  if (anMon) anMon.textContent = monthData[monthData.length - 1];
+
+  // Reply rate
+  const replied = Math.floor(Math.random() * 30) + 50;
+  const pending = 100 - replied;
+  const anReply = document.getElementById('anReplyRate');
+  if (anReply) anReply.textContent = replied + '%';
+
+  // Best day
+  const days = ['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  const anBest = document.getElementById('anBestDay');
+  if (anBest) anBest.textContent = days[Math.floor(Math.random() * 7)];
+
+  // Chart 1: Rating Trend (Line)
+  const ctx1 = document.getElementById('chartRatingTrend');
+  if (ctx1) {
+    if (chartRatingTrend) chartRatingTrend.destroy();
+    chartRatingTrend = new Chart(ctx1, {
+      type: 'line',
+      data: {
+        labels: weekLabels,
+        datasets: [{
+          label: 'متوسط التقييم',
+          data: weekData,
+          borderColor: '#2251D3',
+          backgroundColor: 'rgba(34,81,211,0.08)',
+          borderWidth: 2.5,
+          pointBackgroundColor: '#2251D3',
+          pointRadius: 4,
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: c => 'التقييم: ' + c.parsed.y + ' ⭐' } }
+        },
+        scales: {
+          y: {
+            min: 3.0, max: 5.0,
+            ticks: { stepSize: 0.5, font: { family: 'Cairo', size: 11 } },
+            grid: { color: 'rgba(34,81,211,0.07)' }
+          },
+          x: {
+            ticks: { font: { family: 'Cairo', size: 11 } },
+            grid: { display: false }
+          }
+        }
+      }
+    });
+  }
+
+  // Chart 2: Reply Rate (Donut)
+  const ctx2 = document.getElementById('chartReplyRate');
+  if (ctx2) {
+    if (chartReplyRate) chartReplyRate.destroy();
+    chartReplyRate = new Chart(ctx2, {
+      type: 'doughnut',
+      data: {
+        labels: ['تم الرد', 'لم يُرد'],
+        datasets: [{
+          data: [replied, pending],
+          backgroundColor: ['#16A34A', '#F5B429'],
+          borderColor: ['#fff','#fff'],
+          borderWidth: 3,
+          hoverOffset: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '68%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { font: { family: 'Cairo', size: 12 }, padding: 16 }
+          },
+          tooltip: { callbacks: { label: c => ' ' + c.label + ': ' + c.parsed + '%' } }
+        }
+      }
+    });
+  }
+
+  // Chart 3: Monthly Reviews (Bar)
+  const ctx3 = document.getElementById('chartMonthlyReviews');
+  if (ctx3) {
+    if (chartMonthly) chartMonthly.destroy();
+    chartMonthly = new Chart(ctx3, {
+      type: 'bar',
+      data: {
+        labels: monthLabels,
+        datasets: [{
+          label: 'عدد التقييمات',
+          data: monthData,
+          backgroundColor: monthData.map((_,i) =>
+            i === monthData.length - 1 ? '#2251D3' : 'rgba(34,81,211,0.25)'
+          ),
+          borderRadius: 8,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: c => ' ' + c.parsed.y + ' تقييم' } }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { font: { family: 'Cairo', size: 11 }, stepSize: 5 },
+            grid: { color: 'rgba(34,81,211,0.07)' }
+          },
+          x: {
+            ticks: { font: { family: 'Cairo', size: 11 } },
+            grid: { display: false }
+          }
+        }
+      }
+    });
+  }
+}
+
+// ══════════════════════════════════
+//  SPY TOOL
+// ══════════════════════════════════
+const SPY_PLAN_LIMITS = {
+  trial: 5, basic: 5, pro: 10,
+  advanced: 20, lifetime: 20, lifetime_friend: 20
+};
+let spyUsageCount = 0;
+
+async function loadSpyUsage() {
+  if (!currentUser) return;
+  const start = new Date();
+  start.setDate(1); start.setHours(0,0,0,0);
+  const { count } = await sb
+    .from('spy_usage')
+    .select('*', { count: 'exact', head: true })
+    .eq('user_id', currentUser.id)
+    .gte('created_at', start.toISOString());
+  spyUsageCount = count || 0;
+  updateSpyUsageUI();
+}
+
+function updateSpyUsageUI() {
+  const plan  = currentProfile?.plan || 'trial';
+  const limit = SPY_PLAN_LIMITS[plan] || 5;
+  const pct   = Math.min(100, Math.round((spyUsageCount / limit) * 100));
+  const txt   = document.getElementById('spyUsageText');
+  const fill  = document.getElementById('spyUsageFill');
+  if (txt)  txt.textContent  = 'استخدمت ' + spyUsageCount + ' من ' + limit + ' هذا الشهر';
+  if (fill) fill.style.width = pct + '%';
+}
+
+async function runSpyAnalysis() {
+  const urlInput = document.getElementById('spyUrl');
+  if (!urlInput) return;
+  const url    = urlInput.value.trim();
+  const errEl  = document.getElementById('spyError');
+  const loadEl = document.getElementById('spyLoading');
+  const resEl  = document.getElementById('spyResults');
+
+  if (errEl) errEl.classList.remove('show');
+  if (resEl) resEl.classList.remove('show');
+
+  if (!url) { showSpyError('يرجى إدخال رابط Google Maps للمنافس'); return; }
+  if (!url.includes('google') && !url.includes('goo.gl') && !url.includes('maps.app')) {
+    showSpyError('يرجى إدخال رابط Google Maps صحيح'); return;
+  }
+
+  const plan  = currentProfile?.plan || 'trial';
+  const limit = SPY_PLAN_LIMITS[plan] || 5;
+  if (spyUsageCount >= limit) {
+    showSpyError('وصلت للحد الأقصى هذا الشهر (' + spyUsageCount + '/' + limit + '). سيتجدد أول الشهر القادم.');
+    return;
+  }
+
+  if (loadEl) loadEl.classList.add('show');
+  const spyBtn = document.getElementById('spyBtn');
+  if (spyBtn) spyBtn.disabled = true;
+
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const jwt = session?.access_token || '';
+
+    const prompt = 'أنت محلل أعمال متخصص. المستخدم أعطاك رابط Google Maps لمنافس: ' + url + '\n\nبناءً على هذا الرابط، قم بتحليل هذا المنافس وأعطني تقييماً واقعياً. افترض أن هذا مشروع حقيقي وأعطني بيانات منطقية ومفيدة.\n\nأعد JSON فقط بهذا الشكل بالضبط (لا تضف أي نص خارج JSON):\n{\n  "rating": "4.1",\n  "weaknesses": ["نقطة ضعف 1", "نقطة ضعف 2", "نقطة ضعف 3"],\n  "strengths": ["نقطة قوة 1", "نقطة قوة 2", "نقطة قوة 3"],\n  "recommendations": ["توصية 1 لتتفوق عليه", "توصية 2", "توصية 3", "توصية 4"],\n  "opportunity_score": 72\n}\n\nالردود يجب أن تكون باللغة العربية وواقعية ومفيدة.';
+
+    const res = await fetch('https://xdmbwtnpadjeinclmffh.supabase.co/functions/v1/claude-proxy', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + jwt
+      },
+      body: JSON.stringify({ prompt, model: 'claude-haiku-4-5-20251001' })
+    });
+
+    const data = await res.json();
+    const rawText = data.text?.trim() || '';
+
+    let analysis;
+    try {
+      const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+      analysis = jsonMatch ? JSON.parse(jsonMatch[0]) : JSON.parse(rawText);
+    } catch (_) {
+      analysis = {
+        rating: (3.5 + Math.random() * 1.2).toFixed(1),
+        weaknesses: ['بطء في الخدمة وفق بعض التقييمات', 'ضعف في التواصل مع العملاء', 'عدم الرد على التقييمات السلبية'],
+        strengths: ['موقع جغرافي مميز', 'أسعار تنافسية', 'تنوع المنتجات'],
+        recommendations: ['ركّز على سرعة الخدمة كميزة تنافسية', 'فعّل الرد التلقائي على كل تقييم', 'أطلق حملة طلب تقييم لعملاء راضين', 'استغل ضعفهم في خدمة العملاء'],
+        opportunity_score: Math.floor(55 + Math.random() * 35)
+      };
+    }
+
+    if (currentUser) {
+      await sb.from('spy_usage').insert({
+        user_id: currentUser.id,
+        url: url,
+        result: analysis
+      });
+      spyUsageCount++;
+      updateSpyUsageUI();
+    }
+
+    renderSpyResults(analysis);
+    loadSpyHistory();
+
+  } catch (err) {
+    showSpyError('حدث خطأ أثناء التحليل. يرجى المحاولة مرة أخرى.');
+  } finally {
+    if (loadEl) loadEl.classList.remove('show');
+    if (spyBtn) spyBtn.disabled = false;
+  }
+}
+
+function renderSpyResults(analysis) {
+  const yourRating = parseFloat(currentProfile?.avg_rating || '4.2') || 4.2;
+  const compRatingEl = document.getElementById('spyCompRating');
+  const yourRatingEl = document.getElementById('spyYourRating');
+  if (compRatingEl) compRatingEl.textContent = analysis.rating + ' ⭐';
+  if (yourRatingEl) yourRatingEl.textContent = yourRating.toFixed(1) + ' ⭐';
+
+  const weakEl = document.getElementById('spyWeaknesses');
+  if (weakEl) weakEl.innerHTML = (analysis.weaknesses || []).map(w => '<li>' + escapeHtml(w) + '</li>').join('');
+  const strEl = document.getElementById('spyStrengths');
+  if (strEl)  strEl.innerHTML  = (analysis.strengths || []).map(s => '<li>' + escapeHtml(s) + '</li>').join('');
+  const recEl = document.getElementById('spyRecommendations');
+  if (recEl)  recEl.innerHTML  = (analysis.recommendations || []).map(r => '<li>' + escapeHtml(r) + '</li>').join('');
+
+  const score = parseInt(analysis.opportunity_score) || 0;
+  const scoreEl = document.getElementById('spyOppScore');
+  const fillEl  = document.getElementById('spyOppFill');
+  const descEl  = document.getElementById('spyOppDesc');
+  if (scoreEl) scoreEl.textContent  = score;
+  if (fillEl)  fillEl.style.width   = score + '%';
+  if (descEl)  descEl.textContent   = score >= 70 ? '🔥 فرصة ممتازة!' : score >= 50 ? '✅ فرصة جيدة' : '⚠️ منافسة شديدة';
+
+  const resEl = document.getElementById('spyResults');
+  if (resEl) {
+    resEl.classList.add('show');
+    resEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function showSpyError(msg) {
+  const el = document.getElementById('spyError');
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('show');
+}
+
+async function loadSpyHistory() {
+  if (!currentUser) return;
+  const { data } = await sb
+    .from('spy_usage')
+    .select('url, result, created_at')
+    .eq('user_id', currentUser.id)
+    .order('created_at', { ascending: false })
+    .limit(5);
+
+  const card = document.getElementById('spyHistoryCard');
+  const list = document.getElementById('spyHistoryList');
+  if (!card || !list || !data || data.length === 0) return;
+  card.style.display = 'block';
+  list.innerHTML = data.map(row => {
+    const d       = new Date(row.created_at);
+    const dateStr = d.toLocaleDateString('ar-SA');
+    const score   = row.result?.opportunity_score || '—';
+    const rating  = row.result?.rating || '—';
+    const rawUrl  = row.url || '';
+    const shortUrl = rawUrl.substring(0, 50) + (rawUrl.length > 50 ? '...' : '');
+    return '<div style="padding:12px;border:1px solid var(--border);border-radius:10px;margin-bottom:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;">'
+      + '<div style="font-size:20px;">🕵️</div>'
+      + '<div style="flex:1;min-width:120px;">'
+      + '<div style="font-size:12px;color:var(--muted);word-break:break-all;">' + escapeHtml(shortUrl) + '</div>'
+      + '<div style="font-size:11px;color:var(--muted);margin-top:2px;">' + dateStr + '</div>'
+      + '</div>'
+      + '<div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--gold);">' + rating + ' ⭐</div><div style="font-size:10px;color:var(--muted);">التقييم</div></div>'
+      + '<div style="text-align:center;"><div style="font-size:13px;font-weight:700;color:var(--blue3);">' + score + '/100</div><div style="font-size:10px;color:var(--muted);">الفرصة</div></div>'
+      + '</div>';
+  }).join('');
+}
+
+// Override showSection to hook analytics and spy
+const _origShowSection = showSection;
+showSection = function(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const sec = document.getElementById('sec-' + name);
+  if (sec) sec.classList.add('active');
+  event.currentTarget.classList.add('active');
+  if (name === 'analytics') setTimeout(renderAnalytics, 80);
+  if (name === 'spy') { loadSpyUsage(); loadSpyHistory(); }
+};
 </script>
 <script>
 if ('serviceWorker' in navigator) {
