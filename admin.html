@@ -324,6 +324,32 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
 .btn-dashed { padding:8px 16px; background:transparent; border:1.5px dashed var(--border); color:var(--muted); border-radius:10px; font-family:'Cairo',sans-serif; font-size:12px; font-weight:700; cursor:pointer; transition:0.2s; }
 .btn-dashed:hover { border-color:var(--blue3); color:var(--blue3); }
 
+/* ═══ P&L SECTION ═══ */
+.pl-card {
+  background:var(--card); border:1px solid var(--border); border-radius:20px;
+  padding:24px; margin-bottom:28px; overflow:hidden;
+}
+.pl-title { font-family:'Tajawal',sans-serif; font-size:18px; font-weight:900; margin-bottom:20px; }
+.pl-table { width:100%; border-collapse:collapse; }
+.pl-table td { padding:10px 14px; font-size:13px; border-bottom:1px solid var(--border); vertical-align:middle; }
+.pl-table tr:last-child td { border-bottom:none; }
+.pl-table .pl-section-head td { background:var(--blue4); font-weight:900; font-size:11px; color:var(--blue2); letter-spacing:1px; padding:8px 14px; }
+.pl-table .pl-total td { font-family:'Tajawal',sans-serif; font-size:18px; font-weight:900; background:var(--bg); padding:14px; }
+.pl-amount { font-family:'Tajawal',sans-serif; font-size:16px; font-weight:900; text-align:left; direction:ltr; white-space:nowrap; }
+.pl-label { color:var(--muted); font-size:11px; }
+.pl-green { color:var(--green); }
+.pl-red   { color:var(--red);   }
+.pl-muted { color:var(--muted); font-size:12px; }
+.pl-profit-pos { color:var(--green); }
+.pl-profit-neg { color:var(--red);   }
+.pl-token-row { font-size:11px; color:var(--muted); margin-top:12px; border-top:1px solid var(--border); padding-top:12px; }
+.pl-sparkline { display:flex; align-items:flex-end; gap:4px; height:40px; margin-top:12px; }
+.pl-spark-bar { flex:1; background:var(--blue4); border-radius:3px 3px 0 0; min-height:3px; transition:0.3s; position:relative; }
+.pl-spark-bar:hover::after { content:attr(data-tip); position:absolute; bottom:110%; left:50%; transform:translateX(-50%); background:var(--blue); color:#fff; font-size:10px; padding:3px 7px; border-radius:6px; white-space:nowrap; pointer-events:none; }
+.pl-spark-label { display:flex; gap:4px; margin-top:4px; }
+.pl-spark-day { flex:1; font-size:9px; color:var(--muted); text-align:center; overflow:hidden; text-overflow:ellipsis; }
+.pl-7days-title { font-size:11px; font-weight:900; color:var(--muted); letter-spacing:1px; margin-top:16px; margin-bottom:6px; }
+
 /* ═══ ACCESS DENIED ═══ */
 #accessDenied {
   display:none; position:fixed; inset:0;
@@ -503,6 +529,60 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
       <div class="promo-history-title">RECENT PROMO LINKS</div>
       <div id="promoHistoryList"></div>
     </div>
+  </div>
+
+  <!-- P&L SECTION -->
+  <div class="section-head" style="margin-top:8px;">
+    <div class="section-title">📈 الأرباح والخسائر</div>
+  </div>
+  <div class="pl-card">
+    <div class="pl-title">📈 الأرباح والخسائر — هذا الشهر</div>
+    <table class="pl-table">
+      <!-- INCOME -->
+      <tr class="pl-section-head"><td colspan="2">💚 الإيرادات</td></tr>
+      <tr>
+        <td>مشتركون دفعوا (lifetime × 997 ر.س)</td>
+        <td class="pl-amount pl-green" id="plRevenue">—</td>
+      </tr>
+      <!-- EXPENSES -->
+      <tr class="pl-section-head"><td colspan="2">🔴 المصاريف</td></tr>
+      <tr>
+        <td>Anthropic API <span class="pl-label" id="plApiCallsLabel"></span></td>
+        <td class="pl-amount pl-red" id="plApiCost">—</td>
+      </tr>
+      <tr>
+        <td>UltraMsg (واتساب — شهري)</td>
+        <td class="pl-amount pl-red">150.00 ر.س</td>
+      </tr>
+      <tr>
+        <td>Supabase</td>
+        <td class="pl-amount pl-muted">0.00 ر.س (مجاني)</td>
+      </tr>
+      <tr>
+        <td>Vercel</td>
+        <td class="pl-amount pl-muted">0.00 ر.س (مجاني)</td>
+      </tr>
+      <tr>
+        <td>Domain (تقريبي)</td>
+        <td class="pl-amount pl-muted">~5.00 ر.س/شهر</td>
+      </tr>
+      <!-- NET -->
+      <tr class="pl-section-head"><td colspan="2">🏆 الصافي</td></tr>
+      <tr class="pl-total">
+        <td>صافي الربح / الخسارة</td>
+        <td class="pl-amount" id="plNet">—</td>
+      </tr>
+    </table>
+
+    <!-- Token usage info -->
+    <div class="pl-token-row" id="plTokenRow" style="display:none;">
+      استهلاك API: <strong id="plTokens">—</strong> token | <strong id="plCalls">—</strong> مكالمة هذا الشهر
+    </div>
+
+    <!-- Sparkline — last 7 days -->
+    <div class="pl-7days-title" id="plSparkTitle" style="display:none;">تكلفة API — الأيام السبعة الأخيرة (ر.س)</div>
+    <div class="pl-sparkline" id="plSparkline"></div>
+    <div class="pl-spark-label" id="plSparkLabels"></div>
   </div>
 
   <!-- REVENUE SECTION -->
@@ -842,7 +922,7 @@ async function savePlan(userId) {
 }
 
 // ══ UPDATE STATS ══
-function updateStats(stats) {
+function updateStats(stats, api_costs) {
   if (stats) {
     document.getElementById('statTotal').textContent       = stats.total;
     document.getElementById('statTrialActive').textContent = stats.trial_active;
@@ -859,6 +939,44 @@ function updateStats(stats) {
     document.getElementById('revExpiringSoon').textContent = stats.trial_expiring_soon || 0;
     const growth = stats.growth_rate || 0;
     document.getElementById('revGrowth').textContent       = (growth >= 0 ? '+' : '') + growth + '%';
+
+    // P&L section
+    const revSAR = stats.paid_lifetime * 997; // only paid lifetime count as revenue
+    const ULTRAMSG_SAR = 150;
+    const DOMAIN_SAR   = 5;
+    const apiCostSAR   = api_costs ? parseFloat(api_costs.monthly_sar) || 0 : 0;
+    const totalExpSAR  = apiCostSAR + ULTRAMSG_SAR + DOMAIN_SAR;
+    const netSAR       = revSAR - totalExpSAR;
+
+    document.getElementById('plRevenue').textContent   = revSAR.toLocaleString('ar-SA') + ' ر.س';
+    document.getElementById('plApiCost').textContent   = apiCostSAR.toFixed(2) + ' ر.س';
+
+    const netEl = document.getElementById('plNet');
+    netEl.textContent = (netSAR >= 0 ? '+' : '') + netSAR.toLocaleString('ar-SA') + ' ر.س';
+    netEl.className   = 'pl-amount ' + (netSAR >= 0 ? 'pl-profit-pos' : 'pl-profit-neg');
+
+    if (api_costs) {
+      document.getElementById('plTokens').textContent = Number(api_costs.monthly_tokens).toLocaleString();
+      document.getElementById('plCalls').textContent  = Number(api_costs.monthly_calls).toLocaleString();
+      document.getElementById('plTokenRow').style.display = 'block';
+      document.getElementById('plApiCallsLabel').textContent = `(${api_costs.monthly_calls} مكالمة)`;
+
+      // Sparkline
+      const days = api_costs.cost_last_7_days || [];
+      if (days.length) {
+        const maxCost = Math.max(...days.map(d => d.cost_usd), 0.000001);
+        document.getElementById('plSparkTitle').style.display = 'block';
+        document.getElementById('plSparkline').innerHTML = days.map(d => {
+          const heightPct = Math.max((d.cost_usd / maxCost) * 100, 3);
+          const sarVal    = (d.cost_usd * 3.75).toFixed(4);
+          const label     = d.date.slice(5); // MM-DD
+          return `<div class="pl-spark-bar" style="height:${heightPct}%;background:${d.cost_usd > 0 ? 'var(--blue3)' : 'var(--blue4)'};" data-tip="${label}: ${sarVal} ر.س"></div>`;
+        }).join('');
+        document.getElementById('plSparkLabels').innerHTML = days.map(d =>
+          `<div class="pl-spark-day">${d.date.slice(5)}</div>`
+        ).join('');
+      }
+    }
   }
 }
 
@@ -881,7 +999,7 @@ async function loadData() {
     if (!res.ok) throw new Error(data.error || 'فشل التحميل');
 
     allProfiles = data.profiles || [];
-    updateStats(data.stats);
+    updateStats(data.stats, data.api_costs);
     renderTable(allProfiles);
 
     document.getElementById('tableLoading').style.display = 'none';

@@ -108,8 +108,32 @@ serve(async (req) => {
       email_confirmed_at: authMap[p.id]?.email_confirmed_at || null,
     }));
 
-    // 7. Compute summary stats
+    // 7. Fetch API usage stats for current month
     const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
+    const { data: usageData } = await admin
+      .from('api_usage_logs')
+      .select('cost_usd, created_at, input_tokens, output_tokens')
+      .gte('created_at', monthStart);
+
+    const monthlyCost   = (usageData || []).reduce((sum, r) => sum + (Number(r.cost_usd) || 0), 0);
+    const monthlyTokens = (usageData || []).reduce((sum, r) => sum + (r.input_tokens || 0) + (r.output_tokens || 0), 0);
+
+    // Cost per day — last 7 days
+    const dailyCosts: Record<string, number> = {};
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now);
+      d.setDate(d.getDate() - i);
+      dailyCosts[d.toISOString().slice(0, 10)] = 0;
+    }
+    for (const r of (usageData || [])) {
+      const day = (r.created_at || '').slice(0, 10);
+      if (day in dailyCosts) dailyCosts[day] += Number(r.cost_usd) || 0;
+    }
+    const costLast7Days = Object.entries(dailyCosts).map(([date, cost]) => ({ date, cost_usd: Number(cost.toFixed(6)) }));
+
+    // 8. Compute summary stats
     const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     const twoMonthsAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
     const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
@@ -136,7 +160,15 @@ serve(async (req) => {
       growth_rate: growthRate,
     };
 
-    return new Response(JSON.stringify({ profiles: enriched, stats }), {
+    const api_costs = {
+      monthly_usd: monthlyCost.toFixed(4),
+      monthly_sar: (monthlyCost * 3.75).toFixed(2),
+      monthly_tokens: monthlyTokens,
+      monthly_calls: (usageData || []).length,
+      cost_last_7_days: costLast7Days,
+    };
+
+    return new Response(JSON.stringify({ profiles: enriched, stats, api_costs }), {
       headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }
     });
 

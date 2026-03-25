@@ -114,6 +114,42 @@ serve(async (req) => {
 
     const text = data.content?.[0]?.text ?? '';
 
+    // ── LOG API TOKEN USAGE (fire and forget) ──
+    {
+      const inputTokens = data.usage?.input_tokens || 0;
+      const outputTokens = data.usage?.output_tokens || 0;
+      // Claude Haiku 4.5: $0.80/M input, $4/M output
+      const costUsd = (inputTokens * 0.80 / 1_000_000) + (outputTokens * 4.0 / 1_000_000);
+
+      // Extract userId from JWT if available (non-anon sessions)
+      let userId: string | null = null;
+      if (!isAnonKey) {
+        try {
+          const payload = JSON.parse(atob(authHeader.split(' ')[1].split('.')[1]));
+          userId = payload.sub || null;
+        } catch (_) {}
+      }
+
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+      const serviceKey  = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      fetch(`${supabaseUrl}/rest/v1/api_usage_logs`, {
+        method: 'POST',
+        headers: {
+          'apikey': serviceKey,
+          'Authorization': 'Bearer ' + serviceKey,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          model,
+          input_tokens: inputTokens,
+          output_tokens: outputTokens,
+          cost_usd: costUsd,
+          type: body.type || 'chat'
+        })
+      }).catch(() => {}); // fire and forget
+    }
+
     // ── LOG DIAGNOSIS USAGE after successful call ──
     if (type === 'diagnosis' && email) {
       const supabaseUrl    = Deno.env.get('SUPABASE_URL')!;
