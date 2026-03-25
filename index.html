@@ -679,8 +679,7 @@ async function runDiagnosis(){
       <div style="font-size:10px;color:rgba(255,255,255,0.35);margin:8px 0;">* التحليل تقديري بناءً على متوسطات السوق السعودي</div>
       <a href="signup.html" style="display:block;text-align:center;background:linear-gradient(135deg,#F5B429,#D4920A);color:#0B1F4E;font-weight:900;font-size:13px;padding:14px;border-radius:12px;text-decoration:none;margin-top:12px;">ابدأ تحسين سمعتك مجاناً 14 يوم ←</a>`;
 
-  } catch(e) {
-    console.error('Diagnosis error:', e);
+  } catch(_) {
     // Fallback to smart estimates if API fails
     const score = Math.floor(Math.random()*25)+45;
     const rating = (Math.random()*1.2+3.3).toFixed(1);

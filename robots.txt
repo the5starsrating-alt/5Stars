@@ -1,7 +1,13 @@
 User-agent: *
 Allow: /
+Disallow: /dashboard
 Disallow: /dashboard.html
+Disallow: /auth-callback
 Disallow: /auth-callback.html
+Disallow: /reset-password
 Disallow: /reset-password.html
+Disallow: /admin
+Disallow: /admin.html
+Disallow: /review
 
 Sitemap: https://www.the5starsrating.com/sitemap.xml

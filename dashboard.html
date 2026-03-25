@@ -1084,8 +1084,7 @@ async function generateReply(btn) {
     const badge = item.querySelector('.badge-pending, .badge-negative');
     if (badge) { badge.className = 'badge-replied'; badge.textContent = '✓ تم الرد'; }
 
-  } catch(e) {
-    console.error(e);
+  } catch(_) {
     btn.disabled = false;
     btn.textContent = originalText;
     alert('حدث خطأ في توليد الرد. حاول مرة أخرى.');
@@ -1312,14 +1311,11 @@ async function sendWhatsAppMessage(toPhone, message) {
     );
     const data = await res.json();
     if (data.success) {
-      console.log('✅ WhatsApp sent:', data.sid);
       return true;
     } else {
-      console.error('❌ WhatsApp error:', data);
       return false;
     }
-  } catch(e) {
-    console.error('WhatsApp send failed:', e);
+  } catch(_) {
     return false;
   }
 }

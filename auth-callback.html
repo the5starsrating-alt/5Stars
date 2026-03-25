@@ -86,7 +86,6 @@ function showError(msg) {
 
 // الاستماع لـ auth state - هذا الأضمن مع PKCE
 sb.auth.onAuthStateChange(async (event, session) => {
-  console.log('Auth event:', event, session ? 'has session' : 'no session');
   
   if (event === 'SIGNED_IN' && session) {
     document.getElementById('subtitle').textContent = 'تم تسجيل الدخول! جاري التحويل...';
@@ -106,7 +105,7 @@ sb.auth.onAuthStateChange(async (event, session) => {
         plan: 'trial',
         trial_ends: new Date(Date.now() + 14*24*60*60*1000).toISOString()
       }, { onConflict: 'id', ignoreDuplicates: true });
-    } catch(e) { console.log('profile upsert:', e.message); }
+    } catch(_) { /* silent */ }
 
     // ضع علامة المستخدم الجديد
     if (isNewUser) {
