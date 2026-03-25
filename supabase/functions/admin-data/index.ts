@@ -1,0 +1,124 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': 'https://www.the5starsrating.com',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
+  }
+
+  const supabaseUrl      = Deno.env.get('SUPABASE_URL')!;
+  const supabaseAnonKey  = Deno.env.get('SUPABASE_ANON_KEY')!;
+  const serviceRoleKey   = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const ownerEmail       = Deno.env.get('OWNER_EMAIL') || '';
+
+  try {
+    // 1. Verify caller JWT
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // 2. Identify caller via their JWT
+    const userClient = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+    const { data: { user }, error: userError } = await userClient.auth.getUser();
+
+    if (userError || !user) {
+      return new Response(JSON.stringify({ error: 'Invalid token' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // 3. Owner-only gate
+    if (!ownerEmail || user.email !== ownerEmail) {
+      return new Response(JSON.stringify({ error: 'Forbidden' }), {
+        status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
+
+    // 4. Service-role client bypasses RLS
+    const admin = createClient(supabaseUrl, serviceRoleKey);
+
+    // Handle plan update action
+    if (req.method === 'POST') {
+      const body = await req.json();
+      if (body.action === 'update_plan') {
+        const { userId, plan } = body;
+        if (!userId || !plan) {
+          return new Response(JSON.stringify({ error: 'userId and plan required' }), {
+            status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        const validPlans = ['trial', 'lifetime', 'lifetime_friend', 'suspended'];
+        if (!validPlans.includes(plan)) {
+          return new Response(JSON.stringify({ error: 'Invalid plan' }), {
+            status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          });
+        }
+        const { error: updateError } = await admin
+          .from('profiles')
+          .update({ plan })
+          .eq('id', userId);
+        if (updateError) throw updateError;
+        return new Response(JSON.stringify({ success: true }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+    }
+
+    // 5. Fetch all profiles
+    const { data: profiles, error: profilesError } = await admin
+      .from('profiles')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (profilesError) throw profilesError;
+
+    // 6. Fetch auth users (for last sign-in data)
+    const { data: authData } = await admin.auth.admin.listUsers({ perPage: 1000 });
+    const authMap: Record<string, { last_sign_in_at: string; email_confirmed_at: string }> = {};
+    for (const u of (authData?.users || [])) {
+      authMap[u.id] = {
+        last_sign_in_at: u.last_sign_in_at || '',
+        email_confirmed_at: u.email_confirmed_at || '',
+      };
+    }
+
+    // Merge last_sign_in and confirmed status into profiles
+    const enriched = (profiles || []).map(p => ({
+      ...p,
+      last_sign_in_at: authMap[p.id]?.last_sign_in_at || null,
+      email_confirmed_at: authMap[p.id]?.email_confirmed_at || null,
+    }));
+
+    // 7. Compute summary stats
+    const now = new Date();
+    const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const stats = {
+      total: enriched.length,
+      trial_active: enriched.filter(p => p.plan === 'trial' && p.trial_ends && new Date(p.trial_ends) > now).length,
+      trial_expired: enriched.filter(p => p.plan === 'trial' && p.trial_ends && new Date(p.trial_ends) <= now).length,
+      lifetime: enriched.filter(p => p.plan === 'lifetime').length,
+      lifetime_friend: enriched.filter(p => p.plan === 'lifetime_friend').length,
+      new_this_month: enriched.filter(p => p.created_at && new Date(p.created_at) > monthAgo).length,
+      google_connected: enriched.filter(p => !!p.google_maps_url).length,
+    };
+
+    return new Response(JSON.stringify({ profiles: enriched, stats }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+
+  } catch (e) {
+    return new Response(JSON.stringify({ error: e.message }), {
+      status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+    });
+  }
+});

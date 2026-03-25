@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5tars — لوحة المالك</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root {
+  --blue:   #0B1F4E;
+  --blue2:  #1A3A8F;
+  --blue3:  #2251D3;
+  --blue4:  #EEF3FF;
+  --gold:   #D4920A;
+  --gold2:  #F5B429;
+  --gold3:  #FFF0A0;
+  --green:  #16A34A;
+  --red:    #DC2626;
+  --orange: #EA580C;
+  --white:  #FFFFFF;
+  --bg:     #F0F4FF;
+  --text:   #0B1F4E;
+  --muted:  #64748B;
+  --border: rgba(34,81,211,0.10);
+  --card:   #FFFFFF;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direction:rtl;min-height:100vh;}
+
+/* ═══ TOP BAR ═══ */
+.topbar {
+  background:linear-gradient(135deg,var(--blue),var(--blue2));
+  padding:14px 28px;
+  display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:50;
+  box-shadow:0 2px 16px rgba(11,31,78,0.25);
+}
+.topbar-logo { display:flex; align-items:center; gap:12px; }
+.logo-text { font-family:'Tajawal',sans-serif; font-size:24px; font-weight:900; }
+.logo-text span:first-child { font-style:italic; background:linear-gradient(180deg,var(--gold3),var(--gold2)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+.logo-text span:last-child { color:#fff; }
+.admin-badge {
+  background:linear-gradient(135deg,var(--gold2),var(--gold));
+  color:var(--blue); font-size:10px; font-weight:900;
+  padding:3px 10px; border-radius:20px; letter-spacing:1px;
+}
+.topbar-right { display:flex; align-items:center; gap:12px; }
+.owner-info { text-align:left; }
+.owner-name { font-size:13px; font-weight:700; color:#fff; }
+.owner-role { font-size:10px; color:var(--gold2); }
+.btn-logout-top {
+  background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2);
+  color:#fff; padding:7px 14px; border-radius:8px; font-family:'Cairo',sans-serif;
+  font-size:12px; font-weight:700; cursor:pointer; transition:all 0.2s;
+}
+.btn-logout-top:hover { background:rgba(220,38,38,0.3); border-color:rgba(220,38,38,0.4); }
+
+/* ═══ MAIN ═══ */
+.main { padding:28px; max-width:1400px; margin:0 auto; }
+
+/* ═══ STATS ═══ */
+.stats-grid {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:16px; margin-bottom:28px;
+}
+.stat-card {
+  background:var(--card); border:1px solid var(--border); border-radius:16px;
+  padding:20px; position:relative; overflow:hidden; transition:all 0.2s;
+}
+.stat-card:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(11,31,78,0.08); }
+.stat-icon { font-size:28px; margin-bottom:8px; }
+.stat-num { font-family:'Tajawal',sans-serif; font-size:34px; font-weight:900; line-height:1; margin-bottom:4px; }
+.stat-label { font-size:12px; color:var(--muted); }
+.stat-card.blue .stat-num  { color:var(--blue3); }
+.stat-card.gold .stat-num  { color:var(--gold); }
+.stat-card.green .stat-num { color:var(--green); }
+.stat-card.red .stat-num   { color:var(--red); }
+.stat-card.orange .stat-num{ color:var(--orange); }
+
+/* ═══ SECTION HEADER ═══ */
+.section-head {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:16px; flex-wrap:wrap; gap:12px;
+}
+.section-title { font-family:'Tajawal',sans-serif; font-size:18px; font-weight:900; }
+.search-row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+.search-input {
+  padding:9px 14px; border:1.5px solid var(--border); border-radius:10px;
+  font-family:'Cairo',sans-serif; font-size:13px; color:var(--text); outline:none;
+  background:#fff; min-width:220px; transition:all 0.2s;
+}
+.search-input:focus { border-color:var(--blue3); box-shadow:0 0 0 3px rgba(34,81,211,0.08); }
+.filter-select {
+  padding:9px 14px; border:1.5px solid var(--border); border-radius:10px;
+  font-family:'Cairo',sans-serif; font-size:13px; color:var(--text); outline:none;
+  background:#fff; cursor:pointer; transition:all 0.2s;
+}
+.filter-select:focus { border-color:var(--blue3); }
+
+/* ═══ TABLE ═══ */
+.table-wrap {
+  background:var(--card); border:1px solid var(--border); border-radius:16px;
+  overflow:hidden; margin-bottom:28px;
+}
+.table-wrap table { width:100%; border-collapse:collapse; }
+.table-wrap th {
+  background:var(--blue4); padding:12px 14px;
+  font-size:11px; font-weight:900; color:var(--blue2); text-align:right;
+  border-bottom:1px solid var(--border); white-space:nowrap;
+}
+.table-wrap td {
+  padding:12px 14px; font-size:12px; border-bottom:1px solid var(--border);
+  vertical-align:middle;
+}
+.table-wrap tr:last-child td { border-bottom:none; }
+.table-wrap tr:hover td { background:var(--blue4); }
+
+/* ═══ BADGES ═══ */
+.badge { font-size:10px; font-weight:900; padding:3px 10px; border-radius:20px; white-space:nowrap; }
+.badge-trial   { background:#FEF3C7; color:#92400E; }
+.badge-active  { background:#DCFCE7; color:#15803D; }
+.badge-expired { background:#FEE2E2; color:#991B1B; }
+.badge-lifetime{ background:linear-gradient(135deg,#FFF0A0,#F5B429); color:#7C2D12; }
+.badge-friend  { background:linear-gradient(135deg,#E9D5FF,#A855F7); color:#4C1D95; }
+.badge-suspended{ background:#F1F5F9; color:#64748B; }
+.badge-yes     { background:#DCFCE7; color:#15803D; font-size:10px; font-weight:900; padding:2px 8px; border-radius:20px; }
+.badge-no      { background:#F1F5F9; color:#94A3B8; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; }
+
+/* ═══ PLAN SELECTOR ═══ */
+.plan-select {
+  padding:5px 10px; border:1.5px solid var(--border); border-radius:8px;
+  font-family:'Cairo',sans-serif; font-size:11px; color:var(--text);
+  background:#fff; cursor:pointer; outline:none; transition:all 0.2s;
+}
+.plan-select:focus { border-color:var(--blue3); }
+.btn-save {
+  padding:5px 12px; background:var(--blue3); color:#fff;
+  border:none; border-radius:8px; font-family:'Cairo',sans-serif;
+  font-size:11px; font-weight:700; cursor:pointer; transition:all 0.2s;
+  display:none;
+}
+.btn-save:hover { background:var(--blue2); }
+
+/* ═══ API KEYS PANEL ═══ */
+.keys-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:16px; margin-bottom:28px; }
+.key-card {
+  background:var(--card); border:1px solid var(--border); border-radius:14px; padding:18px;
+  display:flex; flex-direction:column; gap:10px;
+}
+.key-card-head { display:flex; align-items:center; gap:10px; }
+.key-icon { font-size:24px; }
+.key-name { font-size:14px; font-weight:900; }
+.key-desc { font-size:12px; color:var(--muted); line-height:1.5; }
+.key-action {
+  padding:7px 14px; border-radius:8px; font-family:'Cairo',sans-serif;
+  font-size:12px; font-weight:700; cursor:pointer; transition:all 0.2s;
+  border:1.5px solid var(--border); background:transparent; color:var(--text);
+  text-decoration:none; display:inline-block; text-align:center;
+}
+.key-action:hover { border-color:var(--blue3); color:var(--blue3); background:var(--blue4); }
+.key-status { display:flex; align-items:center; gap:6px; font-size:11px; }
+.dot-green { width:7px; height:7px; border-radius:50%; background:var(--green); display:inline-block; }
+.dot-warn  { width:7px; height:7px; border-radius:50%; background:var(--gold2); display:inline-block; }
+
+/* ═══ LOADING / ERROR ═══ */
+.loading-box {
+  text-align:center; padding:60px 20px; color:var(--muted);
+}
+.spinner {
+  width:40px; height:40px; border:3px solid var(--blue4);
+  border-top-color:var(--blue3); border-radius:50%;
+  animation:spin 0.8s linear infinite; margin:0 auto 16px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.error-box {
+  background:#FEF2F2; border:1px solid rgba(220,38,38,0.2);
+  color:var(--red); border-radius:12px; padding:16px 20px;
+  font-size:13px; margin-bottom:20px; display:none;
+}
+.error-box.show { display:block; }
+
+/* ═══ TOAST ═══ */
+.toast {
+  position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px);
+  background:var(--blue); color:#fff; padding:12px 24px;
+  border-radius:40px; font-size:13px; font-weight:700;
+  transition:all 0.3s; z-index:999; opacity:0; white-space:nowrap;
+  box-shadow:0 8px 28px rgba(11,31,78,0.3);
+}
+.toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+.toast.success { background:var(--green); }
+.toast.error   { background:var(--red); }
+
+/* ═══ ACCESS DENIED ═══ */
+#accessDenied {
+  display:none; position:fixed; inset:0;
+  background:var(--blue4); z-index:999;
+  align-items:center; justify-content:center; flex-direction:column; gap:16px;
+  text-align:center;
+}
+#accessDenied.show { display:flex; }
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:768px){
+  .main { padding:16px; }
+  .topbar { padding:12px 16px; }
+  .table-wrap { overflow-x:auto; }
+  .stats-grid { grid-template-columns:repeat(2,1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- ACCESS DENIED -->
+<div id="accessDenied">
+  <div style="font-size:64px;">🔒</div>
+  <div style="font-family:'Tajawal',sans-serif;font-size:24px;font-weight:900;color:var(--blue);">وصول مقيّد</div>
+  <div style="font-size:14px;color:var(--muted);max-width:300px;">هذه الصفحة متاحة لمالك المنصة فقط.</div>
+  <button onclick="window.location.href='dashboard.html'" style="padding:10px 24px;background:var(--blue3);color:#fff;border:none;border-radius:10px;font-family:'Cairo',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;">العودة للوحة</button>
+</div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="logo-text"><span>5</span><span>tars</span></div>
+    <div class="admin-badge">OWNER</div>
+  </div>
+  <div class="topbar-right">
+    <div class="owner-info">
+      <div class="owner-name" id="ownerName">—</div>
+      <div class="owner-role">مالك المنصة</div>
+    </div>
+    <button class="btn-logout-top" onclick="handleLogout()">خروج</button>
+  </div>
+</div>
+
+<div class="main" id="mainContent" style="display:none;">
+
+  <!-- ERROR -->
+  <div class="error-box" id="errorBox"></div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card blue">
+      <div class="stat-icon">👥</div>
+      <div class="stat-num" id="statTotal">—</div>
+      <div class="stat-label">إجمالي المستخدمين</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-icon">✅</div>
+      <div class="stat-num" id="statTrialActive">—</div>
+      <div class="stat-label">تجربة مجانية نشطة</div>
+    </div>
+    <div class="stat-card red">
+      <div class="stat-icon">⏰</div>
+      <div class="stat-num" id="statTrialExpired">—</div>
+      <div class="stat-label">تجربة منتهية</div>
+    </div>
+    <div class="stat-card gold">
+      <div class="stat-icon">♾️</div>
+      <div class="stat-num" id="statLifetime">—</div>
+      <div class="stat-label">مدى الحياة</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-icon">🌟</div>
+      <div class="stat-num" id="statFriend">—</div>
+      <div class="stat-label">صديق مدى الحياة</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-icon">🆕</div>
+      <div class="stat-num" id="statNewMonth">—</div>
+      <div class="stat-label">جديد هذا الشهر</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-icon">🔗</div>
+      <div class="stat-num" id="statGoogle">—</div>
+      <div class="stat-label">ربط Google Business</div>
+    </div>
+  </div>
+
+  <!-- USERS TABLE -->
+  <div class="section-head">
+    <div class="section-title">المستخدمون</div>
+    <div class="search-row">
+      <input type="text" class="search-input" id="searchInput" placeholder="بحث بالاسم أو البريد..." oninput="filterTable()">
+      <select class="filter-select" id="planFilter" onchange="filterTable()">
+        <option value="">كل الخطط</option>
+        <option value="trial">تجريبي</option>
+        <option value="lifetime">مدى الحياة</option>
+        <option value="lifetime_friend">صديق</option>
+        <option value="suspended">موقوف</option>
+      </select>
+      <select class="filter-select" id="googleFilter" onchange="filterTable()">
+        <option value="">كل الحسابات</option>
+        <option value="connected">ربط Google</option>
+        <option value="not_connected">لم يربط</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <div class="loading-box" id="tableLoading">
+      <div class="spinner"></div>
+      <div>جاري تحميل البيانات...</div>
+    </div>
+    <table id="usersTable" style="display:none;">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>الاسم</th>
+          <th>البريد الإلكتروني</th>
+          <th>الخطة</th>
+          <th>التجربة تنتهي</th>
+          <th>النشاط</th>
+          <th>واتساب</th>
+          <th>Google</th>
+          <th>آخر دخول</th>
+          <th>تاريخ التسجيل</th>
+          <th>إجراء</th>
+        </tr>
+      </thead>
+      <tbody id="usersBody"></tbody>
+    </table>
+    <div id="noResults" style="display:none;text-align:center;padding:40px;color:var(--muted);font-size:14px;">لا توجد نتائج</div>
+  </div>
+
+  <!-- API KEYS PANEL -->
+  <div class="section-head">
+    <div class="section-title">إدارة المفاتيح والخدمات</div>
+  </div>
+  <div class="keys-grid">
+    <div class="key-card">
+      <div class="key-card-head">
+        <div class="key-icon">🤖</div>
+        <div>
+          <div class="key-name">Anthropic Claude API</div>
+          <div class="key-status"><span class="dot-green"></span> نشط — يُستخدم لتوليد الردود</div>
+        </div>
+      </div>
+      <div class="key-desc">مفتاح الذكاء الاصطناعي. قم بتدويره كل 90 يوماً لأفضل أمان.</div>
+      <a href="https://console.anthropic.com/settings/keys" target="_blank" class="key-action">إدارة المفاتيح ←</a>
+    </div>
+    <div class="key-card">
+      <div class="key-card-head">
+        <div class="key-icon">📱</div>
+        <div>
+          <div class="key-name">Twilio WhatsApp</div>
+          <div class="key-status"><span class="dot-green"></span> نشط — إشعارات الواتساب</div>
+        </div>
+      </div>
+      <div class="key-desc">مستخدم لإرسال إشعارات العملاء ونوتيفكيشن المالك.</div>
+      <a href="https://console.twilio.com" target="_blank" class="key-action">لوحة Twilio ←</a>
+    </div>
+    <div class="key-card">
+      <div class="key-card-head">
+        <div class="key-icon">🗄️</div>
+        <div>
+          <div class="key-name">Supabase</div>
+          <div class="key-status"><span class="dot-green"></span> نشط — قاعدة البيانات والمصادقة</div>
+        </div>
+      </div>
+      <div class="key-desc">قاعدة البيانات، المصادقة، والوظائف السحابية. مفتاح Anon عام — يعمل بـ RLS.</div>
+      <a href="https://supabase.com/dashboard/project/xdmbwtnpadjeinclmffh" target="_blank" class="key-action">لوحة Supabase ←</a>
+    </div>
+    <div class="key-card">
+      <div class="key-card-head">
+        <div class="key-icon">🚀</div>
+        <div>
+          <div class="key-name">Vercel Deployment</div>
+          <div class="key-status"><span class="dot-green"></span> نشط — الاستضافة والنشر</div>
+        </div>
+      </div>
+      <div class="key-desc">يُنشر تلقائياً عند كل push على main. راجع سجلات النشر من هنا.</div>
+      <a href="https://vercel.com/dashboard" target="_blank" class="key-action">لوحة Vercel ←</a>
+    </div>
+    <div class="key-card">
+      <div class="key-card-head">
+        <div class="key-icon">📊</div>
+        <div>
+          <div class="key-name">Google Analytics</div>
+          <div class="key-status"><span class="dot-green"></span> G-8R9SJ30X5L</div>
+        </div>
+      </div>
+      <div class="key-desc">تتبع الزوار وتحليل سلوك المستخدمين على جميع صفحات الموقع.</div>
+      <a href="https://analytics.google.com" target="_blank" class="key-action">Google Analytics ←</a>
+    </div>
+    <div class="key-card">
+      <div class="key-card-head">
+        <div class="key-icon">⚙️</div>
+        <div>
+          <div class="key-name">متغيرات البيئة المطلوبة</div>
+          <div class="key-status"><span class="dot-warn"></span> تحقق من الإعداد</div>
+        </div>
+      </div>
+      <div class="key-desc">
+        تأكد من ضبط هذه المتغيرات في Supabase:<br>
+        <code style="font-size:10px;background:var(--bg);padding:2px 6px;border-radius:4px;">OWNER_EMAIL</code>
+        <code style="font-size:10px;background:var(--bg);padding:2px 6px;border-radius:4px;">OWNER_PHONE</code>
+        <code style="font-size:10px;background:var(--bg);padding:2px 6px;border-radius:4px;">ANTHROPIC_API_KEY</code>
+        <code style="font-size:10px;background:var(--bg);padding:2px 6px;border-radius:4px;">TWILIO_*</code>
+      </div>
+      <a href="https://supabase.com/dashboard/project/xdmbwtnpadjeinclmffh/settings/functions" target="_blank" class="key-action">إعداد المتغيرات ←</a>
+    </div>
+  </div>
+
+</div><!-- end main -->
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://xdmbwtnpadjeinclmffh.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkbWJ3dG5wYWRqZWluY2xtZmZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NDI1OTksImV4cCI6MjA4ODQxODU5OX0.fmWmQXlm0eHnj8I5PFxakW7xh13nnMQBN1yU6-z2aFw';
+
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let allProfiles = [];
+
+// ══ TOAST ══
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+// ══ PLAN LABEL ══
+function planBadge(plan, trialEnds) {
+  if (plan === 'lifetime') return '<span class="badge badge-lifetime">♾️ مدى الحياة</span>';
+  if (plan === 'lifetime_friend') return '<span class="badge badge-friend">🌟 صديق</span>';
+  if (plan === 'suspended') return '<span class="badge badge-suspended">⛔ موقوف</span>';
+  // trial
+  const now = new Date();
+  const end = trialEnds ? new Date(trialEnds) : null;
+  if (end && end > now) {
+    const days = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+    return `<span class="badge badge-active">تجربة (${days}ي)</span>`;
+  }
+  return '<span class="badge badge-expired">⏰ منتهية</span>';
+}
+
+// ══ DATE FORMAT ══
+function fmtDate(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleDateString('ar-SA', { year:'numeric', month:'short', day:'numeric' });
+}
+
+// ══ BIZ TYPE ══
+function bizLabel(t) {
+  const m = { restaurant:'مطعم', cafe:'كافيه', salon:'صالون', clinic:'عيادة', retail:'متجر', other:'أخرى' };
+  return m[t] || t || '—';
+}
+
+// ══ RENDER TABLE ══
+function renderTable(profiles) {
+  const tbody = document.getElementById('usersBody');
+  if (!profiles.length) {
+    tbody.innerHTML = '';
+    document.getElementById('usersTable').style.display = 'none';
+    document.getElementById('noResults').style.display = 'block';
+    return;
+  }
+  document.getElementById('usersTable').style.display = 'table';
+  document.getElementById('noResults').style.display = 'none';
+
+  tbody.innerHTML = profiles.map((p, i) => `
+    <tr data-id="${p.id}" data-plan="${p.plan || 'trial'}">
+      <td style="color:var(--muted);font-size:11px;">${i + 1}</td>
+      <td><strong>${escHtml(p.full_name || p.business_name || '—')}</strong></td>
+      <td style="direction:ltr;text-align:right;color:var(--muted);font-size:11px;">${escHtml(p.email || '—')}</td>
+      <td>${planBadge(p.plan, p.trial_ends)}</td>
+      <td style="font-size:11px;">${p.trial_ends ? fmtDate(p.trial_ends) : '—'}</td>
+      <td style="font-size:11px;">${bizLabel(p.business_type)}</td>
+      <td>${p.phone ? '<span class="badge-yes">✓</span>' : '<span class="badge-no">—</span>'}</td>
+      <td>${p.google_maps_url ? '<span class="badge-yes">✓</span>' : '<span class="badge-no">—</span>'}</td>
+      <td style="font-size:11px;">${p.last_sign_in_at ? fmtDate(p.last_sign_in_at) : '—'}</td>
+      <td style="font-size:11px;">${fmtDate(p.created_at)}</td>
+      <td>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <select class="plan-select" id="ps_${p.id}" onchange="onPlanChange('${p.id}')">
+            <option value="trial"          ${(p.plan||'trial')==='trial'           ? 'selected':''}>تجريبي</option>
+            <option value="lifetime"       ${p.plan==='lifetime'        ? 'selected':''}>مدى الحياة</option>
+            <option value="lifetime_friend"${p.plan==='lifetime_friend' ? 'selected':''}>صديق</option>
+            <option value="suspended"      ${p.plan==='suspended'       ? 'selected':''}>موقوف</option>
+          </select>
+          <button class="btn-save" id="sb_${p.id}" onclick="savePlan('${p.id}')">حفظ</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function onPlanChange(userId) {
+  document.getElementById('sb_' + userId).style.display = 'inline-block';
+}
+
+// ══ FILTER ══
+function filterTable() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const planF  = document.getElementById('planFilter').value;
+  const googleF= document.getElementById('googleFilter').value;
+
+  const filtered = allProfiles.filter(p => {
+    const name  = (p.full_name || p.business_name || '').toLowerCase();
+    const email = (p.email || '').toLowerCase();
+    const matchSearch = !search || name.includes(search) || email.includes(search);
+    const matchPlan   = !planF  || p.plan === planF || (!p.plan && planF === 'trial');
+    const matchGoogle = !googleF
+      || (googleF === 'connected'     &&  p.google_maps_url)
+      || (googleF === 'not_connected' && !p.google_maps_url);
+    return matchSearch && matchPlan && matchGoogle;
+  });
+
+  renderTable(filtered);
+}
+
+// ══ SAVE PLAN ══
+async function savePlan(userId) {
+  const btn  = document.getElementById('sb_' + userId);
+  const sel  = document.getElementById('ps_' + userId);
+  const plan = sel.value;
+
+  btn.disabled = true;
+  btn.textContent = '...';
+
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-data`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + session.access_token
+      },
+      body: JSON.stringify({ action: 'update_plan', userId, plan })
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.error || 'فشل التحديث');
+
+    // Update local data
+    const p = allProfiles.find(x => x.id === userId);
+    if (p) p.plan = plan;
+
+    btn.style.display = 'none';
+    btn.textContent = 'حفظ';
+    btn.disabled = false;
+    showToast('تم تحديث الخطة بنجاح ✓', 'success');
+    updateStats();
+  } catch (e) {
+    btn.textContent = 'حفظ';
+    btn.disabled = false;
+    showToast('خطأ: ' + e.message, 'error');
+  }
+}
+
+// ══ UPDATE STATS ══
+function updateStats(stats) {
+  if (stats) {
+    document.getElementById('statTotal').textContent       = stats.total;
+    document.getElementById('statTrialActive').textContent = stats.trial_active;
+    document.getElementById('statTrialExpired').textContent= stats.trial_expired;
+    document.getElementById('statLifetime').textContent    = stats.lifetime;
+    document.getElementById('statFriend').textContent      = stats.lifetime_friend;
+    document.getElementById('statNewMonth').textContent    = stats.new_this_month;
+    document.getElementById('statGoogle').textContent      = stats.google_connected;
+  }
+}
+
+// ══ LOAD DATA ══
+async function loadData() {
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if (!session) { window.location.href = 'signup.html'; return; }
+
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-data`, {
+      headers: { 'Authorization': 'Bearer ' + session.access_token }
+    });
+
+    if (res.status === 403) {
+      document.getElementById('accessDenied').classList.add('show');
+      return;
+    }
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'فشل التحميل');
+
+    allProfiles = data.profiles || [];
+    updateStats(data.stats);
+    renderTable(allProfiles);
+
+    document.getElementById('tableLoading').style.display = 'none';
+
+  } catch (e) {
+    document.getElementById('tableLoading').style.display = 'none';
+    const eb = document.getElementById('errorBox');
+    eb.textContent = 'خطأ في تحميل البيانات: ' + e.message;
+    eb.classList.add('show');
+  }
+}
+
+// ══ LOGOUT ══
+async function handleLogout() {
+  await sb.auth.signOut();
+  window.location.href = 'signup.html';
+}
+
+// ══ INIT ══
+sb.auth.getSession().then(({ data: { session } }) => {
+  if (!session) {
+    window.location.href = 'signup.html';
+    return;
+  }
+  const user = session.user;
+  document.getElementById('ownerName').textContent = user.user_metadata?.full_name || user.email || 'المالك';
+  document.getElementById('mainContent').style.display = 'block';
+  loadData();
+});
+</script>
+</body>
+</html>

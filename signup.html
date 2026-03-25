@@ -504,8 +504,9 @@ async function handleSignup() {
       });
     }
 
-    // Send welcome email via Supabase
-    await sendWelcomeEmail(email, name);
+    // Notify owner via WhatsApp
+    notifyOwner({ name, email, business_type: business, phone }).catch(() => {});
+
 
     showSuccessState(
       '🎉 تم إنشاء حسابك!',
@@ -591,6 +592,23 @@ async function handleForgotPassword() {
   } catch(err) {
     showError('تعذر إرسال البريد. تحقق من العنوان وحاول مجدداً.');
   }
+}
+
+// ══════════════════════════════════
+//  NOTIFY OWNER ON NEW SIGNUP
+// ══════════════════════════════════
+async function notifyOwner({ name, email, business_type, phone }) {
+  const SUPABASE_URL = 'https://xdmbwtnpadjeinclmffh.supabase.co';
+  try {
+    await fetch(`${SUPABASE_URL}/functions/v1/notify-owner`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event: 'new_user',
+        data: { name, email, business_type, phone }
+      })
+    });
+  } catch (_) { /* silent — don't block signup */ }
 }
 
 // ══════════════════════════════════
