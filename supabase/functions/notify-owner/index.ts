@@ -62,6 +62,15 @@ serve(async (req) => {
         `💬 الرسالة: ${msg || 'لا توجد رسالة'}\n` +
         `📱 هاتف العميل: ${cPhone || 'لم يُشارك'}\n\n` +
         `⏰ ${now}`;
+    } else if (event === 'system_alert') {
+      const { service, issue, details } = data;
+      message =
+        `🚨 *تنبيه نظام 5tars*\n\n` +
+        `⚠️ الخدمة: ${service || 'غير محدد'}\n` +
+        `❌ المشكلة: ${issue || 'غير محدد'}\n` +
+        `📝 التفاصيل: ${details || '—'}\n\n` +
+        `⏰ ${now}\n` +
+        `🔗 تحقق: https://supabase.com/dashboard/project/xdmbwtnpadjeinclmffh`;
     } else {
       return new Response(JSON.stringify({ error: `Unknown event: ${event}` }), {
         status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' }

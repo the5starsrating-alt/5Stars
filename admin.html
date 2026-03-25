@@ -505,6 +505,39 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
     </div>
   </div>
 
+  <!-- REVENUE SECTION -->
+  <div class="section-head" style="margin-top:8px;">
+    <div class="section-title">💵 الإيرادات</div>
+  </div>
+  <div style="background:linear-gradient(135deg,#0B1F4E 0%,#1A3A8F 60%,#2251D3 100%);border-radius:20px;padding:28px;margin-bottom:24px;position:relative;overflow:hidden;">
+    <div style="position:absolute;top:-40px;left:-40px;width:160px;height:160px;background:rgba(245,180,41,0.12);border-radius:50%;pointer-events:none;"></div>
+    <div style="position:absolute;bottom:-30px;right:-30px;width:120px;height:120px;background:rgba(34,81,211,0.3);border-radius:50%;pointer-events:none;"></div>
+    <div style="position:relative;z-index:1;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;">
+        <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:18px;">
+          <div style="font-size:11px;color:rgba(255,255,255,0.6);font-weight:700;letter-spacing:1px;margin-bottom:8px;">المشتركون الفعليون</div>
+          <div style="font-family:'Tajawal',sans-serif;font-size:36px;font-weight:900;color:#F5B429;line-height:1;" id="revTotalPaid">—</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px;">lifetime + صديق</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:18px;">
+          <div style="font-size:11px;color:rgba(255,255,255,0.6);font-weight:700;letter-spacing:1px;margin-bottom:8px;">إجمالي الإيرادات</div>
+          <div style="font-family:'Tajawal',sans-serif;font-size:36px;font-weight:900;color:#4ade80;line-height:1;" id="revTotalAmount">—</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px;">ر.س (مدى الحياة × 997)</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:18px;">
+          <div style="font-size:11px;color:rgba(255,255,255,0.6);font-weight:700;letter-spacing:1px;margin-bottom:8px;">فرص الترقية</div>
+          <div style="font-family:'Tajawal',sans-serif;font-size:36px;font-weight:900;color:#fb923c;line-height:1;" id="revExpiringSoon">—</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px;">تجارب تنتهي خلال 7 أيام</div>
+        </div>
+        <div style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:18px;">
+          <div style="font-size:11px;color:rgba(255,255,255,0.6);font-weight:700;letter-spacing:1px;margin-bottom:8px;">نمو هذا الشهر</div>
+          <div style="font-family:'Tajawal',sans-serif;font-size:36px;font-weight:900;color:#a78bfa;line-height:1;" id="revGrowth">—</div>
+          <div style="font-size:11px;color:rgba(255,255,255,0.5);margin-top:4px;">نسبة النمو الشهري</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- COST TRACKER -->
   <div class="section-head">
     <div class="section-title">💰 التكاليف والاشتراكات</div>
@@ -818,6 +851,14 @@ function updateStats(stats) {
     document.getElementById('statFriend').textContent      = stats.lifetime_friend;
     document.getElementById('statNewMonth').textContent    = stats.new_this_month;
     document.getElementById('statGoogle').textContent      = stats.google_connected;
+
+    // Revenue section
+    const totalPaid = (stats.paid_lifetime || 0) + (stats.paid_friend || 0);
+    document.getElementById('revTotalPaid').textContent    = totalPaid;
+    document.getElementById('revTotalAmount').textContent  = (stats.monthly_revenue_est || 0).toLocaleString('ar-SA');
+    document.getElementById('revExpiringSoon').textContent = stats.trial_expiring_soon || 0;
+    const growth = stats.growth_rate || 0;
+    document.getElementById('revGrowth').textContent       = (growth >= 0 ? '+' : '') + growth + '%';
   }
 }
 
@@ -1018,6 +1059,20 @@ function renderSubs() {
   totalEl.textContent = Math.round(monthlyTotal).toLocaleString();
 }
 
+let _apiAlertSentThisSession = false;
+
+async function sendSystemAlert(service, issue, details) {
+  if (_apiAlertSentThisSession) return;
+  _apiAlertSentThisSession = true;
+  try {
+    await fetch(`${SUPABASE_URL}/functions/v1/notify-owner`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ event: 'system_alert', data: { service, issue, details } })
+    });
+  } catch(_) {}
+}
+
 async function checkApiStatus() {
   const chip = document.getElementById('chipAnthropic');
   try {
@@ -1032,16 +1087,23 @@ async function checkApiStatus() {
     if (d.success) {
       chip.textContent = '✅ Anthropic نشط';
       chip.className = 'api-chip ok';
-    } else if (d.error?.error?.message?.includes('credit')) {
+    } else if (d.error?.error?.message?.includes('credit') || d.error?.error?.type === 'insufficient_quota') {
       chip.textContent = '⚠️ Anthropic — رصيد منخفض';
       chip.className = 'api-chip warn';
+      sendSystemAlert('Anthropic API', 'رصيد منخفض أو منتهي', d.error?.error?.message || 'insufficient_quota');
+    } else if (d.error?.error?.message?.includes('invalid') || d.error?.error?.type === 'authentication_error') {
+      chip.textContent = '❌ Anthropic — مفتاح غير صالح';
+      chip.className = 'api-chip err';
+      sendSystemAlert('Anthropic API', 'مفتاح API غير صالح', d.error?.error?.message || 'authentication_error');
     } else {
       chip.textContent = '❌ Anthropic — خطأ';
       chip.className = 'api-chip err';
+      sendSystemAlert('Anthropic API', 'خطأ غير معروف', JSON.stringify(d.error)?.slice(0, 200));
     }
   } catch(e) {
     chip.textContent = '❌ Anthropic — لا يستجيب';
     chip.className = 'api-chip err';
+    sendSystemAlert('Anthropic API', 'لا يستجيب', e.message || 'network error');
   }
 }
 

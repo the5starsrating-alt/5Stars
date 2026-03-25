@@ -111,14 +111,29 @@ serve(async (req) => {
     // 7. Compute summary stats
     const now = new Date();
     const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+    const twoMonthsAgo = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
+    const sevenDaysFromNow = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+
+    const lifetimeCount = enriched.filter(p => p.plan === 'lifetime').length;
+    const friendCount   = enriched.filter(p => p.plan === 'lifetime_friend').length;
+    const newThisMonth  = enriched.filter(p => p.created_at && new Date(p.created_at) > monthAgo).length;
+    const newLastMonth  = enriched.filter(p => p.created_at && new Date(p.created_at) > twoMonthsAgo && new Date(p.created_at) <= monthAgo).length;
+    const growthRate    = newLastMonth > 0 ? Math.round(((newThisMonth - newLastMonth) / newLastMonth) * 100) : 0;
+
     const stats = {
       total: enriched.length,
       trial_active: enriched.filter(p => p.plan === 'trial' && p.trial_ends && new Date(p.trial_ends) > now).length,
       trial_expired: enriched.filter(p => p.plan === 'trial' && p.trial_ends && new Date(p.trial_ends) <= now).length,
-      lifetime: enriched.filter(p => p.plan === 'lifetime').length,
-      lifetime_friend: enriched.filter(p => p.plan === 'lifetime_friend').length,
-      new_this_month: enriched.filter(p => p.created_at && new Date(p.created_at) > monthAgo).length,
+      lifetime: lifetimeCount,
+      lifetime_friend: friendCount,
+      new_this_month: newThisMonth,
       google_connected: enriched.filter(p => !!p.google_maps_url).length,
+      // Revenue stats
+      paid_lifetime: lifetimeCount,
+      paid_friend: friendCount,
+      monthly_revenue_est: lifetimeCount * 997,
+      trial_expiring_soon: enriched.filter(p => p.plan === 'trial' && p.trial_ends && new Date(p.trial_ends) > now && new Date(p.trial_ends) <= sevenDaysFromNow).length,
+      growth_rate: growthRate,
     };
 
     return new Response(JSON.stringify({ profiles: enriched, stats }), {

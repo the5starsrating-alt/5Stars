@@ -281,8 +281,10 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
         <h2 class="section-title" style="color:#fff;">اعرف وين <em>تقف سمعتك</em> الحين</h2>
         <p>أضف رابط مشروعك على Google Maps وشوف تقرير سمعتك — مجاناً وبدون تسجيل.</p>
         <div class="diagnosis-form">
+          <input class="diagnosis-input" id="diagEmail" type="email" placeholder="بريدك الإلكتروني (مطلوب)" required>
           <input class="diagnosis-input" id="diagMapsUrl" type="url" placeholder="https://maps.app.goo.gl/...  رابط مشروعك على Google Maps">
           <button class="btn-diagnosis" onclick="runDiagnosis()">🔍 شخّص مشروعي الآن — مجاناً</button>
+          <div id="diagErrorMsg" style="display:none;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;border-radius:10px;padding:12px 16px;font-size:13px;text-align:center;line-height:1.6;"></div>
           <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:8px;text-align:center;">📌 افتح Google Maps ← ابحث عن مشروعك ← اضغط "مشاركة" ← انسخ الرابط</div>
         </div>
       </div>
@@ -609,22 +611,43 @@ const obs=new IntersectionObserver((e)=>{e.forEach(i=>{if(i.isIntersecting)i.tar
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 window.addEventListener('scroll',()=>{document.querySelector('nav').classList.toggle('scrolled',window.scrollY>80);});
 
-async function callClaude(prompt, model) {
+async function callClaude(prompt, model, extraBody) {
+  const body = { prompt, model: model || 'claude-haiku-4-5-20251001', ...extraBody };
   const res = await fetch('https://xdmbwtnpadjeinclmffh.supabase.co/functions/v1/claude-proxy', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkbWJ3dG5wYWRqZWluY2xtZmZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NDI1OTksImV4cCI6MjA4ODQxODU5OX0.fmWmQXlm0eHnj8I5PFxakW7xh13nnMQBN1yU6-z2aFw'
     },
-    body: JSON.stringify({ prompt, model: model || 'claude-haiku-4-5-20251001' })
+    body: JSON.stringify(body)
   });
+  if (res.status === 429) {
+    const data = await res.json();
+    const err = new Error(data.error || 'rate_limited');
+    err.rateLimited = true;
+    throw err;
+  }
   const data = await res.json();
-  return data.text?.trim() || '';
+  return { text: data.text?.trim() || '', ok: res.ok, status: res.status };
 }
 
 async function runDiagnosis(){
+  const email   = document.getElementById('diagEmail')?.value.trim() || '';
   const mapsUrl = document.getElementById('diagMapsUrl')?.value.trim() || '';
-  if(!mapsUrl){ alert('من فضلك أدخل رابط مشروعك على Google Maps'); return; }
+  const errMsg  = document.getElementById('diagErrorMsg');
+
+  if (errMsg) errMsg.style.display = 'none';
+
+  if (!email) {
+    if (errMsg) { errMsg.textContent = 'من فضلك أدخل بريدك الإلكتروني أولاً.'; errMsg.style.display = 'block'; }
+    else alert('من فضلك أدخل بريدك الإلكتروني أولاً');
+    return;
+  }
+  if (!mapsUrl) {
+    if (errMsg) { errMsg.textContent = 'من فضلك أدخل رابط مشروعك على Google Maps'; errMsg.style.display = 'block'; }
+    else alert('من فضلك أدخل رابط مشروعك على Google Maps');
+    return;
+  }
 
   const btn = document.querySelector('.btn-diagnosis');
   btn.textContent = '⏳ جاري التحليل بالذكاء الاصطناعي...';
@@ -645,10 +668,10 @@ async function runDiagnosis(){
 رد فقط بـ JSON بهذا الشكل بدون أي نص آخر:
 {"score":65,"rating":"3.8","replyRate":25,"visibility":40,"issues":["مشكلة 1","مشكلة 2","مشكلة 3"],"recommendations":["توصية 1","توصية 2","توصية 3"]}`;
 
-    const responseText = await callClaude(prompt);
+    const result = await callClaude(prompt, null, { type: 'diagnosis', email, url: mapsUrl });
     let analysis;
     try {
-      const text = responseText || '{}';
+      const text = result.text || '{}';
       const clean = text.replace(/```json|```/g, '').trim();
       analysis = JSON.parse(clean);
     } catch(e) {
@@ -679,7 +702,20 @@ async function runDiagnosis(){
       <div style="font-size:10px;color:rgba(255,255,255,0.35);margin:8px 0;">* التحليل تقديري بناءً على متوسطات السوق السعودي</div>
       <a href="signup.html" style="display:block;text-align:center;background:linear-gradient(135deg,#F5B429,#D4920A);color:#0B1F4E;font-weight:900;font-size:13px;padding:14px;border-radius:12px;text-decoration:none;margin-top:12px;">ابدأ تحسين سمعتك مجاناً 14 يوم ←</a>`;
 
-  } catch(_) {
+  } catch(err) {
+    // Handle rate limiting (429)
+    if (err.rateLimited) {
+      const errMsg = document.getElementById('diagErrorMsg');
+      if (errMsg) {
+        errMsg.textContent = err.message;
+        errMsg.style.display = 'block';
+      } else {
+        alert(err.message);
+      }
+      btn.textContent = '🔍 شخّص مشروعي الآن — مجاناً';
+      btn.disabled = false;
+      return;
+    }
     // Fallback to smart estimates if API fails
     const score = Math.floor(Math.random()*25)+45;
     const rating = (Math.random()*1.2+3.3).toFixed(1);

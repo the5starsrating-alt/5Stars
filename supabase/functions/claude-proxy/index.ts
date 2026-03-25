@@ -44,7 +44,35 @@ serve(async (req) => {
     }
     // ─────────────────────────────────────────────────────────────────────────
 
-    const { prompt, model = 'claude-haiku-4-5-20251001', max_tokens = 400 } = await req.json();
+    const body = await req.json();
+    const { prompt, model = 'claude-haiku-4-5-20251001', max_tokens = 400, type, email, url: diagUrl } = body;
+
+    // ── DIAGNOSIS RATE LIMITING ──
+    if (type === 'diagnosis' && email) {
+      const supabaseUrl    = Deno.env.get('SUPABASE_URL')!;
+      const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const admin = createClient(supabaseUrl, serviceRoleKey);
+
+      // Check if this email has used diagnosis in last 30 days
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+      const { data: existing } = await admin
+        .from('diagnosis_logs')
+        .select('id, created_at')
+        .eq('email', email.toLowerCase().trim())
+        .gte('created_at', thirtyDaysAgo)
+        .limit(1);
+
+      if (existing && existing.length > 0) {
+        return new Response(JSON.stringify({
+          error: 'لقد استخدمت أداة التشخيص مؤخراً. يمكنك إعادة استخدامها بعد 30 يوماً من تاريخ آخر استخدام.',
+          rate_limited: true
+        }), {
+          status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+
+      // Will log after successful call (see below)
+    }
 
     if (!prompt) {
       return new Response(JSON.stringify({ error: 'prompt is required' }), {
@@ -85,6 +113,20 @@ serve(async (req) => {
     }
 
     const text = data.content?.[0]?.text ?? '';
+
+    // ── LOG DIAGNOSIS USAGE after successful call ──
+    if (type === 'diagnosis' && email) {
+      const supabaseUrl    = Deno.env.get('SUPABASE_URL')!;
+      const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const admin = createClient(supabaseUrl, serviceRoleKey);
+      const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || '';
+      await admin.from('diagnosis_logs').insert({
+        email: email.toLowerCase().trim(),
+        ip,
+        url: diagUrl || ''
+      }).catch(() => {});
+    }
+
     return new Response(JSON.stringify({ success: true, text }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
