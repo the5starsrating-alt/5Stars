@@ -51,41 +51,46 @@ serve(async (req) => {
       });
     }
 
-    const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID') || '';
-    const authToken  = Deno.env.get('TWILIO_AUTH_TOKEN') || '';
-    const from       = Deno.env.get('TWILIO_FROM') || '';
+    // UltraMsg API
+    const instanceId = Deno.env.get('ULTRAMSG_INSTANCE_ID') || '';
+    const token = Deno.env.get('ULTRAMSG_TOKEN') || '';
 
-    let phone = to.replace(/[^0-9+]/g, '');
-    if (phone.startsWith('00')) phone = '+' + phone.slice(2);
-    else if (phone.startsWith('0')) phone = '+966' + phone.slice(1);
-    else if (!phone.startsWith('+')) phone = '+966' + phone;
+    if (!instanceId || !token) {
+      console.error('UltraMsg credentials not configured');
+      return new Response(JSON.stringify({ error: 'WhatsApp not configured' }), {
+        status: 503,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
 
-    const body = new URLSearchParams({
-      To:   'whatsapp:' + phone,
-      From: from,
-      Body: message
+    // Format phone number (ensure it starts with country code)
+    let phone = to.replace(/\D/g, '');
+    if (phone.startsWith('05')) phone = '966' + phone.slice(1);
+    if (!phone.startsWith('966') && !phone.startsWith('+')) phone = '966' + phone;
+    phone = phone.replace('+', '');
+
+    const formData = new URLSearchParams();
+    formData.append('token', token);
+    formData.append('to', phone);
+    formData.append('body', message);
+
+    const response = await fetch(`https://api.ultramsg.com/${instanceId}/messages/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formData.toString()
     });
 
-    const res = await fetch(
-      `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Basic ' + btoa(accountSid + ':' + authToken),
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: body.toString()
-      }
-    );
-
-    const data = await res.json();
-    return new Response(
-      JSON.stringify(data.sid ? { success: true, sid: data.sid } : { success: false, error: data }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    const result = await response.json();
+    if (result.sent === true || result.id) {
+      return new Response(JSON.stringify({ success: true, id: result.id }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    } else {
+      throw new Error(result.error || 'Failed to send message');
+    }
 
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), {
+    return new Response(JSON.stringify({ error: (e as Error).message }), {
       status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }

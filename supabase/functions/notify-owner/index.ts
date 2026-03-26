@@ -13,9 +13,8 @@ serve(async (req) => {
   try {
     const { event, data } = await req.json();
 
-    const accountSid = Deno.env.get('TWILIO_ACCOUNT_SID') || '';
-    const authToken  = Deno.env.get('TWILIO_AUTH_TOKEN') || '';
-    const from       = Deno.env.get('TWILIO_FROM') || '';
+    const instanceId = Deno.env.get('ULTRAMSG_INSTANCE_ID') || '';
+    const token      = Deno.env.get('ULTRAMSG_TOKEN') || '';
     const ownerPhone = Deno.env.get('OWNER_PHONE') || '';
 
     if (!ownerPhone) {
@@ -28,19 +27,19 @@ serve(async (req) => {
 
     let message = '';
 
-    if (event === 'new_user') {
-      const { name, email, business_type, phone } = data;
+    if (event === 'new_user' || event === 'new_subscriber') {
+      const { name, email, business_type, phone, plan } = data;
       const biz: Record<string, string> = {
         restaurant: 'مطعم', cafe: 'كافيه', salon: 'صالون',
         clinic: 'عيادة', retail: 'متجر تجزئة', other: 'أخرى'
       };
       message =
-        `🎉 *مستخدم جديد في 5tars!*\n\n` +
+        `🎉 مشترك جديد!\n` +
         `👤 الاسم: ${name || 'غير محدد'}\n` +
-        `📧 البريد: ${email || 'غير محدد'}\n` +
-        `🏢 النشاط: ${biz[business_type] || business_type || 'غير محدد'}\n` +
-        `📱 الواتساب: ${phone || 'لم يُدخل'}\n\n` +
-        `⏰ ${now}`;
+        `📧 الإيميل: ${email || 'غير محدد'}\n` +
+        `📦 الباقة: ${plan || business_type ? (biz[business_type] || business_type || 'trial') : 'trial'}\n` +
+        (phone ? `📱 الواتساب: ${phone}\n` : '') +
+        `\n⏰ ${now}`;
     } else if (event === 'plan_upgrade') {
       const { name, email, plan } = data;
       const planAr: Record<string, string> = {
@@ -53,23 +52,23 @@ serve(async (req) => {
         `📧 ${email || ''}\n` +
         `📦 الخطة الجديدة: ${planAr[plan] || plan}\n\n` +
         `⏰ ${now}`;
-    } else if (event === 'new_complaint') {
+    } else if (event === 'new_complaint' || event === 'new_review') {
       const { business, rating, message: msg, phone: cPhone } = data;
       message =
-        `⚠️ *شكوى جديدة عبر 5tars!*\n\n` +
+        `⭐ تقييم جديد!\n` +
         `🏢 المشروع: ${business || 'غير معروف'}\n` +
-        `⭐ التقييم: ${rating || '?'} نجوم\n` +
-        `💬 الرسالة: ${msg || 'لا توجد رسالة'}\n` +
-        `📱 هاتف العميل: ${cPhone || 'لم يُشارك'}\n\n` +
-        `⏰ ${now}`;
-    } else if (event === 'system_alert') {
-      const { service, issue, details } = data;
+        `⭐ النجوم: ${rating || '?'}\n` +
+        `💬 التعليق: ${msg || 'لا توجد رسالة'}\n` +
+        (cPhone ? `📱 هاتف العميل: ${cPhone}\n` : '') +
+        `\n⏰ ${now}`;
+    } else if (event === 'system_error' || event === 'system_alert') {
+      const { service, issue, details, key, error: errMsg } = data;
       message =
-        `🚨 *تنبيه نظام 5tars*\n\n` +
-        `⚠️ الخدمة: ${service || 'غير محدد'}\n` +
-        `❌ المشكلة: ${issue || 'غير محدد'}\n` +
-        `📝 التفاصيل: ${details || '—'}\n\n` +
-        `⏰ ${now}\n` +
+        `⚠️ خطأ في النظام!\n` +
+        `🔑 المفتاح: ${key || service || 'غير محدد'}\n` +
+        `❌ الخطأ: ${errMsg || issue || 'غير محدد'}\n` +
+        (details ? `📝 التفاصيل: ${details}\n` : '') +
+        `\n⏰ ${now}\n` +
         `🔗 تحقق: https://supabase.com/dashboard/project/xdmbwtnpadjeinclmffh`;
     } else {
       return new Response(JSON.stringify({ error: `Unknown event: ${event}` }), {
@@ -77,38 +76,44 @@ serve(async (req) => {
       });
     }
 
-    // Format Saudi phone
-    let phone = ownerPhone.replace(/[^0-9+]/g, '');
-    if (phone.startsWith('00')) phone = '+' + phone.slice(2);
-    else if (phone.startsWith('0')) phone = '+966' + phone.slice(1);
-    else if (!phone.startsWith('+')) phone = '+966' + phone;
+    if (!instanceId || !token) {
+      console.error('UltraMsg credentials not configured');
+      // Log the message but don't fail hard — owner should still get notified once configured
+      console.log('[notify-owner] Message would have been sent:', message);
+      return new Response(JSON.stringify({ error: 'WhatsApp not configured', message }), {
+        status: 503,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    }
 
-    const body = new URLSearchParams({
-      To:   'whatsapp:' + phone,
-      From: from,
-      Body: message
+    // Format Saudi phone
+    let phone = ownerPhone.replace(/\D/g, '');
+    if (phone.startsWith('05')) phone = '966' + phone.slice(1);
+    if (!phone.startsWith('966') && !phone.startsWith('+')) phone = '966' + phone;
+    phone = phone.replace('+', '');
+
+    const formData = new URLSearchParams();
+    formData.append('token', token);
+    formData.append('to', phone);
+    formData.append('body', message);
+
+    const res = await fetch(`https://api.ultramsg.com/${instanceId}/messages/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formData.toString()
     });
 
-    const res = await fetch(
-      `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Basic ' + btoa(accountSid + ':' + authToken),
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: body.toString()
-      }
-    );
-
     const result = await res.json();
-    return new Response(
-      JSON.stringify(result.sid ? { success: true, sid: result.sid } : { success: false, error: result }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    if (result.sent === true || result.id) {
+      return new Response(JSON.stringify({ success: true, id: result.id }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      });
+    } else {
+      throw new Error(result.error || 'Failed to send message');
+    }
 
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), {
+    return new Response(JSON.stringify({ error: (e as Error).message }), {
       status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }

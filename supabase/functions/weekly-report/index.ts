@@ -2,9 +2,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
 // Weekly Report Function
-// Triggered weekly via cron (UltraMsg integration to be configured)
-// Prepares weekly summaries for all active users and logs them
-// When UltraMsg is connected, will send WhatsApp messages automatically
+// Triggered weekly via cron — sends WhatsApp reports to all active users via UltraMsg
 
 const ALLOWED_ORIGINS = [
   'https://www.the5starsrating.com',
@@ -58,6 +56,31 @@ function buildReportMessage(profile: {
 5tars — منصة التقييمات الذكية`;
 }
 
+async function sendWhatsApp(instanceId: string, token: string, to: string, message: string): Promise<{ success: boolean; id?: string; error?: string }> {
+  // Format phone number
+  let phone = to.replace(/\D/g, '');
+  if (phone.startsWith('05')) phone = '966' + phone.slice(1);
+  if (!phone.startsWith('966') && !phone.startsWith('+')) phone = '966' + phone;
+  phone = phone.replace('+', '');
+
+  const formData = new URLSearchParams();
+  formData.append('token', token);
+  formData.append('to', phone);
+  formData.append('body', message);
+
+  const res = await fetch(`https://api.ultramsg.com/${instanceId}/messages/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: formData.toString()
+  });
+
+  const result = await res.json();
+  if (result.sent === true || result.id) {
+    return { success: true, id: result.id };
+  }
+  return { success: false, error: result.error || 'Failed to send' };
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: getCorsHeaders(req) });
@@ -65,6 +88,8 @@ serve(async (req) => {
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
   const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+  const instanceId = Deno.env.get('ULTRAMSG_INSTANCE_ID') || '';
+  const token = Deno.env.get('ULTRAMSG_TOKEN') || '';
 
   try {
     const admin = createClient(supabaseUrl, serviceRoleKey);
@@ -89,7 +114,10 @@ serve(async (req) => {
       phone: string;
       message: string;
       sent: boolean;
+      sendError?: string;
     }> = [];
+
+    const ultraMsgReady = !!(instanceId && token);
 
     for (const profile of (profiles || [])) {
       if (!profile.phone) continue;
@@ -107,52 +135,57 @@ serve(async (req) => {
       const message = buildReportMessage(reportData);
 
       console.log(`[weekly-report] Preparing report for user ${profile.id} (${profile.full_name})`);
-      console.log(`[weekly-report] Phone: ${profile.phone}`);
-      console.log(`[weekly-report] Message:\n${message}`);
 
-      // TODO: Send via UltraMsg when configured
-      // const ultraMsgToken = Deno.env.get('ULTRAMSG_TOKEN');
-      // const ultraMsgInstance = Deno.env.get('ULTRAMSG_INSTANCE');
-      // if (ultraMsgToken && ultraMsgInstance) {
-      //   const res = await fetch(`https://api.ultramsg.com/${ultraMsgInstance}/messages/chat`, {
-      //     method: 'POST',
-      //     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      //     body: new URLSearchParams({
-      //       token: ultraMsgToken,
-      //       to: profile.phone,
-      //       body: message
-      //     })
-      //   });
-      //   const data = await res.json();
-      //   sent = data.sent === 'true';
-      // }
+      let sent = false;
+      let sendError: string | undefined;
+
+      if (ultraMsgReady) {
+        try {
+          const sendResult = await sendWhatsApp(instanceId, token, profile.phone, message);
+          sent = sendResult.success;
+          if (!sendResult.success) {
+            sendError = sendResult.error;
+            console.error(`[weekly-report] Failed to send to ${profile.id}: ${sendError}`);
+          }
+        } catch (sendErr) {
+          sendError = (sendErr as Error).message;
+          console.error(`[weekly-report] Error sending to ${profile.id}: ${sendError}`);
+        }
+      } else {
+        console.log(`[weekly-report] UltraMsg not configured — skipping send for ${profile.id}`);
+        console.log(`[weekly-report] Message:\n${message}`);
+      }
 
       reports.push({
         userId: profile.id,
         bizName: profile.full_name || 'N/A',
         phone: profile.phone,
         message,
-        sent: false // will be true when UltraMsg is connected
+        sent,
+        ...(sendError ? { sendError } : {})
       });
     }
 
-    console.log(`[weekly-report] Processed ${reports.length} reports`);
+    console.log(`[weekly-report] Processed ${reports.length} reports, sent ${reports.filter(r => r.sent).length}`);
 
     return new Response(JSON.stringify({
       success: true,
       processed: reports.length,
+      sent: reports.filter(r => r.sent).length,
+      ultramsg_configured: ultraMsgReady,
       reports: reports.map(r => ({
         userId: r.userId,
         bizName: r.bizName,
-        sent: r.sent
+        sent: r.sent,
+        ...(r.sendError ? { error: r.sendError } : {})
       }))
     }), {
       headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }
     });
 
   } catch (e) {
-    console.error('[weekly-report] Error:', e.message);
-    return new Response(JSON.stringify({ error: e.message }), {
+    console.error('[weekly-report] Error:', (e as Error).message);
+    return new Response(JSON.stringify({ error: (e as Error).message }), {
       status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }
     });
   }

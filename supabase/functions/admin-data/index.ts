@@ -112,26 +112,45 @@ serve(async (req) => {
     const now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
 
-    const { data: usageData } = await admin
-      .from('api_usage_logs')
-      .select('cost_usd, created_at, input_tokens, output_tokens')
-      .gte('created_at', monthStart);
-
-    const monthlyCost   = (usageData || []).reduce((sum, r) => sum + (Number(r.cost_usd) || 0), 0);
-    const monthlyTokens = (usageData || []).reduce((sum, r) => sum + (r.input_tokens || 0) + (r.output_tokens || 0), 0);
-
-    // Cost per day — last 7 days
+    // Cost last 7 days skeleton
     const dailyCosts: Record<string, number> = {};
     for (let i = 6; i >= 0; i--) {
       const d = new Date(now);
       d.setDate(d.getDate() - i);
       dailyCosts[d.toISOString().slice(0, 10)] = 0;
     }
-    for (const r of (usageData || [])) {
-      const day = (r.created_at || '').slice(0, 10);
-      if (day in dailyCosts) dailyCosts[day] += Number(r.cost_usd) || 0;
-    }
-    const costLast7Days = Object.entries(dailyCosts).map(([date, cost]) => ({ date, cost_usd: Number(cost.toFixed(6)) }));
+
+    let api_costs = {
+      monthly_usd: '0.0000',
+      monthly_sar: '0.00',
+      monthly_tokens: 0,
+      monthly_calls: 0,
+      cost_last_7_days: Object.entries(dailyCosts).map(([date, cost]) => ({ date, cost_usd: cost })),
+    };
+
+    try {
+      const { data: usageData } = await admin
+        .from('api_usage_logs')
+        .select('cost_usd, created_at, input_tokens, output_tokens')
+        .gte('created_at', monthStart);
+
+      const monthlyCost   = (usageData || []).reduce((sum, r) => sum + (Number(r.cost_usd) || 0), 0);
+      const monthlyTokens = (usageData || []).reduce((sum, r) => sum + (r.input_tokens || 0) + (r.output_tokens || 0), 0);
+
+      for (const r of (usageData || [])) {
+        const day = (r.created_at || '').slice(0, 10);
+        if (day in dailyCosts) dailyCosts[day] += Number(r.cost_usd) || 0;
+      }
+      const costLast7Days = Object.entries(dailyCosts).map(([date, cost]) => ({ date, cost_usd: Number(cost.toFixed(6)) }));
+
+      api_costs = {
+        monthly_usd: monthlyCost.toFixed(4),
+        monthly_sar: (monthlyCost * 3.75).toFixed(2),
+        monthly_tokens: monthlyTokens,
+        monthly_calls: (usageData || []).length,
+        cost_last_7_days: costLast7Days,
+      };
+    } catch(_e) { /* api_usage_logs table might not exist yet */ }
 
     // 8. Compute summary stats
     const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
@@ -160,20 +179,12 @@ serve(async (req) => {
       growth_rate: growthRate,
     };
 
-    const api_costs = {
-      monthly_usd: monthlyCost.toFixed(4),
-      monthly_sar: (monthlyCost * 3.75).toFixed(2),
-      monthly_tokens: monthlyTokens,
-      monthly_calls: (usageData || []).length,
-      cost_last_7_days: costLast7Days,
-    };
-
     return new Response(JSON.stringify({ profiles: enriched, stats, api_costs }), {
       headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }
     });
 
   } catch (e) {
-    return new Response(JSON.stringify({ error: e.message }), {
+    return new Response(JSON.stringify({ error: (e as Error).message }), {
       status: 500, headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' }
     });
   }
