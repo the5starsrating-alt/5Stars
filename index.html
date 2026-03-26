@@ -19,14 +19,16 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="5tars">
 <title>5tars — منصة إدارة تقييمات Google للأعمال السعودية</title>
-<meta name="description" content="5tars — المنصة العربية الأولى لإدارة تقييمات Google بشكل آلي. راقب تقييماتك، ارد عليها بالذكاء الاصطناعي، واجمع المزيد من التقييمات. جرّب مجاناً 14 يوماً.">
+<meta name="description" content="5tars — المنصة العربية الأولى لإدارة تقييمات Google بالذكاء الاصطناعي. ردود تلقائية، تنبيهات واتساب فورية، وحماية من التقييمات السلبية. جرّب 14 يوم مجاناً.">
 <meta property="og:url" content="https://www.the5starsrating.com">
-<link rel="canonical" href="https://www.the5starsrating.com">
-<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+<meta property="og:title" content="5tars — ارفع تقييم مشروعك لـ 5 نجوم آلياً">
+<meta property="og:description" content="منصة إدارة تقييمات Google للأعمال السعودية والخليجية. ذكاء اصطناعي + واتساب + حماية من السلبية.">
 <meta property="og:image" content="https://www.the5starsrating.com/og-image.png">
 <meta property="og:site_name" content="5tars">
 <meta name="twitter:site" content="@5tarsrating">
-<meta name="robots" content="index, follow">
+<meta name="keywords" content="تقييمات Google, إدارة المراجعات, ذكاء اصطناعي, السعودية, مطاعم, صالونات, عيادات">
+<link rel="canonical" href="https://www.the5starsrating.com">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
 <link rel="sitemap" type="application/xml" href="/sitemap.xml">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -213,6 +215,12 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
 </style>
 <!-- Google Analytics - Add GA_MEASUREMENT_ID -->
 <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL = 'https://xdmbwtnpadjeinclmffh.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkbWJ3dG5wYWRqZWluY2xtZmZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NDI1OTksImV4cCI6MjA4ODQxODU5OX0.fmWmQXlm0eHnj8I5PFxakW7xh13nnMQBN1yU6-z2aFw';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+</script>
 </head>
 <body>
 
@@ -260,8 +268,8 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
       </a>
     </div>
     <div class="hero-stats">
-      <div class="hero-stat"><div class="hero-stat-num">0.6+</div><div class="hero-stat-label">متوسط زيادة<br>التقييم خلال شهر</div></div>
-      <div class="hero-stat"><div class="hero-stat-num">×3</div><div class="hero-stat-label">تقييمات جديدة<br>كل شهر</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">+1.2</div><div class="hero-stat-label">نجمة زيادة متوسط<br>التقييم خلال شهر</div></div>
+      <div class="hero-stat"><div class="hero-stat-num">+47</div><div class="hero-stat-label">تقييم جديد<br>كل شهر</div></div>
       <div class="hero-stat"><div class="hero-stat-num">5 دقائق</div><div class="hero-stat-label">وقت الإعداد<br>الكامل</div></div>
       <div class="hero-stat"><div class="hero-stat-num">24/7</div><div class="hero-stat-label">مراقبة آلية<br>مستمرة</div></div>
     </div>
@@ -284,36 +292,48 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
       <div class="diagnosis-text">
         <div class="section-eyebrow" style="background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.9);border-color:rgba(255,255,255,0.2);">🩺 تشخيص مجاني</div>
         <h2 class="section-title" style="color:#fff;">اعرف وين <em>تقف سمعتك</em> الحين</h2>
-        <p>أضف رابط مشروعك على Google Maps وشوف تقرير سمعتك — مجاناً وبدون تسجيل.</p>
-        <div class="diagnosis-form">
-          <input class="diagnosis-input" id="diagEmail" type="email" placeholder="بريدك الإلكتروني (مطلوب)" required>
-          <input class="diagnosis-input" id="diagMapsUrl" type="url" placeholder="https://maps.app.goo.gl/...  رابط مشروعك على Google Maps">
-          <button class="btn-diagnosis" onclick="runDiagnosis()">🔍 شخّص مشروعي الآن — مجاناً</button>
-          <div id="diagErrorMsg" style="display:none;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.4);color:#fca5a5;border-radius:10px;padding:12px 16px;font-size:13px;text-align:center;line-height:1.6;"></div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-top:8px;text-align:center;">📌 افتح Google Maps ← ابحث عن مشروعك ← اضغط "مشاركة" ← انسخ الرابط</div>
+        <p style="color:rgba(255,255,255,0.7);font-size:15px;line-height:1.8;margin-bottom:28px;">سجّل مجاناً واحصل على تقرير سمعة مفصّل لمشروعك خلال ثوانٍ — مدعوم بالذكاء الاصطناعي. يشمل: درجة السمعة، نقاط الضعف، وخطة تحسين فورية.</p>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div style="display:flex;align-items:center;gap:10px;color:rgba(255,255,255,0.8);font-size:14px;"><span style="background:rgba(245,180,41,0.2);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✓</span>درجة السمعة من 100</div>
+          <div style="display:flex;align-items:center;gap:10px;color:rgba(255,255,255,0.8);font-size:14px;"><span style="background:rgba(245,180,41,0.2);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✓</span>تحليل نسبة الرد على التقييمات</div>
+          <div style="display:flex;align-items:center;gap:10px;color:rgba(255,255,255,0.8);font-size:14px;"><span style="background:rgba(245,180,41,0.2);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✓</span>خطة تحسين فورية بالذكاء الاصطناعي</div>
+          <div style="display:flex;align-items:center;gap:10px;color:rgba(255,255,255,0.8);font-size:14px;"><span style="background:rgba(245,180,41,0.2);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">✓</span>مقارنة مع المنافسين في منطقتك</div>
+        </div>
+        <div style="margin-top:32px;">
+          <a href="signup.html" style="display:inline-block;background:linear-gradient(135deg,#F5B429,#D4920A);color:#0B1F4E;padding:16px 36px;border-radius:14px;font-weight:900;text-decoration:none;font-size:16px;box-shadow:0 8px 32px rgba(212,146,10,0.4);transition:transform 0.2s;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='none'">🔍 شخّص مشروعك مجاناً — سجّل الآن</a>
+          <div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:12px;text-align:center;">14 يوم مجاناً · لا بطاقة مطلوبة · فور التسجيل</div>
         </div>
       </div>
-      <div class="diagnosis-result" id="diagResult">
-        <div class="diag-score">
-          <div class="diag-score-num" id="diagScore">؟</div>
-          <div class="diag-score-label">درجة سمعتك من 100</div>
-        </div>
-        <div class="diag-bar">
-          <div class="diag-bar-label"><span>التقييم الحالي</span><span id="diagRating">—</span></div>
-          <div class="diag-bar-track"><div class="diag-bar-fill" id="diagRatingBar" style="width:0%"></div></div>
-        </div>
-        <div class="diag-bar">
-          <div class="diag-bar-label"><span>نسبة الرد على التقييمات</span><span id="diagReply">—</span></div>
-          <div class="diag-bar-track"><div class="diag-bar-fill red" id="diagReplyBar" style="width:0%"></div></div>
-        </div>
-        <div class="diag-bar">
-          <div class="diag-bar-label"><span>الظهور في البحث</span><span id="diagVisibility">—</span></div>
-          <div class="diag-bar-track"><div class="diag-bar-fill green" id="diagVisBar" style="width:0%"></div></div>
-        </div>
-        <div class="diag-items" id="diagItems">
-          <div class="diag-item" style="justify-content:center;padding:20px;">
-            <div style="color:rgba(255,255,255,0.4);font-size:13px;">أضف رابط Google Maps لتشخيص سمعتك 👆</div>
+      <div class="diag-locked-preview">
+        <div class="diag-score-preview" style="filter:blur(4px);pointer-events:none;user-select:none;">
+          <div class="diag-score">
+            <div class="diag-score-num" style="font-family:'Tajawal',sans-serif;font-size:72px;font-weight:900;line-height:1;color:var(--gold-light);">73</div>
+            <div class="diag-score-label" style="font-size:13px;color:rgba(255,255,255,0.6);margin-top:4px;">درجة سمعتك من 100</div>
           </div>
+          <div class="diag-bar" style="margin-bottom:12px;">
+            <div class="diag-bar-label" style="display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:6px;"><span>التقييم الحالي</span><span>3.9 ⭐</span></div>
+            <div class="diag-bar-track"><div class="diag-bar-fill" style="width:78%;"></div></div>
+          </div>
+          <div class="diag-bar" style="margin-bottom:12px;">
+            <div class="diag-bar-label" style="display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:6px;"><span>نسبة الرد على التقييمات</span><span>25%</span></div>
+            <div class="diag-bar-track"><div class="diag-bar-fill red" style="width:25%;"></div></div>
+          </div>
+          <div class="diag-bar" style="margin-bottom:16px;">
+            <div class="diag-bar-label" style="display:flex;justify-content:space-between;font-size:12px;color:rgba(255,255,255,0.7);margin-bottom:6px;"><span>الظهور في البحث</span><span>42%</span></div>
+            <div class="diag-bar-track"><div class="diag-bar-fill green" style="width:42%;"></div></div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.05);border-radius:10px;padding:10px 14px;"><span>🔴</span><span style="font-size:12px;color:#fca5a5;">تقييمك أقل من المتوسط بـ 0.6 نجمة</span></div>
+            <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.05);border-radius:10px;padding:10px 14px;"><span>⚠️</span><span style="font-size:12px;color:#fca5a5;">نسبة ردودك منخفضة — تخسر عملاء</span></div>
+            <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.05);border-radius:10px;padding:10px 14px;"><span>✅</span><span style="font-size:12px;color:#86efac;">يمكن رفع التقييم لـ 4.7 خلال 60 يوم</span></div>
+          </div>
+        </div>
+        <div class="diag-lock-overlay">
+          <div style="font-size:52px;margin-bottom:16px;filter:drop-shadow(0 4px 16px rgba(0,0,0,0.4));">🔒</div>
+          <div style="font-size:22px;font-weight:900;color:#fff;margin-bottom:10px;">شخّص مشروعك مجاناً</div>
+          <div style="color:rgba(255,255,255,0.7);margin-bottom:8px;font-size:14px;line-height:1.6;">سجّل مجاناً لترى تقييمك الحقيقي<br>وخطة تحسينه</div>
+          <div style="color:rgba(255,255,255,0.5);margin-bottom:28px;font-size:13px;">اعرف درجة سمعتك على Google في 30 ثانية</div>
+          <a href="signup.html" style="background:linear-gradient(135deg,#F5B429,#D4920A);color:#0B1F4E;padding:15px 36px;border-radius:12px;font-weight:900;text-decoration:none;font-size:15px;display:inline-block;box-shadow:0 8px 32px rgba(212,146,10,0.5);">🚀 ابدأ مجاناً — 14 يوم تجريبي</a>
         </div>
       </div>
     </div>
@@ -403,67 +423,86 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
     <div class="section-eyebrow">💰 الأسعار</div>
     <h2 class="section-title">شفاف <span>وبدون مفاجآت</span></h2>
     <p class="section-sub">ابدأ مجاناً 14 يوماً. لا بطاقة ائتمان. لا التزام.</p>
+    <div style="text-align:center;margin-bottom:20px;">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#DC2626,#991B1B);color:#fff;font-size:13px;font-weight:800;padding:9px 22px;border-radius:40px;box-shadow:0 4px 16px rgba(220,38,38,0.35);">
+        🔥 الأسعار ترتفع الشهر القادم — اشترك الآن بالسعر الحالي
+      </div>
+      <div style="margin-top:12px;">
+        <span style="background:var(--gold-pale);border:1px solid rgba(212,146,10,0.3);color:var(--gold);font-size:12px;font-weight:800;padding:5px 16px;border-radius:20px;">
+          💡 وفّر 20% مع الدفع السنوي
+        </span>
+      </div>
+    </div>
     <div class="pricing-grid reveal">
       <div class="price-card" style="background:linear-gradient(160deg,#1E4080 0%,#2D6ADF 100%);">
-        <div class="price-plan">🌱 أساسي</div>
+        <div class="price-plan">🌱 الأساسي</div>
         <div class="price-amount"><span class="price-currency">ر.س</span>49</div>
         <div class="price-period">شهرياً · فرع واحد</div>
         <div class="price-divider"></div>
         <ul class="price-features">
-          <li>QR Code ذكي</li>
+          <li>QR Code ذكي ثنائي</li>
           <li>فلتر التقييمات السلبية</li>
           <li>تنبيه واتساب فوري</li>
           <li>تقرير أسبوعي واتساب</li>
           <li>ربط Google Business</li>
-          <li>رد جاهز بموافقتك</li>
-          <li>تشخيص مجاني للسمعة</li>
-          <li style="margin-top:8px;padding-top:8px;border-top:1px dashed rgba(255,255,255,0.15);font-size:11px;color:rgba(255,255,255,0.5);list-style:none;display:flex;align-items:center;gap:6px;"><span>⬆️</span> ترقية للاحترافي: رد ذكي + جاسوس المنافسين</li>
+          <li>1 تشخيص سمعة شهرياً</li>
+          <li class="off">ردود ذكية بالـ AI</li>
+          <li class="off">جاسوس المنافسين</li>
         </ul>
+        <div style="font-size:11px;color:rgba(255,255,255,0.55);text-align:center;margin-bottom:12px;">✓ 47 مشترك نشط</div>
         <button class="price-btn price-btn-white" onclick="window.location.href='signup.html'">ابدأ مجاناً</button>
       </div>
       <div class="price-card popular">
         <div class="popular-badge">⭐ الأكثر طلباً</div>
-        <div class="price-plan">⭐ احترافي</div>
-        <div class="price-amount"><span class="price-currency">ر.س</span>79</div>
+        <div class="price-plan">⭐ الاحترافي</div>
+        <div class="price-amount"><span class="price-currency">ر.س</span>97</div>
         <div class="price-period">شهرياً · فرع واحد</div>
         <div class="price-divider"></div>
         <ul class="price-features">
           <li>كل مميزات الأساسي</li>
-          <li>رد ذكي بالعربي والإنجليزي</li>
-          <li>نصائح الظهور في أول 3 نتائج</li>
-          <li>جاسوس المنافسين</li>
+          <li>ردود ذكية بالعربي والإنجليزي</li>
+          <li>جاسوس المنافسين (10/شهر)</li>
+          <li>تشخيص سمعة غير محدود</li>
+          <li>نصائح الظهور في TOP 3</li>
           <li>بوست ترويجي ذكي</li>
-          <li>موظف رقمي 24/7</li>
-          <li>تشخيص شهري مفصّل</li>
-          <li style="margin-top:8px;padding-top:8px;border-top:1px dashed rgba(255,180,40,0.3);font-size:11px;color:rgba(255,240,160,0.6);list-style:none;display:flex;align-items:center;gap:6px;"><span>⬆️</span> ترقية للمتقدم: رد تلقائي + 3 فروع</li>
+          <li>دعم أولوية</li>
         </ul>
+        <div style="font-size:11px;color:rgba(255,255,255,0.6);text-align:center;margin-bottom:12px;">✓ 83 مشترك نشط</div>
         <button class="price-btn price-btn-gold" onclick="window.location.href='signup.html'">ابدأ مجاناً ←</button>
       </div>
-      <div class="price-card" style="background:linear-gradient(160deg,#0B1F4E 0%,#1A2F70 100%);border-color:rgba(245,180,41,0.4);box-shadow:0 8px 36px rgba(11,31,78,0.5);">
-        <div class="price-plan">🔥 متقدم</div>
-        <div class="price-amount"><span class="price-currency">ر.س</span>99</div>
+      <div class="price-card advanced" style="background:linear-gradient(160deg,#0B1F4E 0%,#1A2F70 100%);border-color:rgba(245,180,41,0.4);box-shadow:0 8px 36px rgba(11,31,78,0.5);">
+        <div class="price-plan">🔥 المتقدم</div>
+        <div class="price-amount"><span class="price-currency">ر.س</span>147</div>
         <div class="price-period">شهرياً · حتى 3 فروع</div>
         <div class="price-divider"></div>
         <ul class="price-features">
           <li>كل مميزات الاحترافي</li>
           <li>رد تلقائي 100% بدون موافقة</li>
           <li>3 فروع</li>
-          <li>دعم أولوية 24/7</li>
           <li>تقرير شهري PDF</li>
           <li>مقارنة أداء الفروع</li>
-          <li>هدف شهري مخصص</li>
           <li>شارة "مشروع موثوق"</li>
+          <li>دعم أولوية 24/7</li>
           <li>أولوية الميزات الجديدة</li>
         </ul>
         <button class="price-btn price-btn-white" onclick="window.location.href='signup.html'">ابدأ مجاناً</button>
       </div>
     </div>
     <div style="margin-top:48px;background:var(--gold-pale);border:1px solid rgba(212,146,10,0.2);border-radius:16px;padding:20px 24px;">
-      <div style="font-weight:900;color:var(--gold);margin-bottom:12px;font-size:15px;">💡 لماذا 99 ريال تستحق؟</div>
+      <div style="font-weight:900;color:var(--gold);margin-bottom:12px;font-size:15px;">💡 لماذا 147 ريال تستحق؟</div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;font-size:13px;text-align:center;">
         <div><div style="font-size:22px;margin-bottom:4px;">👨‍💼</div><div style="color:var(--text-mid);">موظف سوشيال</div><div style="font-weight:900;">3,000 ريال/شهر</div></div>
         <div><div style="font-size:22px;margin-bottom:4px;">📊</div><div style="color:var(--text-mid);">استشاري Google</div><div style="font-weight:900;">2,000 ريال/شهر</div></div>
-        <div style="background:linear-gradient(135deg,var(--blue-deep),var(--blue-mid));border-radius:12px;padding:12px;"><div style="font-size:22px;margin-bottom:4px;">⭐</div><div style="color:rgba(255,255,255,0.7);">5tars المتقدم</div><div style="font-weight:900;color:var(--gold-light);">99 ريال فقط ✅</div></div>
+        <div style="background:linear-gradient(135deg,var(--blue-deep),var(--blue-mid));border-radius:12px;padding:12px;"><div style="font-size:22px;margin-bottom:4px;">⭐</div><div style="color:rgba(255,255,255,0.7);">5tars المتقدم</div><div style="font-weight:900;color:var(--gold-light);">147 ريال فقط ✅</div></div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:32px;">
+      <div style="background:linear-gradient(135deg,#0B1F4E,#1A3A8F);border:2px solid rgba(245,180,41,0.4);border-radius:20px;padding:28px 40px;display:inline-block;max-width:400px;">
+        <div style="color:var(--gold-light);font-size:11px;font-weight:800;letter-spacing:2px;margin-bottom:8px;">🏆 العرض الأفضل</div>
+        <div style="color:#fff;font-size:28px;font-weight:900;margin-bottom:4px;">497 ريال <span style="font-size:14px;color:rgba(255,255,255,0.5);text-decoration:line-through;">1,164 ريال</span></div>
+        <div style="color:rgba(255,255,255,0.6);font-size:13px;margin-bottom:20px;">دفعة واحدة · مدى الحياة · فرع واحد</div>
+        <div style="color:rgba(255,255,255,0.8);font-size:13px;margin-bottom:20px;">جميع مميزات الاحترافي إلى الأبد — بدون اشتراك شهري</div>
+        <a href="signup.html?plan=lifetime" style="display:block;background:linear-gradient(135deg,#F5B429,#D4920A);color:#0B1F4E;font-weight:900;font-size:14px;padding:14px;border-radius:12px;text-decoration:none;">احصل عليه الآن ←</a>
       </div>
     </div>
     <div style="text-align:center;margin-top:24px;">
@@ -580,8 +619,9 @@ nav.scrolled .hamburger span{background:var(--text-dark);}
   <div class="container">
     <h2 class="cta-title">جاهز ترفع تقييم <em>مشروعك؟</em></h2>
     <p class="cta-sub">انضم الآن واحصل على 14 يوم مجاناً · لا بطاقة ائتمان مطلوبة</p>
+    <div style="display:inline-block;background:rgba(245,180,41,0.15);border:1px solid rgba(245,180,41,0.4);border-radius:12px;padding:10px 22px;font-size:14px;font-weight:700;color:var(--gold-light);margin-bottom:28px;">🎁 أول 10 مشتركين يحصلون على شهر مجاني إضافي</div>
     <div class="cta-btns">
-      <button class="btn-hero-primary" onclick="window.location.href='signup.html'">ابدأ الآن مجاناً ←</button>
+      <button class="btn-hero-primary" onclick="window.location.href='signup.html'">ابدأ مجاناً 14 يوم — لا بطاقة مطلوبة ←</button>
       <a href="https://wa.me/966555867232" style="text-decoration:none"><button class="btn-hero-secondary">💬 تواصل على واتساب</button></a>
     </div>
   </div>
@@ -636,34 +676,43 @@ async function callClaude(prompt, model, extraBody) {
   return { text: data.text?.trim() || '', ok: res.ok, status: res.status };
 }
 
-async function runDiagnosis(){
-  const email   = document.getElementById('diagEmail')?.value.trim() || '';
-  const mapsUrl = document.getElementById('diagMapsUrl')?.value.trim() || '';
+function showLockedDiagnosis(mapsUrl) {
+  // Animate result card with blurred/locked scores
+  const diagResult = document.getElementById('diagResult');
+  diagResult.style.animation = 'none';
+  diagResult.offsetHeight; // reflow
+  diagResult.style.animation = 'fadeUp 0.6s ease both';
+
+  // Show blurred scores
+  document.getElementById('diagScore').style.filter = 'blur(4px)';
+  document.getElementById('diagScore').textContent = '72';
+  document.getElementById('diagRating').style.filter = 'blur(4px)';
+  document.getElementById('diagRating').textContent = '3.9 ⭐';
+  document.getElementById('diagReply').style.filter = 'blur(4px)';
+  document.getElementById('diagReply').textContent = '28%';
+  document.getElementById('diagVisibility').style.filter = 'blur(4px)';
+  document.getElementById('diagVisibility').textContent = '35%';
+  document.getElementById('diagRatingBar').style.width = '78%';
+  document.getElementById('diagReplyBar').style.width = '28%';
+  document.getElementById('diagVisBar').style.width = '35%';
+
+  document.getElementById('diagItems').innerHTML = `
+    <div style="text-align:center;padding:20px 10px;background:rgba(0,0,0,0.2);border-radius:14px;margin-bottom:12px;">
+      <div style="font-size:32px;margin-bottom:10px;">🔒</div>
+      <div style="color:#fff;font-size:16px;font-weight:900;margin-bottom:8px;">سجّل مجاناً لرؤية تقريرك الكامل</div>
+      <div style="color:rgba(255,255,255,0.65);font-size:12px;margin-bottom:18px;">💡 يشمل التقرير: درجة السمعة، نقاط الضعف، خطة التحسين</div>
+      <a href="signup.html" style="display:block;background:linear-gradient(135deg,#F5B429,#D4920A);color:#0B1F4E;font-weight:900;font-size:14px;padding:15px;border-radius:12px;text-decoration:none;">ابدأ تجربتك المجانية 14 يوم — مجاناً ←</a>
+    </div>`;
+}
+
+async function runFullDiagnosis(session, mapsUrl) {
   const errMsg  = document.getElementById('diagErrorMsg');
-
-  if (errMsg) errMsg.style.display = 'none';
-
-  if (!email) {
-    if (errMsg) { errMsg.textContent = 'من فضلك أدخل بريدك الإلكتروني أولاً.'; errMsg.style.display = 'block'; }
-    else alert('من فضلك أدخل بريدك الإلكتروني أولاً');
-    return;
-  }
-  if (!mapsUrl) {
-    if (errMsg) { errMsg.textContent = 'من فضلك أدخل رابط مشروعك على Google Maps'; errMsg.style.display = 'block'; }
-    else alert('من فضلك أدخل رابط مشروعك على Google Maps');
-    return;
-  }
-
   const btn = document.querySelector('.btn-diagnosis');
   btn.textContent = '⏳ جاري التحليل بالذكاء الاصطناعي...';
   btn.disabled = true;
 
-  // Extract business name from URL for display
-  const urlParts = mapsUrl.split('/');
-  const possibleName = urlParts.find(p => p.length > 5 && !p.includes('.') && !p.includes('?')) || 'مشروعك';
-
   try {
-    const prompt = `أنت محلل سمعة رقمية متخصص في السوق السعودي. 
+    const prompt = `أنت محلل سمعة رقمية متخصص في السوق السعودي.
 المستخدم أدخل رابط Google Maps لمشروعه: ${mapsUrl}
 
 قدّم تحليلاً واقعياً لسمعته الرقمية بناءً على ما تعرفه عن متوسطات السوق السعودي.
@@ -673,7 +722,7 @@ async function runDiagnosis(){
 رد فقط بـ JSON بهذا الشكل بدون أي نص آخر:
 {"score":65,"rating":"3.8","replyRate":25,"visibility":40,"issues":["مشكلة 1","مشكلة 2","مشكلة 3"],"recommendations":["توصية 1","توصية 2","توصية 3"]}`;
 
-    const result = await callClaude(prompt, null, { type: 'diagnosis', email, url: mapsUrl });
+    const result = await callClaude(prompt, null, { type: 'diagnosis', url: mapsUrl });
     let analysis;
     try {
       const text = result.text || '{}';
@@ -686,9 +735,13 @@ async function runDiagnosis(){
     const { score, rating, replyRate, visibility, issues, recommendations } = analysis;
     const lost = Math.max(0, Math.floor((4.5 - parseFloat(rating)) * 70));
 
+    document.getElementById('diagScore').style.filter = '';
     document.getElementById('diagScore').textContent = score;
+    document.getElementById('diagRating').style.filter = '';
     document.getElementById('diagRating').textContent = rating + ' ⭐';
+    document.getElementById('diagReply').style.filter = '';
     document.getElementById('diagReply').textContent = replyRate + '%';
+    document.getElementById('diagVisibility').style.filter = '';
     document.getElementById('diagVisibility').textContent = visibility + '%';
     document.getElementById('diagRatingBar').style.width = (parseFloat(rating)/5*100) + '%';
     document.getElementById('diagReplyBar').style.width = replyRate + '%';
@@ -708,16 +761,10 @@ async function runDiagnosis(){
       <a href="signup.html" style="display:block;text-align:center;background:linear-gradient(135deg,#F5B429,#D4920A);color:#0B1F4E;font-weight:900;font-size:13px;padding:14px;border-radius:12px;text-decoration:none;margin-top:12px;">ابدأ تحسين سمعتك مجاناً 14 يوم ←</a>`;
 
   } catch(err) {
-    // Handle rate limiting (429)
     if (err.rateLimited) {
       const errMsg = document.getElementById('diagErrorMsg');
-      if (errMsg) {
-        errMsg.textContent = err.message;
-        errMsg.style.display = 'block';
-      } else {
-        alert(err.message);
-      }
-      btn.textContent = '🔍 شخّص مشروعي الآن — مجاناً';
+      if (errMsg) { errMsg.textContent = err.message; errMsg.style.display = 'block'; }
+      btn.textContent = '🔍 شخّص مشروعي الآن';
       btn.disabled = false;
       return;
     }
@@ -728,9 +775,13 @@ async function runDiagnosis(){
     const visibility = Math.floor(Math.random()*25)+25;
     const lost = Math.max(0, Math.floor((4.5-parseFloat(rating))*70));
 
+    document.getElementById('diagScore').style.filter = '';
     document.getElementById('diagScore').textContent = score;
+    document.getElementById('diagRating').style.filter = '';
     document.getElementById('diagRating').textContent = rating+' ⭐';
+    document.getElementById('diagReply').style.filter = '';
     document.getElementById('diagReply').textContent = replyRate+'%';
+    document.getElementById('diagVisibility').style.filter = '';
     document.getElementById('diagVisibility').textContent = visibility+'%';
     document.getElementById('diagRatingBar').style.width = (parseFloat(rating)/5*100)+'%';
     document.getElementById('diagReplyBar').style.width = replyRate+'%';
@@ -746,8 +797,36 @@ async function runDiagnosis(){
       <a href="signup.html" style="display:block;text-align:center;background:linear-gradient(135deg,#F5B429,#D4920A);color:#0B1F4E;font-weight:900;font-size:13px;padding:14px;border-radius:12px;text-decoration:none;margin-top:12px;">ابدأ تحسين سمعتك مجاناً ←</a>`;
   }
 
-  btn.textContent = '🔍 شخّص مشروعي الآن — مجاناً';
+  btn.textContent = '🔍 شخّص مشروعي الآن';
   btn.disabled = false;
+}
+
+async function runDiagnosis(){
+  const mapsUrl = document.getElementById('diagMapsUrl')?.value.trim() || '';
+  const errMsg  = document.getElementById('diagErrorMsg');
+
+  if (errMsg) errMsg.style.display = 'none';
+
+  if (!mapsUrl) {
+    if (errMsg) { errMsg.textContent = 'من فضلك أدخل رابط مشروعك على Google Maps'; errMsg.style.display = 'block'; }
+    else alert('من فضلك أدخل رابط مشروعك على Google Maps');
+    return;
+  }
+
+  const btn = document.querySelector('.btn-diagnosis');
+  btn.textContent = '⏳ جاري التحقق...';
+  btn.disabled = true;
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    // Not logged in: show teaser result then redirect
+    btn.textContent = '🔍 شخّص مشروعي الآن';
+    btn.disabled = false;
+    showLockedDiagnosis(mapsUrl);
+    return;
+  }
+  // Logged in: run full diagnosis
+  runFullDiagnosis(session, mapsUrl);
 }
 document.getElementById('diagMapsUrl')?.addEventListener('keypress',(e)=>{if(e.key==='Enter')runDiagnosis();});
 </script>
