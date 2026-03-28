@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <style>
 :root{
   --blue:#0B1F4E; --blue2:#1A3A8F; --blue3:#2251D3; --blue4:#EEF3FF;
@@ -359,10 +360,9 @@ input:checked + .toggle-track::before{right:auto;left:3px;}
         <div class="sec-title"><i data-lucide="bar-chart-2" style="width:16px;height:16px;color:var(--blue3);"></i> نمو التسجيلات — آخر 30 يوم</div>
         <span style="font-size:11px;color:var(--muted);" id="chartSubtitle"></span>
       </div>
-      <div class="chart-wrap" id="growthChart">
-        <div class="spin-box" style="padding:20px;"><div class="spinner"></div></div>
+      <div style="position:relative;height:130px;margin-top:12px;">
+        <canvas id="growthChart"></canvas>
       </div>
-      <div class="chart-labels" id="growthLabels"></div>
     </div>
   </div>
 
@@ -429,6 +429,16 @@ input:checked + .toggle-track::before{right:auto;left:3px;}
         <i data-lucide="search-x" style="width:32px;height:32px;margin-bottom:8px;opacity:0.4;"></i>
         <div>لا توجد نتائج</div>
       </div>
+    </div>
+    <!-- PAGINATION -->
+    <div id="pagination" style="display:none;align-items:center;justify-content:space-between;padding:12px 20px;border-top:1px solid var(--border);flex-wrap:wrap;gap:8px;">
+      <button class="btn btn-ghost" id="pgPrev" onclick="prevPage()" style="font-size:12px;">
+        <i data-lucide="chevron-right" style="width:14px;height:14px;"></i> السابق
+      </button>
+      <span id="pgInfo" style="font-size:12px;color:var(--muted);"></span>
+      <button class="btn btn-ghost" id="pgNext" onclick="nextPage()" style="font-size:12px;">
+        التالي <i data-lucide="chevron-left" style="width:14px;height:14px;"></i>
+      </button>
     </div>
   </div>
 </div><!-- /secUsers -->
@@ -1030,55 +1040,87 @@ function updateStats(stats, api_costs) {
 }
 
 // ══════════════════════════════════
-//  GROWTH CHART
+//  GROWTH CHART (Chart.js)
 // ══════════════════════════════════
+let growthChartInst = null;
 function renderGrowthChart(profiles) {
-  // Build daily signups for last 30 days
-  const today = new Date();
-  const days  = [];
+  const today = new Date(); today.setHours(0,0,0,0);
+  const labels = [], counts = [];
   for (let i = 29; i >= 0; i--) {
-    const d = new Date(today);
-    d.setDate(d.getDate() - i);
-    days.push({ date: d.toISOString().slice(0, 10), count: 0 });
+    const d = new Date(today); d.setDate(d.getDate() - i);
+    labels.push(d.toLocaleDateString('ar-SA', { month:'short', day:'numeric' }));
+    counts.push(0);
   }
   profiles.forEach(p => {
     if (!p.created_at) return;
-    const dateStr = p.created_at.slice(0, 10);
-    const day = days.find(d => d.date === dateStr);
-    if (day) day.count++;
+    const pd = new Date(p.created_at); pd.setHours(0,0,0,0);
+    const diff = Math.floor((today - pd) / 86400000);
+    if (diff >= 0 && diff < 30) counts[29 - diff]++;
   });
-
-  const maxCount = Math.max(...days.map(d => d.count), 1);
-  const total30  = days.reduce((s, d) => s + d.count, 0);
-  document.getElementById('chartSubtitle').textContent = total30 + ' تسجيل في 30 يوم';
-
-  document.getElementById('growthChart').innerHTML = days.map(d => {
-    const h = Math.max((d.count / maxCount) * 100, d.count > 0 ? 4 : 1);
-    const color = d.count > 0 ? 'var(--blue3)' : 'var(--bg3)';
-    return `<div class="chart-bar" style="height:${h}%;background:${color};" data-tip="${d.date.slice(5)}: ${d.count}"></div>`;
-  }).join('');
-  document.getElementById('growthLabels').innerHTML = days
-    .filter((_, i) => i % 5 === 0 || i === 29)
-    .map(d => `<div class="chart-label" style="flex:none;width:${100/6}%;">${d.date.slice(5)}</div>`)
-    .join('');
+  const total30 = counts.reduce((s,c) => s+c, 0);
+  document.getElementById('chartSubtitle').textContent = total30 + ' تسجيل في آخر 30 يوم';
+  const canvas = document.getElementById('growthChart');
+  if (growthChartInst) growthChartInst.destroy();
+  growthChartInst = new Chart(canvas.getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        data: counts,
+        backgroundColor: counts.map(c => c > 0 ? 'rgba(34,81,211,0.75)' : 'rgba(51,65,85,0.4)'),
+        borderColor:     counts.map(c => c > 0 ? '#2251D3' : '#334155'),
+        borderWidth: 1, borderRadius: 3,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ctx.raw + ' تسجيل' } }
+      },
+      scales: {
+        x: { ticks:{ color:'#94A3B8', font:{ size:9 }, maxRotation:0, maxTicksLimit:8 }, grid:{ color:'rgba(255,255,255,0.04)' } },
+        y: { ticks:{ color:'#94A3B8', font:{ size:10 }, stepSize:1 }, grid:{ color:'rgba(255,255,255,0.04)' }, beginAtZero:true }
+      }
+    }
+  });
 }
 
 // ══════════════════════════════════
-//  USERS TABLE
+//  USERS TABLE + PAGINATION
 // ══════════════════════════════════
+let filteredCache = [];
+let currentPage   = 1;
+const PAGE_SIZE   = 20;
+
 function renderTable(profiles) {
-  const tbody = document.getElementById('usersBody');
-  if (!profiles.length) {
-    document.getElementById('usersTable').style.display = 'none';
-    document.getElementById('noResults').style.display = 'block';
+  filteredCache = profiles;
+  currentPage   = 1;
+  renderPage();
+}
+
+function renderPage() {
+  const total      = filteredCache.length;
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const start      = (currentPage - 1) * PAGE_SIZE;
+  const page       = filteredCache.slice(start, start + PAGE_SIZE);
+
+  const tbl   = document.getElementById('usersTable');
+  const noRes = document.getElementById('noResults');
+  const pgEl  = document.getElementById('pagination');
+
+  if (!total) {
+    tbl.style.display   = 'none';
+    noRes.style.display = 'block';
+    pgEl.style.display  = 'none';
     return;
   }
-  document.getElementById('usersTable').style.display = 'table';
-  document.getElementById('noResults').style.display = 'none';
+  tbl.style.display   = 'table';
+  noRes.style.display = 'none';
 
-  tbody.innerHTML = profiles.map((p, i) => `
+  document.getElementById('usersBody').innerHTML = page.map((p, i) => `
     <tr data-id="${p.id}">
-      <td style="color:var(--muted);font-size:11px;">${i + 1}</td>
+      <td style="color:var(--muted);font-size:11px;">${start + i + 1}</td>
       <td><strong>${escHtml(p.full_name || p.business_name || '—')}</strong></td>
       <td style="direction:ltr;text-align:right;color:var(--muted);font-size:11px;">${escHtml(p.email || '—')}</td>
       <td>${planBadge(p.plan, p.trial_ends)}</td>
@@ -1106,7 +1148,20 @@ function renderTable(profiles) {
       </td>
     </tr>
   `).join('');
+
+  // Update pagination controls
+  pgEl.style.display = total > PAGE_SIZE ? 'flex' : 'none';
+  document.getElementById('pgInfo').textContent =
+    `الصفحة ${currentPage} من ${totalPages} — ${total} مستخدم`;
+  document.getElementById('pgPrev').disabled = currentPage === 1;
+  document.getElementById('pgNext').disabled = currentPage >= totalPages;
   lucide.createIcons();
+}
+
+function prevPage() { if (currentPage > 1) { currentPage--; renderPage(); } }
+function nextPage() {
+  const tp = Math.ceil(filteredCache.length / PAGE_SIZE);
+  if (currentPage < tp) { currentPage++; renderPage(); }
 }
 
 function onPlanChange(uid) {
@@ -1122,7 +1177,7 @@ function filterTable() {
     const matchG = !gf || (gf==='connected' && p.google_maps_url) || (gf==='not_connected' && !p.google_maps_url);
     return matchQ && matchP && matchG;
   });
-  renderTable(filtered);
+  renderTable(filtered); // resets currentPage = 1
 }
 
 // ══════════════════════════════════
@@ -1477,12 +1532,31 @@ function renderSubs() {
 const settings = {};
 function onToggle(key, val) { settings[key] = val; }
 async function saveSettings() {
-  // يحفظ الإعدادات — يمكن ربطها بجدول site_settings في Supabase
   try {
-    const ann  = document.getElementById('annText').value.trim();
+    const ann   = document.getElementById('annText').value.trim();
     const color = document.getElementById('annColor').value;
-    settings.announcement      = ann;
+    settings.announcement       = ann;
     settings.announcement_color = color;
+
+    // Save to Supabase site_settings table via admin-data Edge Function
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) {
+      const payload = {
+        maintenance_mode:   String(!!settings.maintenance),
+        signup_enabled:     String(settings.signup_enabled !== false),
+        ai_enabled:         String(settings.ai_enabled !== false),
+        whatsapp_enabled:   String(settings.whatsapp_enabled !== false),
+        trial_enabled:      String(settings.trial_enabled !== false),
+        announcement_text:  ann,
+        announcement_color: color,
+      };
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/admin-data`, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+session.access_token },
+        body: JSON.stringify({ action: 'save_settings', settings: payload })
+      });
+      if (!res.ok) console.warn('Supabase settings save failed — using localStorage fallback');
+    }
     localStorage.setItem('site_settings', JSON.stringify(settings));
     showToast('تم حفظ الإعدادات ✓', 'success');
   } catch(e) { showToast('فشل الحفظ: ' + e.message, 'error'); }
@@ -1594,6 +1668,33 @@ async function loadData() {
     updateStats(mergedStats, data.api_costs);
     renderTable(allProfiles);
     renderGrowthChart(allProfiles);
+
+    // Apply site_settings from Supabase (overrides localStorage)
+    if (data.site_settings) {
+      const s = data.site_settings;
+      const toBool = (v, def = true) => v === undefined ? def : v !== 'false';
+      if (s.maintenance_mode !== undefined)
+        document.getElementById('toggleMaintenance').checked = s.maintenance_mode === 'true';
+      if (s.signup_enabled   !== undefined)
+        document.getElementById('toggleSignup').checked    = toBool(s.signup_enabled);
+      if (s.ai_enabled       !== undefined)
+        document.getElementById('toggleAI').checked        = toBool(s.ai_enabled);
+      if (s.whatsapp_enabled !== undefined)
+        document.getElementById('toggleWhatsApp').checked  = toBool(s.whatsapp_enabled);
+      if (s.trial_enabled    !== undefined)
+        document.getElementById('toggleTrial').checked     = toBool(s.trial_enabled);
+      if (s.announcement_text  ) document.getElementById('annText').value  = s.announcement_text;
+      if (s.announcement_color ) document.getElementById('annColor').value = s.announcement_color;
+      Object.assign(settings, {
+        maintenance:       s.maintenance_mode === 'true',
+        signup_enabled:    toBool(s.signup_enabled),
+        ai_enabled:        toBool(s.ai_enabled),
+        whatsapp_enabled:  toBool(s.whatsapp_enabled),
+        trial_enabled:     toBool(s.trial_enabled),
+        announcement:      s.announcement_text  || '',
+        announcement_color:s.announcement_color || 'blue',
+      });
+    }
 
     document.getElementById('tableLoading').style.display = 'none';
   } catch(e) {
