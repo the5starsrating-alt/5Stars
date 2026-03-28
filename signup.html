@@ -191,6 +191,10 @@ body{
   border-color:var(--blue3);
   box-shadow:0 0 0 3px rgba(34,81,211,0.10);
 }
+.field input.error-field{
+  border-color:var(--red);
+  box-shadow:0 0 0 3px rgba(220,38,38,0.08);
+}
 .field input::placeholder{color:var(--muted);}
 
 /* SUBMIT */
@@ -257,7 +261,13 @@ body{
 }
 @keyframes popIn{from{transform:scale(0);opacity:0;}to{transform:scale(1);opacity:1;}}
 .success-state h3{font-family:'Tajawal',sans-serif;font-size:20px;font-weight:900;margin-bottom:8px;}
-.success-state p{font-size:13px;color:var(--muted);line-height:1.7;}
+.success-state p{font-size:13px;color:var(--muted);line-height:1.7;white-space:pre-line;}
+.btn-resend{
+  background:none;border:none;font-family:'Cairo',sans-serif;
+  font-size:12px;color:var(--blue3);cursor:pointer;
+  text-decoration:underline;margin-top:12px;display:inline-block;
+}
+.btn-resend:disabled{color:var(--muted);cursor:default;text-decoration:none;}
 
 /* RESPONSIVE */
 @media(max-width:680px){
@@ -300,12 +310,12 @@ body{
 
     <!-- TABS -->
     <div class="auth-tabs">
-      <button class="auth-tab active" onclick="switchTab('signup')">إنشاء حساب</button>
-      <button class="auth-tab" onclick="switchTab('login')">دخول</button>
+      <button class="auth-tab active" id="tabSignup" onclick="switchTab('signup')">إنشاء حساب</button>
+      <button class="auth-tab" id="tabLogin" onclick="switchTab('login')">دخول</button>
     </div>
 
     <!-- ALERTS -->
-    <div class="alert alert-error" id="alertError"></div>
+    <div class="alert alert-error"   id="alertError"></div>
     <div class="alert alert-success" id="alertSuccess"></div>
 
     <!-- SUCCESS STATE -->
@@ -316,6 +326,10 @@ body{
       <button class="btn-submit" style="margin-top:24px;" onclick="switchTab('login')">
         دخول الآن ←
       </button>
+      <br>
+      <button class="btn-resend" id="resendBtn" onclick="resendConfirmation()">
+        لم يصلني البريد — إعادة إرسال
+      </button>
     </div>
 
     <!-- ═══ SIGNUP FORM ═══ -->
@@ -323,7 +337,6 @@ body{
       <div class="form-title">ابدأ تجربتك المجانية</div>
       <div class="form-sub">14 يوم مجاناً — لا بطاقة ائتمان مطلوبة</div>
 
-      <!-- Google OAuth -->
       <button class="btn-google" onclick="loginWithGoogle()">
         <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707s.102-1.167.282-1.707V4.961H.957C.347 6.175 0 7.55 0 9s.348 2.825.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.961L3.964 7.293C4.672 5.166 6.656 3.58 9 3.58z"/></svg>
         التسجيل بـ Google
@@ -333,15 +346,15 @@ body{
 
       <div class="field">
         <label>الاسم الكامل</label>
-        <input type="text" id="signupName" placeholder="محمد العمري">
+        <input type="text" id="signupName" placeholder="محمد العمري" autocomplete="name">
       </div>
       <div class="field">
         <label>البريد الإلكتروني</label>
-        <input type="email" id="signupEmail" placeholder="name@example.com" style="direction:ltr;text-align:right;">
+        <input type="email" id="signupEmail" placeholder="name@example.com" style="direction:ltr;text-align:right;" autocomplete="email">
       </div>
       <div class="field">
         <label>رقم واتساب</label>
-        <input type="tel" id="signupPhone" placeholder="05xxxxxxxx">
+        <input type="tel" id="signupPhone" placeholder="05xxxxxxxx" autocomplete="tel">
       </div>
       <div class="field">
         <label>نوع النشاط التجاري</label>
@@ -357,7 +370,7 @@ body{
       </div>
       <div class="field">
         <label>كلمة المرور</label>
-        <input type="password" id="signupPassword" placeholder="8 أحرف على الأقل" style="direction:ltr;text-align:right;">
+        <input type="password" id="signupPassword" placeholder="8 أحرف على الأقل" style="direction:ltr;text-align:right;" autocomplete="new-password">
       </div>
 
       <button class="btn-submit" id="btnSignup" onclick="handleSignup()">
@@ -380,15 +393,15 @@ body{
 
       <div class="field">
         <label>البريد الإلكتروني</label>
-        <input type="email" id="loginEmail" placeholder="name@example.com" style="direction:ltr;text-align:right;">
+        <input type="email" id="loginEmail" placeholder="name@example.com" style="direction:ltr;text-align:right;" autocomplete="email">
       </div>
       <div class="field">
         <label>كلمة المرور</label>
-        <input type="password" id="loginPassword" placeholder="••••••••" style="direction:ltr;text-align:right;">
+        <input type="password" id="loginPassword" placeholder="••••••••" style="direction:ltr;text-align:right;" autocomplete="current-password">
       </div>
 
       <div style="text-align:left;margin-bottom:16px;">
-        <a href="#" onclick="handleForgotPassword()" style="font-size:12px;color:var(--blue3);text-decoration:none;">نسيت كلمة المرور؟</a>
+        <a href="#" onclick="handleForgotPassword();return false;" style="font-size:12px;color:var(--blue3);text-decoration:none;">نسيت كلمة المرور؟</a>
       </div>
 
       <button class="btn-submit" id="btnLogin" onclick="handleLogin()">
@@ -411,11 +424,40 @@ const sb = createClient(
 );
 
 // ══════════════════════════════════
+//  GIFT LINK — يجب أن يُشغَّل قبل أي شيء آخر
+// ══════════════════════════════════
+const PROMO_SEED = 'fiveStars2026';
+let   giftPlan   = null;
+let   pendingEmail = '';  // يُحفظ لإعادة إرسال التأكيد
+
+(function detectGiftLink() {
+  try {
+    const token = new URLSearchParams(window.location.search).get('gift');
+    if (!token) return;
+    const data = JSON.parse(atob(decodeURIComponent(token)));
+    if (data.seed !== PROMO_SEED) return;
+    if (data.exp < Date.now()) {
+      const banner = document.createElement('div');
+      banner.style.cssText = 'background:#FEF2F2;border:1px solid rgba(220,38,38,0.2);color:#DC2626;border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:16px;text-align:center;';
+      banner.textContent = '⏰ رابط الدعوة هذا انتهت صلاحيته. تواصل مع من أرسله.';
+      document.querySelector('.form-panel')?.prepend(banner);
+      return;
+    }
+    giftPlan = data.plan;
+    const planLabel = { lifetime_friend:'🌟 صديق — مدى الحياة', lifetime:'♾️ مدى الحياة', trial_30:'✅ تجربة مجانية 30 يوم' }[data.plan] || data.plan;
+    const banner = document.createElement('div');
+    banner.style.cssText = 'background:linear-gradient(135deg,#FFF0A0,#FEF3C7);border:2px solid #F5B429;border-radius:12px;padding:14px 16px;font-size:13px;margin-bottom:16px;text-align:center;direction:rtl;';
+    banner.innerHTML = '🎁 <strong>هدية خاصة!</strong> سيحصل حسابك على خطة <strong>' + planLabel + '</strong> مجاناً عند التسجيل.';
+    document.querySelector('.form-panel')?.prepend(banner);
+  } catch (_) {}
+})();
+
+// ══════════════════════════════════
 //  UI HELPERS
 // ══════════════════════════════════
 function showError(msg) {
   const el = document.getElementById('alertError');
-  el.textContent = '⚠️ ' + msg;
+  el.innerHTML = '⚠️ ' + msg;
   el.classList.add('show');
   document.getElementById('alertSuccess').classList.remove('show');
 }
@@ -429,30 +471,59 @@ function clearAlerts() {
   document.getElementById('alertError').classList.remove('show');
   document.getElementById('alertSuccess').classList.remove('show');
 }
-function setLoading(formType, loading) {
-  const btn = document.getElementById('btn' + (formType === 'signup' ? 'Signup' : 'Login'));
-  const txt = document.getElementById(formType + 'BtnText');
-  const spin = document.getElementById(formType + 'Spinner');
-  btn.disabled = loading;
-  txt.style.display = loading ? 'none' : 'inline';
+function setLoading(type, loading) {
+  const key  = type === 'signup' ? 'Signup' : 'Login';
+  const btn  = document.getElementById('btn' + key);
+  const txt  = document.getElementById(type + 'BtnText');
+  const spin = document.getElementById(type + 'Spinner');
+  btn.disabled       = loading;
+  txt.style.display  = loading ? 'none'  : 'inline';
   spin.style.display = loading ? 'block' : 'none';
 }
 function switchTab(tab) {
   const isSignup = tab === 'signup';
-  document.getElementById('formSignup').style.display = isSignup ? 'block' : 'none';
-  document.getElementById('formLogin').style.display = isSignup ? 'none' : 'block';
+  document.getElementById('formSignup').style.display   = isSignup ? 'block' : 'none';
+  document.getElementById('formLogin').style.display    = isSignup ? 'none'  : 'block';
   document.getElementById('successState').style.display = 'none';
-  document.querySelectorAll('.auth-tab').forEach((t,i) => {
-    t.classList.toggle('active', isSignup ? i===0 : i===1);
-  });
+  document.getElementById('tabSignup').classList.toggle('active', isSignup);
+  document.getElementById('tabLogin').classList.toggle('active',  !isSignup);
   clearAlerts();
 }
 function showSuccessState(title, msg) {
-  document.getElementById('formSignup').style.display = 'none';
-  document.getElementById('formLogin').style.display = 'none';
+  document.getElementById('formSignup').style.display   = 'none';
+  document.getElementById('formLogin').style.display    = 'none';
   document.getElementById('successState').style.display = 'block';
-  document.getElementById('successTitle').textContent = title;
-  document.getElementById('successMsg').textContent = msg;
+  document.getElementById('successTitle').textContent   = title;
+  document.getElementById('successMsg').textContent     = msg;
+}
+
+// ══════════════════════════════════
+//  VALIDATION
+// ══════════════════════════════════
+function isValidEmail(e) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e);
+}
+
+// ══════════════════════════════════
+//  رسائل خطأ Supabase مترجمة
+// ══════════════════════════════════
+const ERR_MAP = {
+  'User already registered':                  'هذا البريد الإلكتروني مسجل مسبقاً. <a href="#" onclick="switchTab(\'login\');return false;" style="color:var(--blue3);font-weight:700;">سجّل دخولك من هنا</a>',
+  'Invalid login credentials':                'البريد الإلكتروني أو كلمة المرور غير صحيحة',
+  'Email not confirmed':                      'يرجى تأكيد بريدك الإلكتروني أولاً. تحقق من صندوق الوارد (وفولدر Spam)',
+  'Invalid email or password':                'البريد الإلكتروني أو كلمة المرور غير صحيحة',
+  'Password should be at least 6 characters': 'كلمة المرور قصيرة جداً (6 أحرف على الأقل)',
+  'Email rate limit exceeded':                'تم تجاوز الحد — انتظر دقيقة ثم حاول مجدداً',
+  'For security purposes':                    'لأسباب أمنية، انتظر 60 ثانية قبل المحاولة مجدداً',
+  'User not found':                           'لا يوجد حساب بهذا البريد الإلكتروني',
+  'Signup is disabled':                       'التسجيل متوقف مؤقتاً',
+};
+function translateError(msg) {
+  if (!msg) return 'حدث خطأ غير متوقع';
+  for (const [key, val] of Object.entries(ERR_MAP)) {
+    if (msg.includes(key)) return val;
+  }
+  return msg;
 }
 
 // ══════════════════════════════════
@@ -466,22 +537,21 @@ async function handleSignup() {
   const business = document.getElementById('signupBusiness').value;
   const password = document.getElementById('signupPassword').value;
 
-  // Validation
-  if (!name)     return showError('الرجاء إدخال الاسم الكامل');
-  if (!email)    return showError('الرجاء إدخال البريد الإلكتروني');
-  if (!phone)    return showError('الرجاء إدخال رقم الواتساب');
-  if (!business) return showError('الرجاء اختيار نوع النشاط التجاري');
+  if (!name)              return showError('الرجاء إدخال الاسم الكامل');
+  if (!email)             return showError('الرجاء إدخال البريد الإلكتروني');
+  if (!isValidEmail(email)) return showError('البريد الإلكتروني غير صحيح');
+  if (!phone)             return showError('الرجاء إدخال رقم الواتساب');
+  if (!business)          return showError('الرجاء اختيار نوع النشاط التجاري');
   if (password.length < 8) return showError('كلمة المرور يجب أن تكون 8 أحرف على الأقل');
 
   setLoading('signup', true);
+  pendingEmail = email;
 
   try {
-    // Determine plan (gift link overrides default trial)
-    const assignedPlan = giftPlan || 'trial';
-    const trialDays    = giftPlan === 'trial_30' ? 30 : 14;
+    const assignedPlan   = giftPlan || 'trial';
+    const trialDays      = giftPlan === 'trial_30' ? 30 : 14;
     const normalizedPlan = assignedPlan === 'trial_30' ? 'trial' : assignedPlan;
 
-    // 1. Create user in Supabase Auth
     const { data, error } = await sb.auth.signUp({
       email,
       password,
@@ -499,9 +569,8 @@ async function handleSignup() {
 
     if (error) throw error;
 
-    // 2. حفظ بيانات الخطة في localStorage ليأخذها auth-callback بعد تأكيد الإيميل
-    //    (لا يمكن upsert profile قبل تأكيد الإيميل لأنه لا توجد جلسة مصادقة بعد)
-    if (data.user) {
+    // احفظ البيانات لـ auth-callback
+    if (data?.user) {
       localStorage.setItem('5tars_pending_profile', JSON.stringify({
         id:            data.user.id,
         full_name:     name,
@@ -512,24 +581,50 @@ async function handleSignup() {
       }));
     }
 
-    // Notify owner via WhatsApp
+    // أرسل إشعار المالك
     notifyOwner({ name, email, business_type: business, phone }).catch(() => {});
 
+    // ── إذا Supabase أعطى session فوراً (تأكيد الإيميل مُعطّل) ──
+    if (data?.session) {
+      showSuccess('تم إنشاء حسابك! جاري تحويلك...');
+      setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
+      return;
+    }
 
+    // ── عادي: يحتاج تأكيد إيميل ──
     showSuccessState(
       '🎉 تم إنشاء حسابك!',
-      'أرسلنا رابط التأكيد إلى: ' + email + '\n\nافتح بريدك وانقر الرابط للدخول. التجربة المجانية 14 يوم تبدأ فور التأكيد!'
+      'أرسلنا رابط التأكيد إلى:\n' + email + '\n\nافتح بريدك وانقر الرابط للدخول.\nالتجربة المجانية ' + trialDays + ' يوم تبدأ فور التأكيد!'
     );
 
   } catch (err) {
-    const msgs = {
-      'User already registered': 'هذا البريد الإلكتروني مسجل مسبقاً. جرب تسجيل الدخول.',
-      'Invalid email': 'البريد الإلكتروني غير صحيح',
-      'Password should be at least 6 characters': 'كلمة المرور قصيرة جداً'
-    };
-    showError(msgs[err.message] || err.message);
+    showError(translateError(err.message));
   } finally {
     setLoading('signup', false);
+  }
+}
+
+// ══════════════════════════════════
+//  RESEND CONFIRMATION EMAIL
+// ══════════════════════════════════
+async function resendConfirmation() {
+  const email = pendingEmail || document.getElementById('signupEmail')?.value?.trim();
+  if (!email) return;
+  const btn = document.getElementById('resendBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ جاري الإرسال...';
+  try {
+    const { error } = await sb.auth.resend({ type: 'signup', email });
+    if (error) throw error;
+    btn.textContent = '✅ تم الإرسال — تحقق من بريدك';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.textContent = 'لم يصلني البريد — إعادة إرسال';
+    }, 60000);
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = 'لم يصلني البريد — إعادة إرسال';
+    showError(translateError(err.message));
   }
 }
 
@@ -541,8 +636,9 @@ async function handleLogin() {
   const email    = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
 
-  if (!email)    return showError('الرجاء إدخال البريد الإلكتروني');
-  if (!password) return showError('الرجاء إدخال كلمة المرور');
+  if (!email)              return showError('الرجاء إدخال البريد الإلكتروني');
+  if (!isValidEmail(email)) return showError('البريد الإلكتروني غير صحيح');
+  if (!password)           return showError('الرجاء إدخال كلمة المرور');
 
   setLoading('login', true);
 
@@ -550,18 +646,11 @@ async function handleLogin() {
     const { data, error } = await sb.auth.signInWithPassword({ email, password });
     if (error) throw error;
 
-    showSuccess('تم تسجيل الدخول بنجاح! جاري تحويلك...');
-    setTimeout(() => {
-      // Redirect to dashboard after login
-      window.location.href = 'dashboard.html';
-    }, 1200);
+    showSuccess('تم تسجيل الدخول! جاري التحويل...');
+    setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);
 
   } catch (err) {
-    const msgs = {
-      'Invalid login credentials': 'البريد أو كلمة المرور غير صحيحة',
-      'Email not confirmed': 'الرجاء تأكيد بريدك الإلكتروني أولاً'
-    };
-    showError(msgs[err.message] || err.message);
+    showError(translateError(err.message));
   } finally {
     setLoading('login', false);
   }
@@ -574,13 +663,11 @@ async function loginWithGoogle() {
   try {
     const { error } = await sb.auth.signInWithOAuth({
       provider: 'google',
-      options: {
-        redirectTo: window.location.origin + '/auth-callback.html'
-      }
+      options: { redirectTo: window.location.origin + '/auth-callback.html' }
     });
     if (error) throw error;
   } catch (err) {
-    showError('تعذر التسجيل بـ Google. حاول مجدداً.');
+    showError('تعذر التسجيل بـ Google: ' + translateError(err.message));
   }
 }
 
@@ -589,89 +676,50 @@ async function loginWithGoogle() {
 // ══════════════════════════════════
 async function handleForgotPassword() {
   const email = document.getElementById('loginEmail').value.trim();
-  if (!email) return showError('أدخل بريدك الإلكتروني أولاً');
-
+  if (!email)               return showError('أدخل بريدك الإلكتروني أولاً');
+  if (!isValidEmail(email)) return showError('البريد الإلكتروني غير صحيح');
   try {
     const { error } = await sb.auth.resetPasswordForEmail(email, {
       redirectTo: 'https://www.the5starsrating.com/reset-password.html'
     });
     if (error) throw error;
-    showSuccess('تم إرسال رابط إعادة تعيين كلمة المرور لبريدك الإلكتروني.');
-  } catch(err) {
-    showError('تعذر إرسال البريد. تحقق من العنوان وحاول مجدداً.');
+    showSuccess('تم إرسال رابط إعادة التعيين — تحقق من بريدك الإلكتروني.');
+  } catch (err) {
+    showError(translateError(err.message));
   }
 }
 
 // ══════════════════════════════════
-//  GIFT LINK HANDLER
-// ══════════════════════════════════
-const PROMO_SEED = 'fiveStars2026';
-let giftPlan = null;
-
-(function detectGiftLink() {
-  try {
-    const token = new URLSearchParams(window.location.search).get('gift');
-    if (!token) return;
-    const data = JSON.parse(atob(decodeURIComponent(token)));
-    if (data.seed !== PROMO_SEED) return;
-    if (data.exp < Date.now()) {
-      // Expired
-      const banner = document.createElement('div');
-      banner.style.cssText = 'background:#FEF2F2;border:1px solid rgba(220,38,38,0.2);color:#DC2626;border-radius:10px;padding:12px 16px;font-size:13px;margin-bottom:16px;text-align:center;';
-      banner.textContent = '⏰ رابط الدعوة هذا انتهت صلاحيته. تواصل مع من أرسله.';
-      document.querySelector('.form-panel')?.prepend(banner);
-      return;
-    }
-    giftPlan = data.plan;
-    const planLabel = { lifetime_friend: '🌟 صديق — مدى الحياة', lifetime: '♾️ مدى الحياة', trial_30: '✅ تجربة مجانية 30 يوم' }[data.plan] || data.plan;
-    const banner = document.createElement('div');
-    banner.style.cssText = 'background:linear-gradient(135deg,#FFF0A0,#FEF3C7);border:2px solid #F5B429;border-radius:12px;padding:14px 16px;font-size:13px;margin-bottom:16px;text-align:center;direction:rtl;';
-    banner.innerHTML = `🎁 <strong>هدية خاصة!</strong> سيحصل حسابك على خطة <strong>${planLabel}</strong> مجاناً عند التسجيل.`;
-    document.querySelector('.form-panel')?.prepend(banner);
-  } catch (_) { /* ignore invalid tokens */ }
-})();
-
-// ══════════════════════════════════
-//  NOTIFY OWNER ON NEW SIGNUP
+//  NOTIFY OWNER
 // ══════════════════════════════════
 async function notifyOwner({ name, email, business_type, phone }) {
-  const SUPABASE_URL = 'https://xdmbwtnpadjeinclmffh.supabase.co';
   try {
-    await fetch(`${SUPABASE_URL}/functions/v1/notify-owner`, {
+    await fetch('https://xdmbwtnpadjeinclmffh.supabase.co/functions/v1/notify-owner', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        event: 'new_user',
-        data: { name, email, business_type, phone }
-      })
+      body: JSON.stringify({ event: 'new_user', data: { name, email, business_type, phone } })
     });
-  } catch (_) { /* silent — don't block signup */ }
+  } catch (_) {}
 }
 
 // ══════════════════════════════════
-//  ENTER KEY SUPPORT
+//  ENTER KEY
 // ══════════════════════════════════
 document.addEventListener('keydown', e => {
-  if (e.key === 'Enter') {
-    const signupVisible = document.getElementById('formSignup').style.display !== 'none';
-    if (signupVisible) handleSignup();
-    else handleLogin();
-  }
+  if (e.key !== 'Enter') return;
+  if (document.getElementById('formSignup').style.display !== 'none') handleSignup();
+  else if (document.getElementById('formLogin').style.display !== 'none') handleLogin();
 });
 
 // ══════════════════════════════════
-//  CHECK IF ALREADY LOGGED IN
+//  AUTO-REDIRECT إذا مسجّل دخول
 // ══════════════════════════════════
-// فقط حوّل إذا المستخدم مو في عملية تسجيل نشطة
-// تحقق من الجلسة
 sb.auth.getSession().then(({ data: { session } }) => {
-  if (session) {
-    const url = new URLSearchParams(window.location.search);
-    // لا تحول إذا في رابط تأكيد
-    if (url.get('token_hash') || url.get('access_token') || url.get('confirmed')) return;
-    // مسجل دخول - حوله للوحة
-    window.location.href = 'dashboard.html';
-  }
+  if (!session) return;
+  // لا تحوّل إذا في URL رابط تأكيد أو إعادة تعيين
+  const p = new URLSearchParams(window.location.search);
+  if (p.get('token_hash') || p.get('access_token') || p.get('type')) return;
+  window.location.replace('dashboard.html');
 });
 </script>
 </body>
