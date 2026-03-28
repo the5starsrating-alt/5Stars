@@ -499,17 +499,17 @@ async function handleSignup() {
 
     if (error) throw error;
 
-    // 2. Insert into profiles table (if exists)
+    // 2. حفظ بيانات الخطة في localStorage ليأخذها auth-callback بعد تأكيد الإيميل
+    //    (لا يمكن upsert profile قبل تأكيد الإيميل لأنه لا توجد جلسة مصادقة بعد)
     if (data.user) {
-      await sb.from('profiles').upsert({
+      localStorage.setItem('5tars_pending_profile', JSON.stringify({
         id:            data.user.id,
         full_name:     name,
         phone:         phone,
         business_type: business,
         plan:          normalizedPlan,
-        trial_ends:    new Date(Date.now() + trialDays*24*60*60*1000).toISOString(),
-        created_at:    new Date().toISOString()
-      });
+        trial_ends:    new Date(Date.now() + trialDays*24*60*60*1000).toISOString()
+      }));
     }
 
     // Notify owner via WhatsApp

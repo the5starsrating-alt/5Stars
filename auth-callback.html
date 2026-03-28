@@ -84,48 +84,113 @@ function showError(msg) {
   document.getElementById('retryBtn').style.display = 'inline-block';
 }
 
-// الاستماع لـ auth state - هذا الأضمن مع PKCE
+// ══════════════════════════════════
+//  استرجاع بيانات الـ profile من signup (إن وُجدت)
+// ══════════════════════════════════
+function getPendingProfile() {
+  try {
+    const raw = localStorage.getItem('5tars_pending_profile');
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (_) { return null; }
+}
+
+function clearPendingProfile() {
+  localStorage.removeItem('5tars_pending_profile');
+}
+
+// ══════════════════════════════════
+//  إنشاء / تحديث الـ profile في قاعدة البيانات
+// ══════════════════════════════════
+async function upsertProfile(user) {
+  const pending = getPendingProfile();
+
+  // إذا كان هناك بيانات محفوظة من signup واستخدمها نفس المستخدم
+  if (pending && pending.id === user.id) {
+    await sb.from('profiles').upsert({
+      id:            user.id,
+      full_name:     pending.full_name || user.user_metadata?.full_name || user.email,
+      phone:         pending.phone     || user.user_metadata?.phone || null,
+      business_type: pending.business_type || user.user_metadata?.business_type || null,
+      plan:          pending.plan      || 'trial',
+      trial_ends:    pending.trial_ends || new Date(Date.now() + 14*24*60*60*1000).toISOString(),
+      updated_at:    new Date().toISOString()
+    }, { onConflict: 'id' }); // بدون ignoreDuplicates حتى يُحدَّث الـ record
+    clearPendingProfile();
+    return;
+  }
+
+  // Google OAuth أو مستخدم بدون بيانات محفوظة
+  // نستخدم upsert بدون ignoreDuplicates ليُحدِّث البيانات لو موجودة
+  const name = user.user_metadata?.full_name
+    || user.user_metadata?.name
+    || user.email;
+
+  // تحقق أولاً إذا يوجد profile لتجنب إعادة تعيين الخطة للمستخدمين القدامى
+  const { data: existing } = await sb
+    .from('profiles')
+    .select('id, plan, trial_ends')
+    .eq('id', user.id)
+    .single();
+
+  if (existing) {
+    // مستخدم موجود — حدّث فقط بيانات الـ OAuth إذا ناقصة
+    await sb.from('profiles').update({
+      full_name:  existing.full_name || name,
+      updated_at: new Date().toISOString()
+    }).eq('id', user.id);
+  } else {
+    // مستخدم جديد عبر Google OAuth
+    await sb.from('profiles').insert({
+      id:         user.id,
+      full_name:  name,
+      plan:       'trial',
+      trial_ends: new Date(Date.now() + 14*24*60*60*1000).toISOString(),
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    });
+  }
+}
+
+// ══════════════════════════════════
+//  الاستماع لـ auth state — هذا الأضمن مع PKCE
+// ══════════════════════════════════
 sb.auth.onAuthStateChange(async (event, session) => {
-  
+
   if (event === 'SIGNED_IN' && session) {
     document.getElementById('subtitle').textContent = 'تم تسجيل الدخول! جاري التحويل...';
-    
+
     const user = session.user;
-    const name = user.user_metadata?.full_name 
-      || user.user_metadata?.name 
-      || user.email;
-    const createdAt = new Date(user.created_at).getTime();
-    const isNewUser = (Date.now() - createdAt) < 60000; // أقل من دقيقة = جديد
+    const createdAt  = new Date(user.created_at).getTime();
+    const isNewUser  = (Date.now() - createdAt) < 120000; // أقل من دقيقتين = مستخدم جديد
 
-    // أنشئ أو حدّث الـ profile
+    // أنشئ أو حدّث الـ profile (مع error handling مرئي)
     try {
-      await sb.from('profiles').upsert({
-        id: user.id,
-        full_name: name,
-        plan: 'trial',
-        trial_ends: new Date(Date.now() + 14*24*60*60*1000).toISOString()
-      }, { onConflict: 'id', ignoreDuplicates: true });
-    } catch(_) { /* silent */ }
+      await upsertProfile(user);
+    } catch (err) {
+      console.warn('Profile upsert failed:', err.message);
+      // لا نوقف العملية — المستخدم يدخل اللوحة حتى لو فشل الـ profile
+    }
 
-    // ضع علامة المستخدم الجديد
     if (isNewUser) {
       localStorage.setItem('5tars_new_user', '1');
       document.getElementById('title').textContent = '🎉 أهلاً بك في 5tars!';
       document.getElementById('subtitle').textContent = 'تجربتك المجانية 14 يوم بدأت الآن ✨';
     }
 
-    // حوّله للوحة التحكم دائماً
     setTimeout(() => {
       window.location.href = 'dashboard.html';
     }, isNewUser ? 2000 : 1000);
   }
-  
+
   if (event === 'SIGNED_OUT') {
     showError('تم تسجيل الخروج. حاول مرة أخرى.');
   }
 });
 
-// تحقق إذا في session موجودة أصلاً
+// ══════════════════════════════════
+//  تحقق إذا في session موجودة أصلاً (fallback)
+// ══════════════════════════════════
 setTimeout(async () => {
   const { data: { session } } = await sb.auth.getSession();
   if (session) {
@@ -133,10 +198,12 @@ setTimeout(async () => {
   }
 }, 3000);
 
-// timeout نهائي
+// ══════════════════════════════════
+//  timeout نهائي — 15 ثانية
+// ══════════════════════════════════
 setTimeout(() => {
   const spinner = document.getElementById('spinner');
-  if (spinner.style.display !== 'none') {
+  if (spinner && spinner.style.display !== 'none') {
     showError('انتهت مهلة الانتظار. حاول مرة أخرى.');
   }
 }, 15000);
