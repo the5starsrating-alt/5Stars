@@ -1513,17 +1513,16 @@ async function generateReply(btn) {
   } catch(_) {
     btn.disabled = false;
     btn.textContent = originalText;
-    alert('حدث خطأ في توليد الرد. حاول مرة أخرى.');
+    showToast('حدث خطأ في توليد الرد. حاول مرة أخرى.', 'error');
   }
 
     // Show success
-    const alert = document.getElementById('replyAlert');
-    if (alert) {
-      alert.textContent = '✅ تم الرد بنجاح عبر الذكاء الاصطناعي!';
-      alert.classList.add('show');
-      setTimeout(() => alert.classList.remove('show'), 3000);
+    const alertEl = document.getElementById('replyAlert');
+    if (alertEl) {
+      alertEl.textContent = '✅ تم الرد بنجاح عبر الذكاء الاصطناعي!';
+      alertEl.classList.add('show');
+      setTimeout(() => alertEl.classList.remove('show'), 3000);
     }
-  }, 1500);
 }
 
 // ══════════════════════════════════
