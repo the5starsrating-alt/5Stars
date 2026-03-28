@@ -1020,7 +1020,16 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
           <div style="font-family:'Tajawal',sans-serif;font-size:24px;font-weight:900;color:var(--gold2)" id="currentPlan">تجربة مجانية</div>
           <div style="font-size:12px;opacity:0.7;margin-top:4px;" id="trialDays">14 يوم متبقية</div>
         </div>
-        <button class="btn btn-gold" style="width:100%">⬆️ ترقية الباقة</button>
+        <button class="btn btn-gold" style="width:100%;margin-bottom:12px;">⬆️ ترقية الباقة</button>
+        <!-- Coupon activation -->
+        <div style="border-top:1px solid var(--border);padding-top:14px;margin-top:4px;">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">🎟️ لديك كوبون خصم؟</div>
+          <div style="display:flex;gap:8px;">
+            <input type="text" id="couponInput" placeholder="أدخل الكود" style="flex:1;text-transform:uppercase;letter-spacing:1px;font-size:13px;">
+            <button class="btn btn-primary" onclick="activateCoupon()" style="font-size:12px;padding:0 14px;white-space:nowrap;">تفعيل</button>
+          </div>
+          <div id="couponMsg" style="font-size:12px;margin-top:8px;display:none;"></div>
+        </div>
       </div>
 
       <div class="card">
@@ -1314,6 +1323,23 @@ async function init() {
 
   currentProfile = profile;
 
+  // Suspended account guard
+  if (profile && profile.plan === 'suspended') {
+    document.getElementById('loadingOverlay').style.display = 'none';
+    document.body.innerHTML = `<div dir="rtl" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0B1F4E;font-family:Cairo,sans-serif;">
+      <div style="text-align:center;padding:40px;background:#1E3A5F;border-radius:20px;max-width:400px;">
+        <div style="font-size:56px;margin-bottom:16px;">🚫</div>
+        <h2 style="color:#EF4444;margin:0 0 12px;">الحساب موقوف</h2>
+        <p style="color:#94A3B8;margin:0 0 24px;">تم إيقاف حسابك مؤقتاً. يرجى التواصل مع الدعم.</p>
+        <button onclick="sb.auth.signOut().then(()=>location.href='signup.html')"
+          style="background:#EF4444;color:#fff;border:none;padding:12px 28px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;">
+          تسجيل خروج
+        </button>
+      </div>
+    </div>`;
+    return;
+  }
+
   if (profile) {
     const name = profile.full_name || currentUser.email;
     const initial = name.charAt(0);
@@ -1444,7 +1470,7 @@ function generateQR() {
 
 function downloadQR() {
   const canvas = document.querySelector('#qrcode canvas');
-  if (!canvas) return alert('أنشئ QR Code أولاً');
+  if (!canvas) return showToast('أنشئ QR Code أولاً', 'error');
   const bizName = localStorage.getItem('gb_name') || currentProfile?.full_name || '5tars';
   const a = document.createElement('a');
   const bizName2 = localStorage.getItem("gb_name") || currentProfile?.full_name || "5tars";
@@ -1610,17 +1636,17 @@ async function saveGBSettings() {
   const whatsapp = document.getElementById('gbWhatsapp')?.value.trim() || '';
 
   if (!name) {
-    alert('يرجى إدخال اسم المشروع على Google');
+    showToast('يرجى إدخال اسم المشروع على Google', 'error');
     document.getElementById('gbBusinessName').focus();
     return;
   }
   if (!mapsUrl) {
-    alert('يرجى إدخال رابط صفحتك على Google Maps');
+    showToast('يرجى إدخال رابط صفحتك على Google Maps', 'error');
     document.getElementById('gbMapsUrl').focus();
     return;
   }
   if (!whatsapp) {
-    alert('يرجى إدخال رقم واتساب لاستقبال الإشعارات');
+    showToast('يرجى إدخال رقم واتساب لاستقبال الإشعارات', 'error');
     document.getElementById('gbWhatsapp').focus();
     return;
   }
@@ -1824,15 +1850,18 @@ function showWelcomeModal(businessName) {
   document.body.appendChild(modal);
 }
 
-function showToast(msg) {
+function showToast(msg, type) {
   const existing = document.getElementById('toastMsg');
   if (existing) existing.remove();
   const t = document.createElement('div');
   t.id = 'toastMsg';
-  t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--green);color:#fff;padding:12px 24px;border-radius:30px;font-size:13px;font-weight:700;z-index:9998;box-shadow:0 8px 24px rgba(22,163,74,0.3);direction:rtl;white-space:nowrap;';
+  const isError = type === 'error';
+  const bg  = isError ? '#EF4444' : 'var(--green, #16A34A)';
+  const shd = isError ? '0 8px 24px rgba(239,68,68,0.35)' : '0 8px 24px rgba(22,163,74,0.3)';
+  t.style.cssText = `position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:${bg};color:#fff;padding:12px 24px;border-radius:30px;font-size:13px;font-weight:700;z-index:9998;box-shadow:${shd};direction:rtl;white-space:nowrap;`;
   t.textContent = msg;
   document.body.appendChild(t);
-  setTimeout(() => t.remove(), 3000);
+  setTimeout(() => t.remove(), 3500);
 }
 
 function loadGBFromStorage() {
@@ -1883,8 +1912,44 @@ async function saveSettings() {
   }).eq('id', currentUser.id);
 
   if (!error) {
-    alert('✅ تم حفظ التغييرات بنجاح!');
+    showToast('✅ تم حفظ التغييرات بنجاح!');
     document.getElementById('userName').textContent = document.getElementById('settingName').value;
+  }
+}
+
+// ══════════════════════════════════
+//  COUPON ACTIVATION
+// ══════════════════════════════════
+async function activateCoupon() {
+  const input = document.getElementById('couponInput');
+  const msg   = document.getElementById('couponMsg');
+  const code  = (input?.value || '').trim().toUpperCase();
+  if (!code) { showToast('يرجى إدخال كود الكوبون', 'error'); return; }
+  if (!currentUser) { showToast('يجب تسجيل الدخول أولاً', 'error'); return; }
+
+  msg.style.display = 'none';
+  const btn = document.querySelector('[onclick="activateCoupon()"]');
+  if (btn) { btn.disabled = true; btn.textContent = '...'; }
+
+  try {
+    const { data, error } = await sb.rpc('use_coupon', { p_code: code, p_user_id: currentUser.id });
+    if (error) throw error;
+    if (!data.success) {
+      msg.style.cssText = 'font-size:12px;margin-top:8px;display:block;color:#EF4444;';
+      msg.textContent = '❌ ' + (data.error || 'كوبون غير صالح');
+    } else {
+      msg.style.cssText = 'font-size:12px;margin-top:8px;display:block;color:#22C55E;';
+      msg.textContent = '✅ تم تفعيل الباقة: ' + (data.plan === 'lifetime' ? 'مدى الحياة' : data.plan);
+      input.value = '';
+      showToast('🎉 تم تفعيل الكوبون بنجاح!');
+      // Reload to reflect new plan
+      setTimeout(() => window.location.reload(), 1800);
+    }
+  } catch (e) {
+    msg.style.cssText = 'font-size:12px;margin-top:8px;display:block;color:#EF4444;';
+    msg.textContent = '❌ خطأ: ' + e.message;
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'تفعيل'; }
   }
 }
 
@@ -1897,7 +1962,7 @@ async function handleLogout() {
 }
 
 async function fetchReviews() {
-  alert('جاري ربط Google Business API... قريباً! 🚀');
+  showToast('جاري ربط Google Business API... قريباً! 🚀');
 }
 
 // ══════════════════════════════════
