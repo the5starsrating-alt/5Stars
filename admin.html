@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة المالك - 5tars</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --blue: #0B1F4E;
+      --blue3: #2251D3;
+      --gold2: #F5B429;
+      --bg: #0f172a;
+      --card: #1e293b;
+      --border: #334155;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --sidebar-w: 260px;
+      --success: #22c55e;
+      --error: #ef4444;
+      --warning: #f59e0b;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Cairo', 'Tajawal', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      min-height: 100vh;
+      direction: rtl;
+    }
+
+    /* ═══ SIDEBAR ═══ */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--card);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; right: 0; bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 24px 20px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo-text {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--gold2);
+      letter-spacing: -1px;
+    }
+
+    .logo-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .owner-profile {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .owner-avatar {
+      width: 42px; height: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--blue3), var(--gold2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700; color: #fff;
+      flex-shrink: 0;
+    }
+
+    .owner-info .owner-name {
+      font-size: 14px; font-weight: 600;
+      color: var(--text);
+    }
+
+    .owner-info .owner-role {
+      font-size: 11px; color: var(--gold2);
+    }
+
+    .nav-section {
+      flex: 1;
+      padding: 12px 0;
+    }
+
+    .nav-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      padding: 8px 20px 4px;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      padding: 11px 20px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: 'Cairo', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      border-right: 3px solid transparent;
+      text-align: right;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+    }
+
+    .nav-btn.active {
+      background: rgba(34, 81, 211, 0.15);
+      color: var(--blue3);
+      border-right-color: var(--blue3);
+    }
+
+    .nav-btn .nav-icon {
+      width: 18px; height: 18px;
+      flex-shrink: 0;
+    }
+
+    .nav-emoji {
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 10px 14px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: 8px;
+      color: #ef4444;
+      cursor: pointer;
+      font-family: 'Cairo', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    /* ═══ MAIN CONTENT ═══ */
+    .main {
+      margin-right: var(--sidebar-w);
+      flex: 1;
+      padding: 32px;
+      min-height: 100vh;
+    }
+
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .page-header {
+      margin-bottom: 28px;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ═══ STAT CARDS ═══ */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .stat-change {
+      font-size: 12px;
+      color: var(--success);
+    }
+
+    .stat-icon {
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 4px;
+    }
+
+    /* ═══ CARDS / PANELS ═══ */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    /* ═══ TABLES ═══ */
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th {
+      text-align: right;
+      padding: 10px 14px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.02);
+    }
+
+    td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(51, 65, 85, 0.5);
+      color: var(--text);
+      vertical-align: middle;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    /* ═══ BADGES ═══ */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .badge-free { background: rgba(148,163,184,0.15); color: #94a3b8; }
+    .badge-basic { background: rgba(34,81,211,0.15); color: #60a5fa; }
+    .badge-pro { background: rgba(245,180,41,0.15); color: var(--gold2); }
+    .badge-advanced { background: rgba(34,197,94,0.15); color: #4ade80; }
+    .badge-trial { background: rgba(168,85,247,0.15); color: #c084fc; }
+    .badge-active { background: rgba(34,197,94,0.15); color: #4ade80; }
+    .badge-suspended { background: rgba(239,68,68,0.15); color: #f87171; }
+
+    /* ═══ BUTTONS ═══ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--blue3);
+      color: #fff;
+    }
+    .btn-primary:hover { background: #1a40b0; }
+
+    .btn-gold {
+      background: var(--gold2);
+      color: #000;
+    }
+    .btn-gold:hover { background: #e0a320; }
+
+    .btn-ghost {
+      background: rgba(255,255,255,0.06);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
+    .btn-danger {
+      background: rgba(239,68,68,0.1);
+      color: #ef4444;
+      border: 1px solid rgba(239,68,68,0.3);
+    }
+    .btn-danger:hover { background: rgba(239,68,68,0.2); }
+
+    .btn-success {
+      background: rgba(34,197,94,0.1);
+      color: #22c55e;
+      border: 1px solid rgba(34,197,94,0.3);
+    }
+    .btn-success:hover { background: rgba(34,197,94,0.2); }
+
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+    /* ═══ SEARCH & FILTERS ═══ */
+    .filters-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 200px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 9px 14px 9px 40px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Cairo', sans-serif;
+      font-size: 13px;
+      outline: none;
+    }
+
+    .search-box input:focus { border-color: var(--blue3); }
+
+    .search-box .search-icon {
+      position: absolute;
+      left: 12px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      width: 16px; height: 16px;
+    }
+
+    select {
+      padding: 9px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Cairo', sans-serif;
+      font-size: 13px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    select:focus { border-color: var(--blue3); }
+
+    /* ═══ PAGINATION ═══ */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .page-num {
+      width: 36px; height: 36px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .page-num:hover, .page-num.active {
+      background: var(--blue3);
+      border-color: var(--blue3);
+      color: #fff;
+    }
+
+    /* ═══ PROGRESS BARS ═══ */
+    .plan-dist { display: flex; flex-direction: column; gap: 14px; }
+
+    .plan-bar-item { display: flex; flex-direction: column; gap: 6px; }
+
+    .plan-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .plan-bar-track {
+      height: 8px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .plan-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+
+    /* ═══ ANALYTICS BARS ═══ */
+    .chart-container {
+      display: flex;
+      align-items: flex-end;
+      gap: 10px;
+      height: 160px;
+      padding: 0 8px;
+    }
+
+    .chart-bar-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .chart-bar {
+      width: 100%;
+      border-radius: 6px 6px 0 0;
+      background: var(--blue3);
+      min-height: 4px;
+      transition: height 0.6s ease;
+      position: relative;
+    }
+
+    .chart-bar:hover { background: var(--gold2); }
+
+    .chart-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    .chart-val {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* ═══ TOGGLES ═══ */
+    .toggle-group {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .toggle-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      transition: border-color 0.2s;
+    }
+
+    .toggle-item.maintenance-item {
+      border-color: rgba(239,68,68,0.4);
+      background: rgba(239,68,68,0.05);
+    }
+
+    .toggle-info { display: flex; flex-direction: column; gap: 3px; }
+
+    .toggle-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .toggle-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .toggle-warn {
+      font-size: 11px;
+      color: #ef4444;
+      margin-top: 2px;
+    }
+
+    .switch {
+      position: relative;
+      width: 52px; height: 28px;
+      flex-shrink: 0;
+    }
+
+    .switch input { display: none; }
+
+    .switch-track {
+      position: absolute;
+      inset: 0;
+      background: var(--border);
+      border-radius: 14px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .switch input:checked + .switch-track { background: var(--blue3); }
+
+    .switch-track::after {
+      content: '';
+      position: absolute;
+      width: 22px; height: 22px;
+      background: #fff;
+      border-radius: 50%;
+      top: 3px; right: 3px;
+      transition: transform 0.3s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .switch input:checked + .switch-track::after {
+      transform: translateX(-24px);
+    }
+
+    /* ═══ FORM ELEMENTS ═══ */
+    .form-group { margin-bottom: 16px; }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Cairo', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-input:focus { border-color: var(--blue3); }
+
+    textarea.form-input {
+      resize: vertical;
+      min-height: 90px;
+    }
+
+    /* ═══ MODALS ═══ */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open { display: flex; }
+
+    .modal {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      width: 100%;
+      max-width: 460px;
+      margin: 20px;
+      position: relative;
+      animation: modalIn 0.2s ease;
+    }
+
+    @keyframes modalIn {
+      from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .modal-close {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(255,255,255,0.06);
+      border: none;
+      border-radius: 8px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .modal-close:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 20px;
+    }
+
+    /* ═══ TOAST ═══ */
+    #toast-container {
+      position: fixed;
+      bottom: 24px;
+      left: 24px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      min-width: 220px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      animation: toastIn 0.3s ease;
+    }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .toast-success { background: #15803d; border: 1px solid #22c55e; }
+    .toast-error { background: #991b1b; border: 1px solid #ef4444; }
+    .toast-info { background: #1d4ed8; border: 1px solid #60a5fa; }
+
+    /* ═══ MISC ═══ */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+    .section-actions {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 20px; height: 20px;
+      border: 2px solid var(--border);
+      border-top-color: var(--blue3);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .user-email-cell { font-size: 12px; color: var(--text-muted); }
+
+    .action-btns { display: flex; gap: 6px; }
+
+    .analytics-metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .metric-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .metric-value {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--gold2);
+    }
+
+    .metric-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .coupon-toggle-btn {
+      font-size: 11px;
+      padding: 4px 10px;
+    }
+
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .two-col { grid-template-columns: 1fr; }
+      .analytics-metrics { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ SIDEBAR ═══ -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-text">5tars ⭐</div>
+      <div class="logo-sub">لوحة تحكم المالك</div>
+    </div>
+
+    <div class="owner-profile">
+      <div class="owner-avatar" id="ownerAvatar">م</div>
+      <div class="owner-info">
+        <div class="owner-name" id="ownerName">جاري التحميل...</div>
+        <div class="owner-role">المالك</div>
+      </div>
+    </div>
+
+    <nav class="nav-section">
+      <div class="nav-label">القائمة الرئيسية</div>
+      <button class="nav-btn active" onclick="switchSection('overview', this)">
+        <span class="nav-emoji">📊</span> نظرة عامة
+      </button>
+      <button class="nav-btn" onclick="switchSection('users', this)">
+        <span class="nav-emoji">👥</span> المستخدمون
+      </button>
+      <button class="nav-btn" onclick="switchSection('subscriptions', this)">
+        <span class="nav-emoji">💳</span> الاشتراكات
+      </button>
+      <button class="nav-btn" onclick="switchSection('analytics', this)">
+        <span class="nav-emoji">📈</span> الإحصائيات
+      </button>
+      <button class="nav-btn" onclick="switchSection('settings', this)">
+        <span class="nav-emoji">⚙️</span> الإعدادات
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="handleLogout()">
+        <i data-lucide="log-out" style="width:16px;height:16px;"></i>
+        تسجيل الخروج
+      </button>
+    </div>
+  </aside>
+
+  <!-- ═══ MAIN ═══ -->
+  <main class="main">
+
+    <!-- ── OVERVIEW ── -->
+    <section id="section-overview" class="section active">
+      <div class="page-header">
+        <div class="page-title">نظرة عامة</div>
+        <div class="page-subtitle">مرحباً بك في لوحة تحكم المالك</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(34,81,211,0.15);">
+            <i data-lucide="users" style="width:18px;height:18px;color:#60a5fa;"></i>
+          </div>
+          <div class="stat-label">إجمالي المستخدمين</div>
+          <div class="stat-value" id="stat-total">—</div>
+          <div class="stat-change">إجمالي المسجلين</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(34,197,94,0.15);">
+            <i data-lucide="activity" style="width:18px;height:18px;color:#4ade80;"></i>
+          </div>
+          <div class="stat-label">نشطون اليوم</div>
+          <div class="stat-value" id="stat-today">—</div>
+          <div class="stat-change">مسجلون اليوم</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(245,180,41,0.15);">
+            <i data-lucide="calendar" style="width:18px;height:18px;color:#F5B429;"></i>
+          </div>
+          <div class="stat-label">هذا الأسبوع</div>
+          <div class="stat-value" id="stat-week">—</div>
+          <div class="stat-change">آخر 7 أيام</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon" style="background:rgba(168,85,247,0.15);">
+            <i data-lucide="dollar-sign" style="width:18px;height:18px;color:#c084fc;"></i>
+          </div>
+          <div class="stat-label">الإيراد (هذا الشهر)</div>
+          <div class="stat-value" id="stat-revenue">—</div>
+          <div class="stat-change">من الاشتراكات</div>
+        </div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">آخر 5 مسجلين</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>الاسم</th>
+                  <th>الإيميل</th>
+                  <th>الخطة</th>
+                  <th>التاريخ</th>
+                </tr>
+              </thead>
+              <tbody id="recent-users-table">
+                <tr><td colspan="4" class="empty-state">جاري التحميل...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">توزيع الخطط</span>
+          </div>
+          <div class="plan-dist" id="plan-distribution">
+            <div class="plan-bar-item">
+              <div class="plan-bar-label">
+                <span>مجاني</span>
+                <span id="free-pct">—</span>
+              </div>
+              <div class="plan-bar-track">
+                <div class="plan-bar-fill" id="free-bar" style="width:0%;background:#94a3b8;"></div>
+              </div>
+            </div>
+            <div class="plan-bar-item">
+              <div class="plan-bar-label">
+                <span>أساسي</span>
+                <span id="basic-pct">—</span>
+              </div>
+              <div class="plan-bar-track">
+                <div class="plan-bar-fill" id="basic-bar" style="width:0%;background:#2251D3;"></div>
+              </div>
+            </div>
+            <div class="plan-bar-item">
+              <div class="plan-bar-label">
+                <span>احترافي</span>
+                <span id="pro-pct">—</span>
+              </div>
+              <div class="plan-bar-track">
+                <div class="plan-bar-fill" id="pro-bar" style="width:0%;background:#F5B429;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── USERS ── -->
+    <section id="section-users" class="section">
+      <div class="page-header">
+        <div class="page-title">إدارة المستخدمين</div>
+        <div class="page-subtitle">عرض وإدارة جميع المستخدمين المسجلين</div>
+      </div>
+
+      <div class="filters-row">
+        <div class="search-box">
+          <i data-lucide="search" class="search-icon"></i>
+          <input type="text" id="user-search" placeholder="بحث بالاسم أو الإيميل..." oninput="filterUsers()" />
+        </div>
+        <select id="filter-plan" onchange="filterUsers()">
+          <option value="">كل الخطط</option>
+          <option value="free">مجاني</option>
+          <option value="basic">أساسي</option>
+          <option value="pro">احترافي</option>
+          <option value="advanced">متقدم</option>
+          <option value="trial">تجريبي</option>
+        </select>
+        <select id="filter-status" onchange="filterUsers()">
+          <option value="">كل الحالات</option>
+          <option value="active">نشط</option>
+          <option value="suspended">موقوف</option>
+        </select>
+      </div>
+
+      <div class="card" style="padding:0;">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>الاسم</th>
+                <th>الإيميل</th>
+                <th>الخطة</th>
+                <th>الحالة</th>
+                <th>تاريخ التسجيل</th>
+                <th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="users-table">
+              <tr><td colspan="6" class="empty-state">جاري التحميل...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="pagination" id="users-pagination"></div>
+    </section>
+
+    <!-- ── SUBSCRIPTIONS ── -->
+    <section id="section-subscriptions" class="section">
+      <div class="page-header">
+        <div class="page-title">الاشتراكات والكوبونات</div>
+        <div class="page-subtitle">إدارة الاشتراكات المجانية والكوبونات</div>
+      </div>
+
+      <div class="section-actions">
+        <button class="btn btn-primary" onclick="showModal('trial-modal')">
+          <i data-lucide="gift" style="width:15px;height:15px;"></i>
+          منح اشتراك مجاني
+        </button>
+        <button class="btn btn-gold" onclick="showModal('coupon-modal')">
+          <i data-lucide="tag" style="width:15px;height:15px;"></i>
+          إنشاء كوبون
+        </button>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">الكوبونات النشطة</span>
+            <button class="btn btn-ghost btn-sm" onclick="loadCoupons()">
+              <i data-lucide="refresh-cw" style="width:13px;height:13px;"></i>
+            </button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>الكود</th>
+                  <th>الخصم</th>
+                  <th>الاستخدامات</th>
+                  <th>الصلاحية</th>
+                  <th>الحالة</th>
+                </tr>
+              </thead>
+              <tbody id="coupons-table">
+                <tr><td colspan="5" class="empty-state">لا توجد كوبونات</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">الاشتراكات النشطة</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>المستخدم</th>
+                  <th>الخطة</th>
+                  <th>البداية</th>
+                  <th>النهاية</th>
+                  <th>المبلغ</th>
+                </tr>
+              </thead>
+              <tbody id="subscriptions-table">
+                <tr><td colspan="5" class="empty-state">لا توجد اشتراكات</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ANALYTICS ── -->
+    <section id="section-analytics" class="section">
+      <div class="page-header">
+        <div class="page-title">الإحصائيات والتحليلات</div>
+        <div class="page-subtitle">نظرة تفصيلية على أداء المنصة</div>
+      </div>
+
+      <div class="analytics-metrics">
+        <div class="metric-card">
+          <div class="metric-value" id="an-conversion">—</div>
+          <div class="metric-label">نسبة التحويل للمدفوع</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="an-avg-rev">—</div>
+          <div class="metric-label">متوسط الإيراد / مشترك</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-value" id="an-active-users">—</div>
+          <div class="metric-label">مستخدمون نشطون</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">النمو الشهري (تسجيلات جديدة)</span>
+        </div>
+        <div class="chart-container" id="monthly-chart">
+          <!-- generated by JS -->
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">توزيع الخطط التفصيلي</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>الخطة</th>
+                <th>عدد المستخدمين</th>
+                <th>النسبة</th>
+                <th>الإيراد المتوقع</th>
+              </tr>
+            </thead>
+            <tbody id="plan-table">
+              <tr><td colspan="4" class="empty-state">جاري التحميل...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SETTINGS ── -->
+    <section id="section-settings" class="section">
+      <div class="page-header">
+        <div class="page-title">إعدادات الموقع</div>
+        <div class="page-subtitle">التحكم في إعدادات المنصة العامة</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">الإعدادات العامة</span>
+        </div>
+
+        <div class="toggle-group">
+          <div class="toggle-item maintenance-item">
+            <div class="toggle-info">
+              <div class="toggle-label">🚧 وضع الصيانة</div>
+              <div class="toggle-desc">إيقاف الموقع مؤقتاً للصيانة</div>
+              <div class="toggle-warn">⚠️ تفعيل هذا سيمنع المستخدمين من الدخول</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-maintenance" />
+              <span class="switch-track"></span>
+            </label>
+          </div>
+
+          <div class="toggle-item">
+            <div class="toggle-info">
+              <div class="toggle-label">🔐 التسجيلات الجديدة</div>
+              <div class="toggle-desc">السماح للمستخدمين الجدد بإنشاء حسابات</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-registrations" checked />
+              <span class="switch-track"></span>
+            </label>
+          </div>
+
+          <div class="toggle-item">
+            <div class="toggle-info">
+              <div class="toggle-label">🤖 ردود الذكاء الاصطناعي</div>
+              <div class="toggle-desc">تفعيل الردود التلقائية بالذكاء الاصطناعي</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-ai" checked />
+              <span class="switch-track"></span>
+            </label>
+          </div>
+
+          <div class="toggle-item">
+            <div class="toggle-info">
+              <div class="toggle-label">💬 إشعارات واتساب</div>
+              <div class="toggle-desc">إرسال إشعارات عبر واتساب</div>
+            </div>
+            <label class="switch">
+              <input type="checkbox" id="toggle-whatsapp" checked />
+              <span class="switch-track"></span>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">رسالة الإعلان</label>
+          <textarea class="form-input" id="announcement-msg" placeholder="اكتب رسالة الإعلان هنا..."></textarea>
+        </div>
+
+        <div class="toggle-item" style="margin-bottom:24px;">
+          <div class="toggle-info">
+            <div class="toggle-label">📢 تفعيل رسالة الإعلان</div>
+            <div class="toggle-desc">عرض الإعلان لجميع المستخدمين</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="toggle-announcement" />
+            <span class="switch-track"></span>
+          </label>
+        </div>
+
+        <button class="btn btn-primary" onclick="saveSettings()" style="width:100%;">
+          <i data-lucide="save" style="width:15px;height:15px;"></i>
+          حفظ الإعدادات
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══ MODAL: منح اشتراك مجاني ═══ -->
+  <div class="modal-overlay" id="trial-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">🎁 منح اشتراك مجاني</span>
+        <button class="modal-close" onclick="hideModal('trial-modal')">
+          <i data-lucide="x" style="width:16px;height:16px;"></i>
+        </button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">إيميل المستخدم *</label>
+        <input type="email" class="form-input" id="trial-email" placeholder="user@example.com" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">عدد الأيام *</label>
+        <input type="number" class="form-input" id="trial-days" placeholder="30" min="1" max="365" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">ملاحظات (اختياري)</label>
+        <textarea class="form-input" id="trial-notes" placeholder="سبب منح الاشتراك..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="hideModal('trial-modal')">إلغاء</button>
+        <button class="btn btn-primary" onclick="submitGrantTrial()">
+          <i data-lucide="check" style="width:14px;height:14px;"></i>
+          منح الاشتراك
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODAL: إنشاء كوبون ═══ -->
+  <div class="modal-overlay" id="coupon-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">🏷️ إنشاء كوبون جديد</span>
+        <button class="modal-close" onclick="hideModal('coupon-modal')">
+          <i data-lucide="x" style="width:16px;height:16px;"></i>
+        </button>
+      </div>
+      <div class="form-group">
+        <label class="form-label">كود الكوبون *</label>
+        <input type="text" class="form-input" id="coupon-code" placeholder="SAVE50" style="text-transform:uppercase;" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">نسبة الخصم % *</label>
+        <input type="number" class="form-input" id="coupon-percent" placeholder="20" min="1" max="100" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">عدد الاستخدامات المسموح</label>
+        <input type="number" class="form-input" id="coupon-uses" placeholder="1" min="1" />
+      </div>
+      <div class="form-group">
+        <label class="form-label">تاريخ الانتهاء (اختياري)</label>
+        <input type="date" class="form-input" id="coupon-expires" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="hideModal('coupon-modal')">إلغاء</button>
+        <button class="btn btn-gold" onclick="submitCreateCoupon()">
+          <i data-lucide="tag" style="width:14px;height:14px;"></i>
+          إنشاء الكوبون
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ MODAL: ترقية مستخدم ═══ -->
+  <div class="modal-overlay" id="upgrade-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span class="modal-title">⬆️ ترقية المستخدم</span>
+        <button class="modal-close" onclick="hideModal('upgrade-modal')">
+          <i data-lucide="x" style="width:16px;height:16px;"></i>
+        </button>
+      </div>
+      <input type="hidden" id="upgrade-user-id" />
+      <div class="form-group">
+        <label class="form-label">الخطة الجديدة</label>
+        <select class="form-input" id="upgrade-plan">
+          <option value="basic">أساسي - Basic</option>
+          <option value="pro">احترافي - Pro</option>
+          <option value="advanced">متقدم - Advanced</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="hideModal('upgrade-modal')">إلغاء</button>
+        <button class="btn btn-primary" onclick="submitUpgrade()">
+          <i data-lucide="arrow-up" style="width:14px;height:14px;"></i>
+          تطبيق الترقية
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TOAST CONTAINER ═══ -->
+  <div id="toast-container"></div>
+
+  <script>
+    // ═══════════════════════════════════════════════
+    // SUPABASE INIT
+    // ═══════════════════════════════════════════════
+    const SUPABASE_URL = 'https://xdmbwtnpadjeinclmffh.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkbWJ3dG5wYWRqZWluY2xtZmZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NDI1OTksImV4cCI6MjA4ODQxODU5OX0.fmWmQXlm0eHnj8I5PFxakW7xh13nnMQBN1yU6-z2aFw';
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // ═══ STATE ═══
+    let allUsers = [];
+    let filteredUsers = [];
+    let currentPage = 1;
+    const PAGE_SIZE = 10;
+    let currentSection = 'overview';
+
+    // ═══════════════════════════════════════════════
+    // INIT - تحقق من session ودور المالك
+    // ═══════════════════════════════════════════════
+    async function init() {
+      try {
+        const { data: { session } } = await sb.auth.getSession();
+        if (!session) {
+          window.location.href = 'signup.html';
+          return;
+        }
+
+        const { data: profile, error } = await sb.from('profiles')
+          .select('role, full_name, email')
+          .eq('id', session.user.id)
+          .single();
+
+        if (error || !profile || profile.role !== 'owner') {
+          window.location.href = 'dashboard.html';
+          return;
+        }
+
+        // اعرض اسم المالك
+        const displayName = profile.full_name || session.user.email || 'المالك';
+        document.getElementById('ownerName').textContent = displayName;
+        document.getElementById('ownerAvatar').textContent = displayName.charAt(0).toUpperCase();
+
+        // حمّل البيانات الأولية
+        await loadOverview();
+        await loadSettings();
+
+        // init lucide icons
+        lucide.createIcons();
+
+      } catch (err) {
+        console.error('Init error:', err);
+        showToast('خطأ في تحميل الصفحة', 'error');
+      }
+    }
+
+    // ═══════════════════════════════════════════════
+    // NAVIGATION
+    // ═══════════════════════════════════════════════
+    function switchSection(name, btn) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('section-' + name).classList.add('active');
+      btn.classList.add('active');
+      currentSection = name;
+
+      // تحميل البيانات عند التبديل
+      if (name === 'users') loadUsers();
+      if (name === 'subscriptions') { loadCoupons(); loadActiveSubscriptions(); }
+      if (name === 'analytics') loadAnalytics();
+
+      lucide.createIcons();
+    }
+
+    // ═══════════════════════════════════════════════
+    // OVERVIEW
+    // ═══════════════════════════════════════════════
+    async function loadOverview() {
+      try {
+        // إجمالي المستخدمين
+        const { count: totalCount } = await sb.from('profiles').select('*', { count: 'exact', head: true });
+        document.getElementById('stat-total').textContent = totalCount || 0;
+
+        // مسجلون اليوم
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const { count: todayCount } = await sb.from('profiles')
+          .select('*', { count: 'exact', head: true })
+          .gte('created_at', today.toISOString());
+        document.getElementById('stat-today').textContent = todayCount || 0;
+
+        // هذا الأسبوع
+        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        const { count: weekCount } = await sb.from('profiles')
+          .select('*', { count: 'exact', head: true })
+          .gte('created_at', weekAgo.toISOString());
+        document.getElementById('stat-week').textContent = weekCount || 0;
+
+        // الإيراد
+        const monthStart = new Date();
+        monthStart.setDate(1);
+        monthStart.setHours(0, 0, 0, 0);
+        const { data: revData } = await sb.from('subscriptions')
+          .select('amount_paid')
+          .gte('created_at', monthStart.toISOString());
+        const revenue = (revData || []).reduce((sum, r) => sum + (parseFloat(r.amount_paid) || 0), 0);
+        document.getElementById('stat-revenue').textContent = revenue.toFixed(0) + ' ر.س';
+
+        // آخر 5 مسجلين
+        const { data: recentUsers } = await sb.from('profiles')
+          .select('full_name, email, plan, created_at')
+          .order('created_at', { ascending: false })
+          .limit(5);
+
+        const tbody = document.getElementById('recent-users-table');
+        if (!recentUsers || recentUsers.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="4" class="empty-state">لا يوجد مستخدمون</td></tr>';
+        } else {
+          tbody.innerHTML = recentUsers.map(u => `
+            <tr>
+              <td>${u.full_name || '—'}</td>
+              <td class="user-email-cell">${u.email || '—'}</td>
+              <td>${planBadge(u.plan || 'free')}</td>
+              <td style="font-size:12px;color:var(--text-muted);">${formatDate(u.created_at)}</td>
+            </tr>
+          `).join('');
+        }
+
+        // توزيع الخطط
+        const { data: planData } = await sb.from('profiles').select('plan');
+        if (planData) {
+          const total = planData.length || 1;
+          const freeC = planData.filter(p => !p.plan || p.plan === 'free').length;
+          const basicC = planData.filter(p => p.plan === 'basic').length;
+          const proC = planData.filter(p => p.plan === 'pro' || p.plan === 'advanced').length;
+
+          const freePct = Math.round((freeC / total) * 100);
+          const basicPct = Math.round((basicC / total) * 100);
+          const proPct = Math.round((proC / total) * 100);
+
+          document.getElementById('free-pct').textContent = `${freeC} (${freePct}%)`;
+          document.getElementById('basic-pct').textContent = `${basicC} (${basicPct}%)`;
+          document.getElementById('pro-pct').textContent = `${proC} (${proPct}%)`;
+          document.getElementById('free-bar').style.width = freePct + '%';
+          document.getElementById('basic-bar').style.width = basicPct + '%';
+          document.getElementById('pro-bar').style.width = proPct + '%';
+        }
+
+        lucide.createIcons();
+      } catch (err) {
+        console.error('loadOverview error:', err);
+        showToast('خطأ في تحميل النظرة العامة', 'error');
+      }
+    }
+
+    // ═══════════════════════════════════════════════
+    // USERS
+    // ═══════════════════════════════════════════════
+    async function loadUsers() {
+      try {
+        document.getElementById('users-table').innerHTML = '<tr><td colspan="6" class="empty-state"><span class="loading-spinner"></span></td></tr>';
+
+        const { data, error } = await sb.from('profiles')
+          .select('id, full_name, email, plan, status, created_at, role')
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+        allUsers = data || [];
+        filteredUsers = [...allUsers];
+        currentPage = 1;
+        renderUsersTable();
+      } catch (err) {
+        console.error('loadUsers error:', err);
+        showToast('خطأ في تحميل المستخدمين', 'error');
+      }
+    }
+
+    function filterUsers() {
+      const search = document.getElementById('user-search').value.toLowerCase();
+      const plan = document.getElementById('filter-plan').value;
+      const status = document.getElementById('filter-status').value;
+
+      filteredUsers = allUsers.filter(u => {
+        const matchSearch = !search ||
+          (u.full_name && u.full_name.toLowerCase().includes(search)) ||
+          (u.email && u.email.toLowerCase().includes(search));
+        const matchPlan = !plan || (u.plan || 'free') === plan;
+        const matchStatus = !status || (u.status || 'active') === status;
+        return matchSearch && matchPlan && matchStatus;
+      });
+      currentPage = 1;
+      renderUsersTable();
+    }
+
+    function renderUsersTable() {
+      const start = (currentPage - 1) * PAGE_SIZE;
+      const end = start + PAGE_SIZE;
+      const pageUsers = filteredUsers.slice(start, end);
+      const tbody = document.getElementById('users-table');
+
+      if (pageUsers.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-state">لا توجد نتائج</td></tr>';
+      } else {
+        tbody.innerHTML = pageUsers.map(u => `
+          <tr>
+            <td><strong>${u.full_name || '—'}</strong></td>
+            <td class="user-email-cell">${u.email || '—'}</td>
+            <td>${planBadge(u.plan || 'free')}</td>
+            <td>${statusBadge(u.status || 'active')}</td>
+            <td style="font-size:12px;color:var(--text-muted);">${formatDate(u.created_at)}</td>
+            <td>
+              <div class="action-btns">
+                ${(u.status || 'active') === 'active'
+                  ? `<button class="btn btn-sm btn-danger" onclick="suspendUser('${u.id}')">تعليق</button>`
+                  : `<button class="btn btn-sm btn-success" onclick="activateUser('${u.id}')">تفعيل</button>`
+                }
+                <button class="btn btn-sm btn-primary" onclick="openUpgradeModal('${u.id}')">ترقية</button>
+                <button class="btn btn-sm btn-danger" onclick="deleteUser('${u.id}')">
+                  <i data-lucide="trash-2" style="width:12px;height:12px;"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      renderPagination();
+      lucide.createIcons();
+    }
+
+    function renderPagination() {
+      const totalPages = Math.ceil(filteredUsers.length / PAGE_SIZE);
+      const container = document.getElementById('users-pagination');
+      if (totalPages <= 1) { container.innerHTML = ''; return; }
+
+      let html = '';
+      if (currentPage > 1) html += `<div class="page-num" onclick="goPage(${currentPage - 1})">‹</div>`;
+      for (let i = 1; i <= totalPages; i++) {
+        html += `<div class="page-num ${i === currentPage ? 'active' : ''}" onclick="goPage(${i})">${i}</div>`;
+      }
+      if (currentPage < totalPages) html += `<div class="page-num" onclick="goPage(${currentPage + 1})">›</div>`;
+      container.innerHTML = html;
+    }
+
+    function goPage(p) {
+      currentPage = p;
+      renderUsersTable();
+    }
+
+    async function suspendUser(id) {
+      try {
+        const { error } = await sb.from('profiles').update({ status: 'suspended' }).eq('id', id);
+        if (error) throw error;
+        const u = allUsers.find(u => u.id === id);
+        if (u) u.status = 'suspended';
+        filterUsers();
+        showToast('تم تعليق المستخدم', 'success');
+      } catch (err) {
+        showToast('خطأ في تعليق المستخدم', 'error');
+      }
+    }
+
+    async function activateUser(id) {
+      try {
+        const { error } = await sb.from('profiles').update({ status: 'active' }).eq('id', id);
+        if (error) throw error;
+        const u = allUsers.find(u => u.id === id);
+        if (u) u.status = 'active';
+        filterUsers();
+        showToast('تم تفعيل المستخدم', 'success');
+      } catch (err) {
+        showToast('خطأ في تفعيل المستخدم', 'error');
+      }
+    }
+
+    function openUpgradeModal(id) {
+      document.getElementById('upgrade-user-id').value = id;
+      showModal('upgrade-modal');
+    }
+
+    async function submitUpgrade() {
+      const id = document.getElementById('upgrade-user-id').value;
+      const plan = document.getElementById('upgrade-plan').value;
+      await upgradeUser(id, plan);
+    }
+
+    async function upgradeUser(id, plan) {
+      try {
+        const { error } = await sb.from('profiles').update({ plan }).eq('id', id);
+        if (error) throw error;
+        const u = allUsers.find(u => u.id === id);
+        if (u) u.plan = plan;
+        filterUsers();
+        hideModal('upgrade-modal');
+        showToast('تم ترقية الخطة بنجاح', 'success');
+      } catch (err) {
+        showToast('خطأ في ترقية المستخدم', 'error');
+      }
+    }
+
+    async function deleteUser(id) {
+      if (!confirm('هل أنت متأكد من حذف هذا المستخدم؟ هذا الإجراء لا يمكن التراجع عنه.')) return;
+      try {
+        const { error } = await sb.from('profiles').delete().eq('id', id);
+        if (error) throw error;
+        allUsers = allUsers.filter(u => u.id !== id);
+        filterUsers();
+        showToast('تم حذف المستخدم', 'success');
+      } catch (err) {
+        showToast('خطأ في حذف المستخدم', 'error');
+      }
+    }
+
+    // ═══════════════════════════════════════════════
+    // SUBSCRIPTIONS
+    // ═══════════════════════════════════════════════
+    async function submitGrantTrial() {
+      const email = document.getElementById('trial-email').value.trim();
+      const days = parseInt(document.getElementById('trial-days').value);
+      const notes = document.getElementById('trial-notes').value.trim();
+
+      if (!email || !days) { showToast('يرجى تعبئة الحقول المطلوبة', 'error'); return; }
+      await grantFreeTrial(email, days, notes);
+    }
+
+    async function grantFreeTrial(email, days, notes) {
+      try {
+        // ابحث عن المستخدم بالإيميل
+        const { data: userData, error: uErr } = await sb.from('profiles')
+          .select('id')
+          .eq('email', email)
+          .single();
+
+        if (uErr || !userData) { showToast('المستخدم غير موجود', 'error'); return; }
+
+        const { data: { session } } = await sb.auth.getSession();
+        const expiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
+
+        const { error } = await sb.from('free_trials').upsert({
+          user_id: userData.id,
+          granted_by: session.user.id,
+          expires_at: expiresAt,
+          notes: notes || null
+        }, { onConflict: 'user_id' });
+
+        if (error) throw error;
+
+        // أضف اشتراك
+        await sb.from('subscriptions').insert({
+          user_id: userData.id,
+          plan: 'trial',
+          status: 'active',
+          end_date: expiresAt,
+          granted_by: session.user.id,
+          amount_paid: 0
+        });
+
+        hideModal('trial-modal');
+        document.getElementById('trial-email').value = '';
+        document.getElementById('trial-days').value = '';
+        document.getElementById('trial-notes').value = '';
+        showToast(`تم منح ${days} يوم تجريبي لـ ${email}`, 'success');
+        loadActiveSubscriptions();
+      } catch (err) {
+        console.error(err);
+        showToast('خطأ في منح الاشتراك: ' + (err.message || ''), 'error');
+      }
+    }
+
+    async function submitCreateCoupon() {
+      const code = document.getElementById('coupon-code').value.trim().toUpperCase();
+      const percent = parseInt(document.getElementById('coupon-percent').value);
+      const maxUses = parseInt(document.getElementById('coupon-uses').value) || 1;
+      const expiresAt = document.getElementById('coupon-expires').value;
+
+      if (!code || !percent) { showToast('يرجى تعبئة الحقول المطلوبة', 'error'); return; }
+      await createCoupon(code, percent, maxUses, expiresAt || null);
+    }
+
+    async function createCoupon(code, percent, maxUses, expiresAt) {
+      try {
+        const { data: { session } } = await sb.auth.getSession();
+        const { error } = await sb.from('coupons').insert({
+          code,
+          discount_percent: percent,
+          max_uses: maxUses,
+          expires_at: expiresAt,
+          created_by: session.user.id
+        });
+
+        if (error) throw error;
+
+        hideModal('coupon-modal');
+        document.getElementById('coupon-code').value = '';
+        document.getElementById('coupon-percent').value = '';
+        document.getElementById('coupon-uses').value = '';
+        document.getElementById('coupon-expires').value = '';
+        showToast('تم إنشاء الكوبون بنجاح', 'success');
+        loadCoupons();
+      } catch (err) {
+        showToast('خطأ في إنشاء الكوبون: ' + (err.message || ''), 'error');
+      }
+    }
+
+    async function loadCoupons() {
+      try {
+        const { data, error } = await sb.from('coupons').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+
+        const tbody = document.getElementById('coupons-table');
+        if (!data || data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="empty-state">لا توجد كوبونات</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = data.map(c => `
+          <tr>
+            <td><code style="background:var(--bg);padding:3px 8px;border-radius:4px;font-size:12px;">${c.code}</code></td>
+            <td>${c.discount_percent}%</td>
+            <td>${c.used_count}/${c.max_uses}</td>
+            <td style="font-size:12px;color:var(--text-muted);">${c.expires_at ? formatDate(c.expires_at) : 'بلا نهاية'}</td>
+            <td>
+              <button class="btn btn-sm coupon-toggle-btn ${c.is_active ? 'btn-success' : 'btn-danger'}" onclick="toggleCoupon('${c.id}', ${!c.is_active})">
+                ${c.is_active ? '✅ نشط' : '❌ موقوف'}
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        showToast('خطأ في تحميل الكوبونات', 'error');
+      }
+    }
+
+    async function toggleCoupon(id, active) {
+      try {
+        const { error } = await sb.from('coupons').update({ is_active: active }).eq('id', id);
+        if (error) throw error;
+        showToast(active ? 'تم تفعيل الكوبون' : 'تم إيقاف الكوبون', 'success');
+        loadCoupons();
+      } catch (err) {
+        showToast('خطأ في تحديث الكوبون', 'error');
+      }
+    }
+
+    async function loadActiveSubscriptions() {
+      try {
+        const { data, error } = await sb.from('subscriptions')
+          .select('*, profiles!subscriptions_user_id_fkey(full_name, email)')
+          .eq('status', 'active')
+          .order('created_at', { ascending: false })
+          .limit(20);
+
+        const tbody = document.getElementById('subscriptions-table');
+        if (!data || data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="5" class="empty-state">لا توجد اشتراكات نشطة</td></tr>';
+          return;
+        }
+
+        tbody.innerHTML = data.map(s => `
+          <tr>
+            <td>
+              <div>${s.profiles?.full_name || '—'}</div>
+              <div class="user-email-cell">${s.profiles?.email || '—'}</div>
+            </td>
+            <td>${planBadge(s.plan)}</td>
+            <td style="font-size:12px;color:var(--text-muted);">${formatDate(s.start_date)}</td>
+            <td style="font-size:12px;color:var(--text-muted);">${s.end_date ? formatDate(s.end_date) : 'مفتوح'}</td>
+            <td>${s.amount_paid || 0} ر.س</td>
+          </tr>
+        `).join('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // ═══════════════════════════════════════════════
+    // ANALYTICS
+    // ═══════════════════════════════════════════════
+    async function loadAnalytics() {
+      try {
+        const { data: profiles } = await sb.from('profiles').select('plan, status, created_at');
+        const { data: subs } = await sb.from('subscriptions').select('amount_paid, plan').eq('status', 'active');
+
+        const total = profiles?.length || 0;
+        const paid = (profiles || []).filter(p => p.plan && p.plan !== 'free').length;
+        const active = (profiles || []).filter(p => p.status === 'active').length;
+        const totalRev = (subs || []).reduce((s, r) => s + (parseFloat(r.amount_paid) || 0), 0);
+        const avgRev = paid > 0 ? (totalRev / paid).toFixed(0) : 0;
+        const conversion = total > 0 ? ((paid / total) * 100).toFixed(1) : 0;
+
+        document.getElementById('an-conversion').textContent = conversion + '%';
+        document.getElementById('an-avg-rev').textContent = avgRev + ' ر.س';
+        document.getElementById('an-active-users').textContent = active;
+
+        // رسم بياني شهري
+        const monthlyData = buildMonthlyData(profiles || []);
+        renderChart(monthlyData);
+
+        // جدول الخطط
+        const planCounts = { free: 0, basic: 0, pro: 0, advanced: 0, trial: 0 };
+        (profiles || []).forEach(p => {
+          const pl = p.plan || 'free';
+          if (planCounts[pl] !== undefined) planCounts[pl]++;
+          else planCounts.free++;
+        });
+
+        const planPrices = { free: 0, trial: 0, basic: 49, pro: 99, advanced: 199 };
+        const planTbody = document.getElementById('plan-table');
+        const planNames = { free: 'مجاني', trial: 'تجريبي', basic: 'أساسي', pro: 'احترافي', advanced: 'متقدم' };
+        planTbody.innerHTML = Object.entries(planCounts).map(([plan, count]) => `
+          <tr>
+            <td>${planBadge(plan)} <span style="margin-right:8px;">${planNames[plan] || plan}</span></td>
+            <td><strong>${count}</strong></td>
+            <td>${total > 0 ? Math.round((count / total) * 100) : 0}%</td>
+            <td>${(count * planPrices[plan]).toLocaleString()} ر.س</td>
+          </tr>
+        `).join('');
+
+      } catch (err) {
+        console.error('loadAnalytics error:', err);
+        showToast('خطأ في تحميل الإحصائيات', 'error');
+      }
+    }
+
+    function buildMonthlyData(profiles) {
+      const months = {};
+      const now = new Date();
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const key = d.toLocaleString('ar-SA', { month: 'short' });
+        months[key] = 0;
+      }
+      profiles.forEach(p => {
+        if (!p.created_at) return;
+        const d = new Date(p.created_at);
+        const key = d.toLocaleString('ar-SA', { month: 'short' });
+        if (months[key] !== undefined) months[key]++;
+      });
+      return months;
+    }
+
+    function renderChart(data) {
+      const container = document.getElementById('monthly-chart');
+      const values = Object.values(data);
+      const maxVal = Math.max(...values, 1);
+
+      container.innerHTML = Object.entries(data).map(([month, count]) => {
+        const pct = Math.round((count / maxVal) * 100);
+        return `
+          <div class="chart-bar-wrap">
+            <div class="chart-val">${count}</div>
+            <div class="chart-bar" style="height:${Math.max(pct, 3)}%;"></div>
+            <div class="chart-label">${month}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ═══════════════════════════════════════════════
+    // SETTINGS
+    // ═══════════════════════════════════════════════
+    async function loadSettings() {
+      try {
+        const { data, error } = await sb.from('site_settings').select('*');
+        if (error) throw error;
+
+        const settings = {};
+        (data || []).forEach(s => { settings[s.key] = s.value; });
+
+        setToggle('toggle-maintenance', settings['maintenance_mode'] === 'true');
+        setToggle('toggle-registrations', settings['new_registrations_enabled'] !== 'false');
+        setToggle('toggle-ai', settings['ai_replies_enabled'] !== 'false');
+        setToggle('toggle-whatsapp', settings['whatsapp_notifications_enabled'] !== 'false');
+        setToggle('toggle-announcement', settings['announcement_active'] === 'true');
+
+        const annMsg = document.getElementById('announcement-msg');
+        if (annMsg) annMsg.value = settings['announcement_message'] || '';
+
+      } catch (err) {
+        console.error('loadSettings error:', err);
+      }
+    }
+
+    function setToggle(id, val) {
+      const el = document.getElementById(id);
+      if (el) el.checked = !!val;
+    }
+
+    async function saveSettings() {
+      try {
+        const settingsArr = [
+          { key: 'maintenance_mode', value: document.getElementById('toggle-maintenance').checked ? 'true' : 'false', updated_at: new Date().toISOString() },
+          { key: 'new_registrations_enabled', value: document.getElementById('toggle-registrations').checked ? 'true' : 'false', updated_at: new Date().toISOString() },
+          { key: 'ai_replies_enabled', value: document.getElementById('toggle-ai').checked ? 'true' : 'false', updated_at: new Date().toISOString() },
+          { key: 'whatsapp_notifications_enabled', value: document.getElementById('toggle-whatsapp').checked ? 'true' : 'false', updated_at: new Date().toISOString() },
+          { key: 'announcement_active', value: document.getElementById('toggle-announcement').checked ? 'true' : 'false', updated_at: new Date().toISOString() },
+          { key: 'announcement_message', value: document.getElementById('announcement-msg').value || '', updated_at: new Date().toISOString() },
+        ];
+
+        const { error } = await sb.from('site_settings').upsert(settingsArr, { onConflict: 'key' });
+        if (error) throw error;
+        showToast('تم حفظ الإعدادات بنجاح ✅', 'success');
+      } catch (err) {
+        console.error('saveSettings error:', err);
+        showToast('خطأ في حفظ الإعدادات', 'error');
+      }
+    }
+
+    // ═══════════════════════════════════════════════
+    // AUTH
+    // ═══════════════════════════════════════════════
+    async function handleLogout() {
+      await sb.auth.signOut();
+      window.location.href = 'signup.html';
+    }
+
+    // ═══════════════════════════════════════════════
+    // MODALS
+    // ═══════════════════════════════════════════════
+    function showModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('open');
+    }
+
+    function hideModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('open');
+    }
+
+    // Close on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('open');
+      });
+    });
+
+    // ═══════════════════════════════════════════════
+    // TOAST
+    // ═══════════════════════════════════════════════
+    function showToast(msg, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      const icons = { success: '✅', error: '❌', info: 'ℹ️' };
+      toast.innerHTML = `<span>${icons[type] || 'ℹ️'}</span> <span>${msg}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        toast.style.transition = 'all 0.3s ease';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // ═══════════════════════════════════════════════
+    // HELPERS
+    // ═══════════════════════════════════════════════
+    function planBadge(plan) {
+      const labels = { free: 'مجاني', basic: 'أساسي', pro: 'احترافي', advanced: 'متقدم', trial: 'تجريبي' };
+      const classes = { free: 'badge-free', basic: 'badge-basic', pro: 'badge-pro', advanced: 'badge-advanced', trial: 'badge-trial' };
+      return `<span class="badge ${classes[plan] || 'badge-free'}">${labels[plan] || plan}</span>`;
+    }
+
+    function statusBadge(status) {
+      if (status === 'suspended') return '<span class="badge badge-suspended">موقوف</span>';
+      return '<span class="badge badge-active">نشط</span>';
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '—';
+      return new Date(dateStr).toLocaleDateString('ar-SA', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    // ═══════════════════════════════════════════════
+    // START
+    // ═══════════════════════════════════════════════
+    window.addEventListener('DOMContentLoaded', () => {
+      init();
+    });
+  </script>
+</body>
+</html>
