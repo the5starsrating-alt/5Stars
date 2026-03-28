@@ -535,9 +535,9 @@ async function handleLogin() {
     if (error) throw error;
 
     showSuccess('تم تسجيل الدخول بنجاح! جاري تحويلك...');
+    const isOwner = data.user.email === 'the5starsrating@gmail.com';
     setTimeout(() => {
-      // Redirect to dashboard after login
-      window.location.href = 'dashboard.html';
+      window.location.href = isOwner ? 'admin.html' : 'dashboard.html';
     }, 1200);
 
   } catch (err) {
@@ -606,7 +606,8 @@ document.addEventListener('keydown', e => {
 // ══════════════════════════════════
 sb.auth.getSession().then(({ data: { session } }) => {
   if (session) {
-    window.location.href = 'dashboard.html';
+    const isOwner = session.user.email === 'the5starsrating@gmail.com';
+    window.location.href = isOwner ? 'admin.html' : 'dashboard.html';
   }
 });
 </script>

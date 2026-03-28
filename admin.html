@@ -1727,23 +1727,29 @@
           return;
         }
 
-        const { data: profile, error } = await sb.from('profiles')
-          .select('role, full_name, email')
-          .eq('id', session.user.id)
-          .single();
+        // تحقق من أن المستخدم مالك عبر email أو role
+        const isOwnerByEmail = session.user.email === 'the5starsrating@gmail.com';
 
-        if (error || !profile) {
-          window.location.href = 'dashboard.html';
-          return;
-        }
-        const isOwner = profile.role === 'owner' || session.user.email === 'the5starsrating@gmail.com';
-        if (!isOwner) {
+        let isOwnerByRole = false;
+        let displayName = session.user.email || 'المالك';
+
+        try {
+          const { data: profile } = await sb.from('profiles')
+            .select('role, full_name')
+            .eq('id', session.user.id)
+            .single();
+          if (profile && profile.role === 'owner') isOwnerByRole = true;
+          if (profile && profile.full_name) {
+            displayName = profile.full_name;
+          }
+        } catch(e) { /* profile table may not exist yet */ }
+
+        if (!isOwnerByEmail && !isOwnerByRole) {
           window.location.href = 'dashboard.html';
           return;
         }
 
         // اعرض اسم المالك
-        const displayName = profile.full_name || session.user.email || 'المالك';
         document.getElementById('ownerName').textContent = displayName;
         document.getElementById('ownerAvatar').textContent = displayName.charAt(0).toUpperCase();
 
@@ -2317,7 +2323,9 @@
     // AUTH
     // ═══════════════════════════════════════════════
     async function handleLogout() {
-      await sb.auth.signOut();
+      try {
+        await sb.auth.signOut();
+      } catch(e) {}
       window.location.href = 'signup.html';
     }
 

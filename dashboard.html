@@ -11,7 +11,7 @@ Output
 <title>5tars — لوحة التحكم</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 :root {
   --blue:   #0B1F4E;
@@ -789,8 +789,17 @@ async function init() {
   // Show connect banner if no google connected
   document.getElementById('connectBanner').style.display = 'flex';
 
-  // Generate initial QR
-  generateQR();
+  // إضافة رابط admin للمالك
+  if (currentUser && currentUser.email === 'the5starsrating@gmail.com') {
+    const adminLink = document.createElement('button');
+    adminLink.className = 'nav-item';
+    adminLink.innerHTML = '<span class="ni">👑</span> لوحة المالك';
+    adminLink.onclick = () => window.location.href = 'admin.html';
+    adminLink.style.background = 'rgba(245,180,41,0.15)';
+    adminLink.style.color = '#F5B429';
+    const sidebarNav = document.querySelector('.sidebar-nav');
+    if (sidebarNav) sidebarNav.appendChild(adminLink);
+  }
 }
 
 // ══════════════════════════════════
@@ -811,17 +820,27 @@ function showSection(name, triggerEl) {
 // ══════════════════════════════════
 let qrGenerated = false;
 function generateQR() {
-  const link = document.getElementById('googleLink').value || 'https://5-stars-psi.vercel.app';
+  if (typeof QRCode === 'undefined') {
+    console.warn('QRCode library not loaded yet');
+    setTimeout(generateQR, 500);
+    return;
+  }
+  const link = document.getElementById('googleLink')?.value?.trim() || 'https://www.the5starsrating.com';
   const el = document.getElementById('qrcode');
+  if (!el) return;
   el.innerHTML = '';
-  document.getElementById('qrUrl').textContent = link.length > 40 ? link.substring(0,40)+'...' : link;
-
-  new QRCode(el, {
-    text: link,
-    width: 160, height: 160,
-    colorDark: '#0B1F4E', colorLight: '#ffffff',
-    correctLevel: QRCode.CorrectLevel.H
-  });
+  try {
+    new QRCode(el, {
+      text: link,
+      width: 180, height: 180,
+      colorDark: '#0B1F4E', colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.H
+    });
+    const urlLabel = document.getElementById('qrUrl');
+    if (urlLabel) urlLabel.textContent = link.length > 45 ? link.substring(0,45)+'...' : link;
+  } catch(e) {
+    console.error('QR error:', e);
+  }
   qrGenerated = true;
 }
 
@@ -912,7 +931,84 @@ function filterReviews(type, triggerEl) {
 //  CONNECT GOOGLE
 // ══════════════════════════════════
 function connectGoogle() {
-  alert('قريباً! ربط Google Business API سيكون متاحاً في التحديث القادم 🚀');
+  // Google Business Profile OAuth
+  const clientId = 'YOUR_GOOGLE_CLIENT_ID'; // سيُضاف لاحقاً
+  const redirectUri = encodeURIComponent('https://www.the5starsrating.com/auth-callback.html');
+  const scope = encodeURIComponent('https://www.googleapis.com/auth/business.manage');
+  const state = encodeURIComponent(JSON.stringify({ action: 'connect_gbp', userId: currentUser?.id }));
+
+  // إذا لم يكن هناك Client ID مضبوط، أظهر تعليمات
+  if (clientId === 'YOUR_GOOGLE_CLIENT_ID') {
+    showGoogleSetupModal();
+    return;
+  }
+
+  const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&access_type=offline&prompt=consent&state=${state}`;
+  window.location.href = authUrl;
+}
+
+function showGoogleSetupModal() {
+  const modal = document.createElement('div');
+  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;display:flex;align-items:center;justify-content:center;';
+  modal.innerHTML = `
+    <div style="background:#fff;border-radius:20px;padding:32px;max-width:480px;width:90%;direction:rtl;">
+      <h3 style="font-family:Cairo;font-size:18px;font-weight:900;color:#0B1F4E;margin-bottom:16px;">🔗 ربط Google Business</h3>
+      <p style="font-size:13px;color:#64748B;line-height:1.8;margin-bottom:16px;">
+        لربط Google Business، يجب إعداد Google OAuth أولاً. في الوقت الحالي، يمكنك إضافة رابط مراجعتك مباشرة:
+      </p>
+      <div style="margin-bottom:16px;">
+        <label style="font-size:12px;font-weight:700;color:#0B1F4E;display:block;margin-bottom:6px;">رابط Google Business للمراجعات:</label>
+        <input type="url" id="manualGoogleLink" placeholder="https://g.page/r/YOUR_REVIEW_LINK/review"
+          style="width:100%;padding:12px;border:1.5px solid #e2e8f0;border-radius:10px;font-family:Cairo;font-size:13px;">
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;">
+        <button onclick="this.closest('[style*=position]').remove()"
+          style="padding:10px 20px;border:1.5px solid #e2e8f0;border-radius:10px;background:#fff;font-family:Cairo;cursor:pointer;">إلغاء</button>
+        <button onclick="saveGoogleLink()"
+          style="padding:10px 20px;background:linear-gradient(135deg,#2251D3,#1A3A8F);color:#fff;border:none;border-radius:10px;font-family:Cairo;font-weight:700;cursor:pointer;">حفظ الرابط</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+async function saveGoogleLink() {
+  const link = document.getElementById('manualGoogleLink')?.value?.trim();
+  if (!link || !currentUser) return;
+
+  const { error } = await sb.from('profiles').update({
+    google_place_url: link,
+    google_connected: true
+  }).eq('id', currentUser.id);
+
+  if (!error) {
+    document.querySelector('[style*="position:fixed"]')?.remove();
+    // تحديث QR code بالرابط الجديد
+    const googleLinkInput = document.getElementById('googleLink');
+    if (googleLinkInput) {
+      googleLinkInput.value = link;
+      generateQR();
+    }
+    showAlert('تم حفظ رابط Google Business بنجاح! ✅', 'success');
+    const googleStatus = document.getElementById('googleStatus');
+    if (googleStatus) {
+      googleStatus.innerHTML = `
+        <div style="text-align:center">
+          <div style="font-size:24px;margin-bottom:8px">✅</div>
+          <div style="font-size:13px;font-weight:700;color:#16A34A">تم الربط!</div>
+          <div style="font-size:11px;color:#64748B;margin-top:4px;word-break:break-all">${link.substring(0,40)}...</div>
+        </div>
+      `;
+    }
+  }
+}
+
+function showAlert(msg, type) {
+  const el = document.getElementById('replyAlert');
+  if (!el) return;
+  el.textContent = msg;
+  el.className = 'alert alert-' + (type === 'success' ? 'success' : 'error') + ' show';
+  setTimeout(() => el.classList.remove('show'), 3000);
 }
 
 // ══════════════════════════════════
@@ -946,6 +1042,10 @@ async function fetchReviews() {
 
 // START
 init();
+
+window.addEventListener('load', () => {
+  generateQR();
+});
 </script>
 </body>
 </html>
