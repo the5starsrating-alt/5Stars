@@ -779,6 +779,193 @@
       .two-col { grid-template-columns: 1fr; }
       .analytics-metrics { grid-template-columns: repeat(2, 1fr); }
     }
+
+    /* ═══ COSTS CALCULATOR ═══ */
+    .costs-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .cost-input-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(51,65,85,0.5);
+    }
+
+    .cost-input-row:last-child { border-bottom: none; }
+
+    .cost-label {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .cost-label-main {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .cost-label-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .cost-input-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cost-input {
+      width: 110px;
+      padding: 8px 10px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'Cairo', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .cost-input:focus { border-color: var(--gold2); }
+
+    .cost-currency {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .cost-total-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: rgba(245,180,41,0.08);
+      border: 1px solid rgba(245,180,41,0.3);
+      border-radius: 10px;
+      margin-top: 16px;
+    }
+
+    .cost-total-label {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gold2);
+    }
+
+    .cost-total-value {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--gold2);
+    }
+
+    .result-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 4px;
+    }
+
+    .result-card {
+      padding: 16px;
+      border-radius: 10px;
+      text-align: center;
+      border: 1px solid;
+    }
+
+    .result-card.green {
+      background: rgba(34,197,94,0.08);
+      border-color: rgba(34,197,94,0.3);
+    }
+
+    .result-card.red {
+      background: rgba(239,68,68,0.08);
+      border-color: rgba(239,68,68,0.3);
+    }
+
+    .result-card.blue {
+      background: rgba(34,81,211,0.08);
+      border-color: rgba(34,81,211,0.3);
+    }
+
+    .result-card.gold {
+      background: rgba(245,180,41,0.08);
+      border-color: rgba(245,180,41,0.3);
+    }
+
+    .result-card .rc-value {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+
+    .result-card.green .rc-value { color: #22c55e; }
+    .result-card.red .rc-value { color: #ef4444; }
+    .result-card.blue .rc-value { color: #60a5fa; }
+    .result-card.gold .rc-value { color: var(--gold2); }
+
+    .result-card .rc-label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .sub-revenue-table {
+      width: 100%;
+      margin-top: 8px;
+    }
+
+    .sub-revenue-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(51,65,85,0.5);
+      font-size: 14px;
+    }
+
+    .sub-revenue-row:last-child { border-bottom: none; }
+
+    .sub-plan-label { color: var(--text); font-weight: 500; }
+    .sub-plan-count { color: var(--text-muted); font-size: 12px; }
+    .sub-plan-rev { font-weight: 700; color: var(--text); }
+
+    .goal-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 12px;
+      padding: 14px;
+      background: var(--bg);
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .goal-row label {
+      font-size: 13px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .goal-row .cost-input { flex: 1; width: auto; }
+
+    .goal-result {
+      font-size: 13px;
+      color: var(--gold2);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    @media (max-width: 900px) {
+      .costs-grid { grid-template-columns: 1fr; }
+      .result-cards { grid-template-columns: 1fr 1fr; }
+    }
   </style>
 </head>
 <body>
@@ -811,6 +998,9 @@
       </button>
       <button class="nav-btn" onclick="switchSection('analytics', this)">
         <span class="nav-emoji">📈</span> الإحصائيات
+      </button>
+      <button class="nav-btn" onclick="switchSection('costs', this)">
+        <span class="nav-emoji">💰</span> حاسبة التكاليف
       </button>
       <button class="nav-btn" onclick="switchSection('settings', this)">
         <span class="nav-emoji">⚙️</span> الإعدادات
@@ -1100,6 +1290,236 @@
       </div>
     </section>
 
+    <!-- ── COSTS CALCULATOR ── -->
+    <section id="section-costs" class="section">
+      <div class="page-header">
+        <div class="page-title">💰 حاسبة التكاليف</div>
+        <div class="page-subtitle">تحليل التكاليف والإيرادات وربحية المنصة</div>
+      </div>
+
+      <div class="costs-grid">
+
+        <!-- أ) تكاليف التشغيل -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📋 تكاليف التشغيل الشهرية</span>
+          </div>
+
+          <div class="cost-input-row">
+            <div class="cost-label">
+              <div class="cost-label-main">WhatsApp Business API</div>
+              <div class="cost-label-sub">رسوم الرسائل</div>
+            </div>
+            <div class="cost-input-wrap">
+              <input type="number" class="cost-input" id="cost-whatsapp" value="150" min="0" oninput="calcCosts()" />
+              <span class="cost-currency">ر.س</span>
+            </div>
+          </div>
+
+          <div class="cost-input-row">
+            <div class="cost-label">
+              <div class="cost-label-main">Supabase</div>
+              <div class="cost-label-sub">استضافة قاعدة البيانات</div>
+            </div>
+            <div class="cost-input-wrap">
+              <input type="number" class="cost-input" id="cost-supabase" value="75" min="0" oninput="calcCosts()" />
+              <span class="cost-currency">ر.س</span>
+            </div>
+          </div>
+
+          <div class="cost-input-row">
+            <div class="cost-label">
+              <div class="cost-label-main">Vercel / Hosting</div>
+              <div class="cost-label-sub">استضافة الموقع</div>
+            </div>
+            <div class="cost-input-wrap">
+              <input type="number" class="cost-input" id="cost-vercel" value="0" min="0" oninput="calcCosts()" />
+              <span class="cost-currency">ر.س</span>
+            </div>
+          </div>
+
+          <div class="cost-input-row">
+            <div class="cost-label">
+              <div class="cost-label-main">Claude AI / OpenAI</div>
+              <div class="cost-label-sub">رسوم الذكاء الاصطناعي</div>
+            </div>
+            <div class="cost-input-wrap">
+              <input type="number" class="cost-input" id="cost-ai" value="200" min="0" oninput="calcCosts()" />
+              <span class="cost-currency">ر.س</span>
+            </div>
+          </div>
+
+          <div class="cost-input-row">
+            <div class="cost-label">
+              <div class="cost-label-main">مصاريف أخرى</div>
+              <div class="cost-label-sub">دومين، مصاريف متفرقة...</div>
+            </div>
+            <div class="cost-input-wrap">
+              <input type="number" class="cost-input" id="cost-other" value="50" min="0" oninput="calcCosts()" />
+              <span class="cost-currency">ر.س</span>
+            </div>
+          </div>
+
+          <div class="cost-total-row">
+            <span class="cost-total-label">إجمالي التكاليف الشهرية</span>
+            <span class="cost-total-value" id="total-costs">0 ر.س</span>
+          </div>
+        </div>
+
+        <!-- ب) إيرادات الاشتراكات -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">💳 إيرادات الاشتراكات</span>
+            <button class="btn btn-ghost btn-sm" onclick="loadCostsRevenue()">
+              <i data-lucide="refresh-cw" style="width:13px;height:13px;"></i>
+              تحديث
+            </button>
+          </div>
+
+          <div class="sub-revenue-table">
+            <div class="sub-revenue-row">
+              <div>
+                <div class="sub-plan-label">🔵 أساسي</div>
+                <div class="sub-plan-count" id="rev-basic-count">0 مشترك × 49 ر.س</div>
+              </div>
+              <div class="sub-plan-rev" id="rev-basic">0 ر.س</div>
+            </div>
+            <div class="sub-revenue-row">
+              <div>
+                <div class="sub-plan-label">🟡 احترافي</div>
+                <div class="sub-plan-count" id="rev-pro-count">0 مشترك × 99 ر.س</div>
+              </div>
+              <div class="sub-plan-rev" id="rev-pro">0 ر.س</div>
+            </div>
+            <div class="sub-revenue-row">
+              <div>
+                <div class="sub-plan-label">🟢 متقدم</div>
+                <div class="sub-plan-count" id="rev-advanced-count">0 مشترك × 199 ر.س</div>
+              </div>
+              <div class="sub-plan-rev" id="rev-advanced">0 ر.س</div>
+            </div>
+          </div>
+
+          <div class="cost-total-row" style="margin-top:16px;">
+            <span class="cost-total-label">إجمالي الإيراد الشهري</span>
+            <span class="cost-total-value" id="total-revenue-costs">0 ر.س</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ج) تحليل الربحية -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📊 تحليل الربحية</span>
+        </div>
+
+        <div class="result-cards" id="profit-result-cards">
+          <div class="result-card green">
+            <div class="rc-value" id="profit-net">0 ر.س</div>
+            <div class="rc-label">صافي الربح</div>
+          </div>
+          <div class="result-card blue">
+            <div class="rc-value" id="profit-margin">0%</div>
+            <div class="rc-label">هامش الربح</div>
+          </div>
+          <div class="result-card gold">
+            <div class="rc-value" id="profit-breakeven">0</div>
+            <div class="rc-label">اشتراكات للتعادل (break-even)</div>
+          </div>
+          <div class="result-card blue">
+            <div class="rc-value" id="profit-avg-sub">0 ر.س</div>
+            <div class="rc-label">متوسط قيمة الاشتراك</div>
+          </div>
+        </div>
+
+        <div class="goal-row">
+          <label>🎯 الهدف الشهري:</label>
+          <input type="number" class="cost-input" id="profit-goal" placeholder="5000" min="0" oninput="calcCosts()" />
+          <span class="cost-currency">ر.س</span>
+          <div class="goal-result" id="profit-goal-result">أدخل هدفك لحساب الاشتراكات المطلوبة</div>
+        </div>
+      </div>
+
+      <!-- د) حاسبة الحملات -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">📣 حاسبة الحملات الإعلانية</span>
+        </div>
+
+        <div class="costs-grid" style="margin-bottom:0;">
+          <div>
+            <div class="cost-input-row">
+              <div class="cost-label">
+                <div class="cost-label-main">ميزانية الحملة</div>
+              </div>
+              <div class="cost-input-wrap">
+                <input type="number" class="cost-input" id="camp-budget" value="2000" min="0" oninput="calcCampaign()" />
+                <span class="cost-currency">ر.س</span>
+              </div>
+            </div>
+
+            <div class="cost-input-row">
+              <div class="cost-label">
+                <div class="cost-label-main">CPA المتوقع</div>
+                <div class="cost-label-sub">تكلفة الاكتساب لكل عميل</div>
+              </div>
+              <div class="cost-input-wrap">
+                <input type="number" class="cost-input" id="camp-cpa" value="100" min="1" oninput="calcCampaign()" />
+                <span class="cost-currency">ر.س</span>
+              </div>
+            </div>
+
+            <div class="cost-input-row">
+              <div class="cost-label">
+                <div class="cost-label-main">معدل التحويل المتوقع</div>
+              </div>
+              <div class="cost-input-wrap">
+                <input type="number" class="cost-input" id="camp-conversion" value="5" min="0.1" max="100" step="0.1" oninput="calcCampaign()" />
+                <span class="cost-currency">%</span>
+              </div>
+            </div>
+
+            <div class="cost-input-row">
+              <div class="cost-label">
+                <div class="cost-label-main">الخطة المستهدفة</div>
+              </div>
+              <div class="cost-input-wrap">
+                <select id="camp-plan" onchange="calcCampaign()" style="padding:8px 10px;font-size:13px;background:var(--bg);border-color:var(--border);color:var(--text);border-radius:8px;">
+                  <option value="49">أساسي (49 ر.س)</option>
+                  <option value="99" selected>احترافي (99 ر.س)</option>
+                  <option value="199">متقدم (199 ر.س)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="padding:8px 0;margin-bottom:8px;font-size:13px;font-weight:700;color:var(--text-muted);">نتائج الحملة</div>
+            <div class="result-cards">
+              <div class="result-card blue">
+                <div class="rc-value" id="camp-clients">0</div>
+                <div class="rc-label">عدد العملاء المتوقع</div>
+              </div>
+              <div class="result-card green">
+                <div class="rc-value" id="camp-revenue">0 ر.س</div>
+                <div class="rc-label">الإيراد المتوقع</div>
+              </div>
+              <div class="result-card gold">
+                <div class="rc-value" id="camp-roi">0%</div>
+                <div class="rc-label">العائد على الاستثمار (ROI)</div>
+              </div>
+              <div class="result-card blue">
+                <div class="rc-value" id="camp-payback">0 شهر</div>
+                <div class="rc-label">مدة الاسترداد</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
     <!-- ── SETTINGS ── -->
     <section id="section-settings" class="section">
       <div class="page-header">
@@ -1312,7 +1732,12 @@
           .eq('id', session.user.id)
           .single();
 
-        if (error || !profile || profile.role !== 'owner') {
+        if (error || !profile) {
+          window.location.href = 'dashboard.html';
+          return;
+        }
+        const isOwner = profile.role === 'owner' || session.user.email === 'the5starsrating@gmail.com';
+        if (!isOwner) {
           window.location.href = 'dashboard.html';
           return;
         }
@@ -1349,6 +1774,7 @@
       if (name === 'users') loadUsers();
       if (name === 'subscriptions') { loadCoupons(); loadActiveSubscriptions(); }
       if (name === 'analytics') loadAnalytics();
+      if (name === 'costs') { loadCostsRevenue(); calcCosts(); }
 
       lucide.createIcons();
     }
@@ -1950,6 +2376,119 @@
     function formatDate(dateStr) {
       if (!dateStr) return '—';
       return new Date(dateStr).toLocaleDateString('ar-SA', { year: 'numeric', month: 'short', day: 'numeric' });
+    }
+
+    // ═══════════════════════════════════════════════
+    // COSTS CALCULATOR
+    // ═══════════════════════════════════════════════
+    let costsRevenueData = { basic: 0, pro: 0, advanced: 0 };
+
+    async function loadCostsRevenue() {
+      try {
+        const { data: profiles } = await sb.from('profiles').select('plan');
+        const basicC = (profiles || []).filter(p => p.plan === 'basic').length;
+        const proC = (profiles || []).filter(p => p.plan === 'pro').length;
+        const advC = (profiles || []).filter(p => p.plan === 'advanced').length;
+
+        costsRevenueData = { basic: basicC, pro: proC, advanced: advC };
+
+        document.getElementById('rev-basic-count').textContent = `${basicC} مشترك × 49 ر.س`;
+        document.getElementById('rev-pro-count').textContent = `${proC} مشترك × 99 ر.س`;
+        document.getElementById('rev-advanced-count').textContent = `${advC} مشترك × 199 ر.س`;
+
+        calcCosts();
+        showToast('تم تحديث بيانات الاشتراكات', 'success');
+      } catch (err) {
+        console.error('loadCostsRevenue error:', err);
+        showToast('خطأ في جلب بيانات الاشتراكات', 'error');
+      }
+    }
+
+    function calcCosts() {
+      // تكاليف
+      const whatsapp = parseFloat(document.getElementById('cost-whatsapp').value) || 0;
+      const supabase_ = parseFloat(document.getElementById('cost-supabase').value) || 0;
+      const vercel = parseFloat(document.getElementById('cost-vercel').value) || 0;
+      const ai = parseFloat(document.getElementById('cost-ai').value) || 0;
+      const other = parseFloat(document.getElementById('cost-other').value) || 0;
+      const totalCosts = whatsapp + supabase_ + vercel + ai + other;
+      document.getElementById('total-costs').textContent = totalCosts.toLocaleString('ar-SA') + ' ر.س';
+
+      // إيرادات
+      const { basic, pro, advanced } = costsRevenueData;
+      const basicRev = basic * 49;
+      const proRev = pro * 99;
+      const advRev = advanced * 199;
+      const totalRev = basicRev + proRev + advRev;
+
+      document.getElementById('rev-basic').textContent = basicRev.toLocaleString('ar-SA') + ' ر.س';
+      document.getElementById('rev-pro').textContent = proRev.toLocaleString('ar-SA') + ' ر.س';
+      document.getElementById('rev-advanced').textContent = advRev.toLocaleString('ar-SA') + ' ر.س';
+      document.getElementById('total-revenue-costs').textContent = totalRev.toLocaleString('ar-SA') + ' ر.س';
+
+      // ربحية
+      const netProfit = totalRev - totalCosts;
+      const profitMargin = totalRev > 0 ? ((netProfit / totalRev) * 100).toFixed(1) : 0;
+      const totalSubs = basic + pro + advanced;
+      const avgSub = totalSubs > 0 ? (totalRev / totalSubs).toFixed(0) : 0;
+      const breakeven = avgSub > 0 ? Math.ceil(totalCosts / avgSub) : '∞';
+
+      // لون صافي الربح
+      const netCard = document.getElementById('profit-net').closest('.result-card');
+      document.getElementById('profit-net').textContent = netProfit.toLocaleString('ar-SA') + ' ر.س';
+      if (netProfit >= 0) {
+        netCard.className = 'result-card green';
+      } else {
+        netCard.className = 'result-card red';
+      }
+
+      document.getElementById('profit-margin').textContent = profitMargin + '%';
+      document.getElementById('profit-breakeven').textContent = breakeven;
+      document.getElementById('profit-avg-sub').textContent = avgSub + ' ر.س';
+
+      // هدف الربح
+      const goal = parseFloat(document.getElementById('profit-goal').value) || 0;
+      if (goal > 0 && avgSub > 0) {
+        const neededRevenue = goal + totalCosts;
+        const neededSubs = Math.ceil(neededRevenue / avgSub);
+        const additionalSubs = Math.max(0, neededSubs - totalSubs);
+        document.getElementById('profit-goal-result').textContent =
+          `تحتاج ${neededSubs} اشتراك إجمالاً (${additionalSubs} إضافي)`;
+      } else if (goal > 0) {
+        document.getElementById('profit-goal-result').textContent = 'لا يوجد اشتراكات مدفوعة بعد';
+      } else {
+        document.getElementById('profit-goal-result').textContent = 'أدخل هدفك لحساب الاشتراكات المطلوبة';
+      }
+
+      calcCampaign();
+    }
+
+    function calcCampaign() {
+      const budget = parseFloat(document.getElementById('camp-budget').value) || 0;
+      const cpa = parseFloat(document.getElementById('camp-cpa').value) || 1;
+      const convRate = parseFloat(document.getElementById('camp-conversion').value) || 0;
+      const planPrice = parseFloat(document.getElementById('camp-plan').value) || 99;
+
+      const clients = Math.floor(budget / cpa);
+      const revenue = clients * planPrice;
+      const roi = budget > 0 ? (((revenue - budget) / budget) * 100).toFixed(1) : 0;
+
+      // مدة الاسترداد: كم شهر لاسترداد ميزانية الحملة من اشتراكات شهرية
+      const monthlyFromClients = clients * planPrice;
+      const payback = monthlyFromClients > 0 ? (budget / monthlyFromClients).toFixed(1) : '∞';
+
+      document.getElementById('camp-clients').textContent = clients.toLocaleString('ar-SA');
+      document.getElementById('camp-revenue').textContent = revenue.toLocaleString('ar-SA') + ' ر.س';
+
+      const roiCard = document.getElementById('camp-roi').closest('.result-card');
+      document.getElementById('camp-roi').textContent = roi + '%';
+      if (parseFloat(roi) >= 0) {
+        roiCard.className = 'result-card green';
+      } else {
+        roiCard.className = 'result-card red';
+      }
+
+      document.getElementById('camp-payback').textContent = payback + ' شهر';
     }
 
     // ═══════════════════════════════════════════════
