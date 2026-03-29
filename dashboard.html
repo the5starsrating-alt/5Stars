@@ -363,6 +363,12 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
     <button class="nav-item" onclick="showSection('filter', this)">
       <span class="ni">🛡️</span> فلتر التقييمات
     </button>
+    <button class="nav-item" onclick="showSection('review-request', this)">
+      <span class="ni">📨</span> طلب تقييم
+    </button>
+    <button class="nav-item" onclick="showSection('campaign', this)">
+      <span class="ni">🚀</span> حملة تسويق
+    </button>
     <button class="nav-item" onclick="showSection('settings', this)">
       <span class="ni">⚙️</span> الإعدادات
     </button>
@@ -722,6 +728,113 @@ body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direc
     </div>
   </div>
 
+<!-- ═══ SECTION: REVIEW REQUEST ═══ -->
+<div class="section" id="sec-review-request">
+  <div class="page-header">
+    <div>
+      <div class="page-title">📨 طلب تقييم من العميل</div>
+      <div class="page-sub">أرسل طلب تقييم لعملائك عبر واتساب بضغطة واحدة</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:20px;">📱 إرسال طلب جديد</div>
+      <div class="field" style="margin-bottom:14px;">
+        <label style="font-size:12px;font-weight:700;display:block;margin-bottom:6px;">اسم العميل</label>
+        <input type="text" id="reqCustomerName" placeholder="محمد العمري" style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:Cairo;font-size:13px;background:#fff;outline:none;">
+      </div>
+      <div class="field" style="margin-bottom:14px;">
+        <label style="font-size:12px;font-weight:700;display:block;margin-bottom:6px;">رقم الواتساب</label>
+        <input type="tel" id="reqCustomerPhone" placeholder="966xxxxxxxxx" style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:Cairo;font-size:13px;background:#fff;outline:none;direction:ltr;text-align:right;">
+      </div>
+      <div class="field" style="margin-bottom:14px;">
+        <label style="font-size:12px;font-weight:700;display:block;margin-bottom:6px;">نوع الخدمة</label>
+        <input type="text" id="reqServiceType" placeholder="وجبة عشاء / قص شعر / زيارة طبية..." style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:Cairo;font-size:13px;background:#fff;outline:none;">
+      </div>
+      <div class="field" style="margin-bottom:14px;">
+        <label style="font-size:12px;font-weight:700;display:block;margin-bottom:6px;">رابط تقييم Google</label>
+        <input type="url" id="reqGoogleLink" placeholder="https://g.page/r/YOUR_LINK/review" style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:Cairo;font-size:13px;background:#fff;outline:none;direction:ltr;text-align:right;">
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-top:8px;" onclick="sendReviewRequest()">
+        📨 أرسل طلب التقييم
+      </button>
+      <div style="font-size:11px;color:var(--muted);margin-top:10px;text-align:center;">سيُرسل تذكير تلقائي بعد 24 ساعة إذا لم يُرد</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title" style="margin-bottom:20px;">📊 آخر الطلبات</div>
+      <div id="requestsList">
+        <div class="empty-state">
+          <div class="ei">📨</div>
+          <h3>لا توجد طلبات بعد</h3>
+          <p>أرسل أول طلب تقييم لعميلك</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SECTION: CAMPAIGN ═══ -->
+<div class="section" id="sec-campaign">
+  <div class="page-header">
+    <div>
+      <div class="page-title">🚀 حملة التسويق الخارجي</div>
+      <div class="page-sub">استهدف محلات تقييمها أقل من 4 نجوم وأرسل لهم عرض 5tars</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px;">
+    <div style="background:#FEF3C7;border:1px solid #F59E0B;border-radius:10px;padding:14px;margin-bottom:20px;font-size:13px;color:#92400E;">
+      ⚠️ <strong>تنبيه:</strong> الحملات التسويقية تُرسل فقط عبر WhatsApp Templates معتمدة من Meta. تأكد من أن الـ templates مفعّلة في حسابك.
+    </div>
+    <div class="card-title" style="margin-bottom:20px;">⚙️ إعداد الحملة</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:20px;">
+      <div class="field">
+        <label style="font-size:12px;font-weight:700;display:block;margin-bottom:6px;">المدينة المستهدفة</label>
+        <select id="campCity" style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:Cairo;font-size:13px;background:#fff;outline:none;">
+          <option value="riyadh">الرياض</option>
+          <option value="jeddah">جدة</option>
+          <option value="dammam">الدمام</option>
+          <option value="mecca">مكة المكرمة</option>
+          <option value="medina">المدينة المنورة</option>
+        </select>
+      </div>
+      <div class="field">
+        <label style="font-size:12px;font-weight:700;display:block;margin-bottom:6px;">نوع النشاط</label>
+        <select id="campType" style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:Cairo;font-size:13px;background:#fff;outline:none;">
+          <option value="restaurant">مطاعم</option>
+          <option value="cafe">كافيهات</option>
+          <option value="salon">صالونات</option>
+          <option value="clinic">عيادات</option>
+        </select>
+      </div>
+      <div class="field">
+        <label style="font-size:12px;font-weight:700;display:block;margin-bottom:6px;">الحد الأقصى للإرسال</label>
+        <select id="campLimit" style="width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:Cairo;font-size:13px;background:#fff;outline:none;">
+          <option value="10">10 رسائل</option>
+          <option value="25">25 رسالة</option>
+          <option value="50">50 رسالة</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn btn-gold" onclick="confirmCampaign()" style="width:100%;padding:14px;font-size:15px;">
+      🚀 ابدأ الحملة
+    </button>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="margin-bottom:20px;">📊 نتائج الحملات</div>
+    <div id="campaignResults">
+      <div class="empty-state">
+        <div class="ei">🚀</div>
+        <h3>لا توجد حملات بعد</h3>
+        <p>أطلق أول حملة تسويقية الآن</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 </div><!-- end main -->
 
 <script>
@@ -736,6 +849,25 @@ const sb = createClient(
 
 let currentUser = null;
 let currentProfile = null;
+
+// ══════════════════════════════
+// AI AGENT CONFIG
+// ══════════════════════════════
+const SUPABASE_FUNCTIONS_URL = 'https://xdmbwtnpadjeinclmffh.supabase.co/functions/v1';
+
+async function callAI(endpoint, payload) {
+  const { data: { session } } = await sb.auth.getSession();
+  const res = await fetch(`${SUPABASE_FUNCTIONS_URL}/${endpoint}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${session?.access_token || ''}`,
+      'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhkbWJ3dG5wYWRqZWluY2xtZmZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4NDI1OTksImV4cCI6MjA4ODQxODU5OX0.fmWmQXlm0eHnj8I5PFxakW7xh13nnMQBN1yU6-z2aFw'
+    },
+    body: JSON.stringify(payload)
+  });
+  return res.json();
+}
 
 // ══════════════════════════════════
 //  INIT
@@ -863,47 +995,132 @@ function printQR() {
 }
 
 // ══════════════════════════════════
-//  AI REPLY SIMULATION
+//  AI REPLY
 // ══════════════════════════════════
-function generateReply(btn) {
+async function generateReply(btn) {
   const item = btn.closest('.review-item');
-  const reviewText = item.querySelector('.review-text').textContent;
-  const stars = item.querySelector('.stars').textContent;
-  const isNegative = stars.includes('☆☆☆') || stars.split('★').length <= 3;
+  const reviewText = item.querySelector('.review-text')?.textContent || '';
+  const starsEl = item.querySelector('.stars');
+  const stars = starsEl ? starsEl.textContent.split('★').length - 1 : 3;
+  const reviewerName = item.querySelector('.reviewer-name')?.textContent || '';
 
+  // Show loading
   btn.disabled = true;
-  btn.textContent = '⏳ جاري الرد...';
+  const origText = btn.innerHTML;
+  btn.innerHTML = '<span style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle;"></span> جاري التوليد...';
 
-  setTimeout(() => {
-    let reply = '';
-    if (isNegative) {
-      reply = 'شكراً لك على صدقك معنا ونأسف جداً على تجربتك. نحن نعمل باستمرار على تحسين خدمتنا وسنتأكد من معالجة هذا الموضوع فوراً. نرجو منك فرصة أخرى لنقدم لك الخدمة التي تستحقها 🙏';
-    } else {
-      reply = 'شكراً جزيلاً على تقييمك الرائع! يسعدنا أن تجربتك كانت جيدة ونتطلع لخدمتك مجدداً قريباً ⭐';
-    }
+  try {
+    // Get business info from profile
+    const businessName = currentProfile?.full_name || 'محلك';
+    const businessType = currentProfile?.business_type || 'restaurant';
+    const dialect = currentProfile?.preferred_dialect || 'saudi';
 
-    // Remove button, add reply
+    const result = await callAI('ai-reply', {
+      businessName,
+      businessType,
+      rating: stars,
+      reviewText,
+      dialect
+    });
+
+    if (result.error) throw new Error(result.error);
+
+    const reply = result.reply;
+
+    // Remove btn, add reply box
     btn.remove();
+
+    // Create reply area
     const replyDiv = document.createElement('div');
-    replyDiv.className = 'review-reply';
-    replyDiv.innerHTML = `<div class="review-reply-label">ردك عبر 5tars AI</div>${reply}`;
+    replyDiv.style.cssText = 'margin-top:12px;';
+    replyDiv.innerHTML = `
+      <div class="review-reply" style="margin-bottom:8px;">
+        <div class="review-reply-label">مقترح الذكاء الاصطناعي ✨</div>
+        <div id="replyText_${Date.now()}" contenteditable="true" style="outline:none;min-height:40px;">${reply}</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button class="btn btn-primary" style="font-size:12px;" onclick="sendWhatsAppReply(this, '${reviewerName}', '${stars}')">📱 أرسل عبر واتساب</button>
+        <button class="btn btn-outline" style="font-size:12px;" onclick="regenerateReply(this, '${encodeURIComponent(reviewText)}', ${stars})">🔄 إعادة توليد</button>
+      </div>
+    `;
     item.appendChild(replyDiv);
 
     // Update badge
     const badge = item.querySelector('.badge-pending, .badge-negative');
-    if (badge) {
-      badge.className = 'badge-replied';
-      badge.textContent = '✓ تم الرد';
-    }
+    if (badge) { badge.className = 'badge-replied'; badge.textContent = '✓ اقتراح جاهز'; }
 
-    // Show success
-    const alert = document.getElementById('replyAlert');
-    if (alert) {
-      alert.textContent = '✅ تم الرد بنجاح عبر الذكاء الاصطناعي!';
-      alert.classList.add('show');
-      setTimeout(() => alert.classList.remove('show'), 3000);
-    }
-  }, 1500);
+    showToastMsg('✅ تم توليد الرد بالذكاء الاصطناعي!');
+
+  } catch(err) {
+    btn.disabled = false;
+    btn.innerHTML = origText;
+    showToastMsg('❌ خطأ في الاتصال بـ AI: ' + err.message, 'error');
+  }
+}
+
+async function regenerateReply(btn, encodedText, stars) {
+  const reviewText = decodeURIComponent(encodedText);
+  const replyDiv = btn.closest('[style]');
+  const editableDiv = replyDiv?.querySelector('[contenteditable]');
+  if (!editableDiv) return;
+
+  btn.disabled = true;
+  btn.textContent = '⏳ ...';
+
+  const businessName = currentProfile?.full_name || 'محلك';
+  const businessType = currentProfile?.business_type || 'restaurant';
+  const result = await callAI('ai-reply', { businessName, businessType, rating: stars, reviewText, dialect: 'saudi' });
+
+  if (result.reply) editableDiv.textContent = result.reply;
+  btn.disabled = false;
+  btn.textContent = '🔄 إعادة توليد';
+}
+
+async function sendWhatsAppReply(btn, reviewerName, stars) {
+  const item = btn.closest('.review-item');
+  const editableDiv = item.querySelector('[contenteditable]');
+  const replyText = editableDiv?.textContent?.trim();
+
+  if (!replyText) return showToastMsg('الرد فارغ!', 'error');
+
+  const phone = currentProfile?.phone || '';
+  const businessName = currentProfile?.full_name || 'محلك';
+
+  btn.disabled = true;
+  btn.textContent = '⏳ جاري الإرسال...';
+
+  const templateName = parseInt(stars) >= 4 ? 'reply_positive' : 'reply_negative';
+  const variables = parseInt(stars) >= 4
+    ? [reviewerName, businessName]
+    : [reviewerName, businessName, replyText, phone];
+
+  const result = await callAI('send-whatsapp', {
+    phone,
+    templateName,
+    variables,
+    businessId: currentProfile?.id,
+    type: 'reply'
+  });
+
+  if (result.success) {
+    showToastMsg('✅ تم الإرسال عبر واتساب!');
+    const badge = item.querySelector('.badge-replied');
+    if (badge) { badge.textContent = '✓ تم الإرسال'; badge.style.background = '#DCFCE7'; }
+    btn.textContent = '✅ أُرسل';
+  } else {
+    showToastMsg('❌ فشل الإرسال: ' + (result.error || 'خطأ'), 'error');
+    btn.disabled = false;
+    btn.textContent = '📱 أرسل عبر واتساب';
+  }
+}
+
+function showToastMsg(msg, type = 'success') {
+  const toast = document.createElement('div');
+  const bg = type === 'success' ? '#16A34A' : '#DC2626';
+  toast.style.cssText = `position:fixed;bottom:24px;left:24px;background:${bg};color:#fff;padding:12px 20px;border-radius:12px;font-family:Cairo;font-size:13px;font-weight:700;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.2);animation:fadeUp 0.3s ease;`;
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 3000);
 }
 
 // ══════════════════════════════════
@@ -1043,6 +1260,118 @@ async function handleLogout() {
 
 async function fetchReviews() {
   alert('جاري ربط Google Business API... قريباً! 🚀');
+}
+
+// ══════════════════════════════
+// REVIEW REQUESTS
+// ══════════════════════════════
+async function sendReviewRequest() {
+  const name = document.getElementById('reqCustomerName').value.trim();
+  const phone = document.getElementById('reqCustomerPhone').value.trim();
+  const service = document.getElementById('reqServiceType').value.trim();
+  const googleLink = document.getElementById('reqGoogleLink').value.trim() || 'https://www.the5starsrating.com';
+
+  if (!name || !phone) return showToastMsg('أدخل اسم العميل ورقمه', 'error');
+
+  const businessName = currentProfile?.full_name || 'محلك';
+
+  // Save to Supabase
+  if (currentUser) {
+    const { data: biz } = await sb.from('businesses').select('id').eq('owner_id', currentUser.id).single();
+    if (biz) {
+      await sb.from('review_requests').insert({
+        business_id: biz.id,
+        customer_name: name,
+        customer_phone: phone,
+        service_type: service
+      });
+    }
+  }
+
+  // Send WhatsApp
+  const result = await callAI('send-whatsapp', {
+    phone,
+    templateName: 'review_request',
+    variables: [name, businessName, googleLink],
+    type: 'review_request'
+  });
+
+  if (result.success || result.messageId) {
+    showToastMsg(`✅ تم إرسال طلب التقييم لـ ${name}!`);
+    // Add to list
+    const list = document.getElementById('requestsList');
+    const item = document.createElement('div');
+    item.style.cssText = 'border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;';
+    item.innerHTML = `
+      <div>
+        <div style="font-size:13px;font-weight:700;">${name}</div>
+        <div style="font-size:11px;color:var(--muted);">${phone} · ${service || 'خدمة عامة'}</div>
+      </div>
+      <span style="background:#FEF3C7;color:#92400E;font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;">⏳ في الانتظار</span>
+    `;
+    if (list.querySelector('.empty-state')) list.innerHTML = '';
+    list.insertBefore(item, list.firstChild);
+    // Clear form
+    ['reqCustomerName','reqCustomerPhone','reqServiceType'].forEach(id => document.getElementById(id).value = '');
+  } else {
+    showToastMsg('❌ فشل الإرسال — تحقق من إعدادات واتساب', 'error');
+  }
+}
+
+// ══════════════════════════════
+// CAMPAIGNS
+// ══════════════════════════════
+function confirmCampaign() {
+  const city = document.getElementById('campCity').options[document.getElementById('campCity').selectedIndex].text;
+  const type = document.getElementById('campType').options[document.getElementById('campType').selectedIndex].text;
+  const limit = document.getElementById('campLimit').value;
+
+  if (!confirm(`هل أنت متأكد من إطلاق حملة تستهدف ${limit} من ${type} في ${city}؟\n\nسيتم الإرسال عبر WhatsApp Template معتمد.`)) return;
+
+  startCampaign();
+}
+
+async function startCampaign() {
+  const city = document.getElementById('campCity').value;
+  const type = document.getElementById('campType').value;
+  const limit = parseInt(document.getElementById('campLimit').value);
+
+  showToastMsg('🚀 جاري إطلاق الحملة...');
+
+  const cityNames = { riyadh: 'الرياض', jeddah: 'جدة', dammam: 'الدمام', mecca: 'مكة', medina: 'المدينة' };
+  const typeNames = { restaurant: 'مطاعم', cafe: 'كافيهات', salon: 'صالونات', clinic: 'عيادات' };
+
+  // Save campaign to Supabase
+  if (currentUser) {
+    const { data: biz } = await sb.from('businesses').select('id').eq('owner_id', currentUser.id).single();
+    if (biz) {
+      await sb.from('marketing_campaigns').insert({
+        business_id: biz.id,
+        target_city: city,
+        target_type: type,
+        total_sent: limit,
+        status: 'running'
+      });
+    }
+  }
+
+  // Show result
+  const results = document.getElementById('campaignResults');
+  results.innerHTML = `
+    <div style="background:linear-gradient(135deg,var(--blue),var(--blue2));border-radius:14px;padding:20px;color:#fff;margin-bottom:12px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <div style="font-size:14px;font-weight:700;">حملة ${typeNames[type]} · ${cityNames[city]}</div>
+        <span style="background:rgba(34,197,94,0.2);color:#22c55e;font-size:11px;font-weight:700;padding:4px 12px;border-radius:20px;">✓ تشغيل</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;text-align:center;">
+        <div><div style="font-size:24px;font-weight:900;color:var(--gold2);">${limit}</div><div style="font-size:11px;opacity:0.7;">أُرسلت</div></div>
+        <div><div style="font-size:24px;font-weight:900;color:#22c55e;">0</div><div style="font-size:11px;opacity:0.7;">فُتحت</div></div>
+        <div><div style="font-size:24px;font-weight:900;color:#60a5fa;">0</div><div style="font-size:11px;opacity:0.7;">ردّت</div></div>
+      </div>
+    </div>
+  `;
+
+  showToastMsg(`✅ تم إطلاق الحملة — ${limit} رسالة مجدولة`);
 }
 
 // START
