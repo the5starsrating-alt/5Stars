@@ -741,12 +741,17 @@ let currentProfile = null;
 //  INIT
 // ══════════════════════════════════
 async function init() {
+  // إخفاء المحتوى فوراً حتى التحقق من الجلسة
+  document.body.style.visibility = 'hidden';
+
   const { data: { session } } = await sb.auth.getSession();
 
   if (!session) {
-    window.location.href = 'signup.html';
+    window.location.replace('signup.html');
     return;
   }
+
+  document.body.style.visibility = 'visible';
 
   currentUser = session.user;
 

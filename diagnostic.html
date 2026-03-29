@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5tars — تشخيص سمعتك على Google مجاناً</title>
+<meta name="description" content="اكتشف مستوى سمعتك الرقمية على Google في 30 ثانية. تقرير مجاني مخصص لمنشأتك التجارية.">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --card2: #273549;
+  --border: #334155;
+  --text: #e2e8f0;
+  --muted: #94a3b8;
+  --blue: #0B1F4E;
+  --blue3: #2251D3;
+  --gold: #D4920A;
+  --gold2: #F5B429;
+  --green: #22c55e;
+  --orange: #f97316;
+  --red: #ef4444;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);direction:rtl;min-height:100vh;}
+
+/* NAV */
+nav{background:rgba(15,23,42,0.95);backdrop-filter:blur(12px);padding:14px 24px;position:sticky;top:0;z-index:100;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-family:'Tajawal',sans-serif;font-size:22px;font-weight:900;background:linear-gradient(135deg,#FFF0A0,#F5B429);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-decoration:none;}
+.nav-back{color:var(--muted);font-size:13px;text-decoration:none;display:flex;align-items:center;gap:6px;}
+.nav-back:hover{color:var(--text);}
+
+/* HERO */
+.hero{text-align:center;padding:60px 24px 40px;max-width:680px;margin:0 auto;}
+.badge{display:inline-flex;align-items:center;gap:8px;background:rgba(245,180,41,0.12);border:1px solid rgba(245,180,41,0.3);color:var(--gold2);font-size:12px;font-weight:700;padding:6px 16px;border-radius:40px;margin-bottom:20px;letter-spacing:1px;}
+.hero h1{font-family:'Tajawal',sans-serif;font-size:clamp(28px,5vw,46px);font-weight:900;line-height:1.2;margin-bottom:14px;}
+.hero h1 em{font-style:normal;color:var(--gold2);}
+.hero p{font-size:16px;color:var(--muted);line-height:1.8;}
+
+/* FORM */
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px;max-width:680px;margin:0 auto 40px;box-shadow:0 20px 60px rgba(0,0,0,0.3);}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media(max-width:600px){.form-grid{grid-template-columns:1fr;}}
+.field{display:flex;flex-direction:column;gap:8px;}
+.field.full{grid-column:1/-1;}
+.field label{font-size:13px;font-weight:700;color:var(--text);}
+.field label span{font-size:11px;color:var(--muted);font-weight:400;}
+.field input,.field select{background:var(--card2);border:1.5px solid var(--border);border-radius:10px;padding:11px 14px;font-family:'Cairo',sans-serif;font-size:14px;color:var(--text);outline:none;transition:border 0.2s;width:100%;}
+.field input:focus,.field select:focus{border-color:var(--blue3);}
+.field select option{background:var(--card);}
+.field input[type="range"]{padding:6px 0;cursor:pointer;accent-color:var(--gold2);}
+.range-val{display:inline-block;background:rgba(245,180,41,0.15);color:var(--gold2);font-size:13px;font-weight:700;padding:3px 12px;border-radius:20px;margin-right:8px;}
+
+.btn-analyze{width:100%;padding:16px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#0B1F4E;border:none;border-radius:14px;font-family:'Cairo',sans-serif;font-size:16px;font-weight:900;cursor:pointer;transition:all 0.25s;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:10px;}
+.btn-analyze:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(212,146,10,0.4);}
+
+/* RESULTS */
+#results{display:none;max-width:680px;margin:0 auto 60px;animation:fadeUp 0.5s ease both;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* GAUGE */
+.gauge-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px 24px;text-align:center;margin-bottom:20px;}
+.gauge-wrap{position:relative;width:200px;height:200px;margin:0 auto 20px;}
+.gauge-wrap svg{transform:rotate(-90deg);}
+.gauge-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.score-num{font-family:'Tajawal',sans-serif;font-size:52px;font-weight:900;line-height:1;}
+.score-sub{font-size:12px;color:var(--muted);}
+.grade-label{font-family:'Tajawal',sans-serif;font-size:22px;font-weight:900;margin-bottom:6px;}
+.grade-desc{font-size:14px;color:var(--muted);}
+
+/* BREAKDOWN */
+.breakdown-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;margin-bottom:20px;}
+.breakdown-card h3{font-size:15px;font-weight:900;margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.bar-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.bar-label{font-size:12px;color:var(--muted);width:160px;flex-shrink:0;}
+.bar-track{flex:1;height:10px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:99px;transition:width 1s cubic-bezier(0.4,0,0.2,1);}
+.bar-pct{font-size:12px;font-weight:700;width:36px;text-align:left;}
+
+/* RECS */
+.recs-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;margin-bottom:20px;}
+.recs-card h3{font-size:15px;font-weight:900;margin-bottom:20px;}
+.rec-item{background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:12px;}
+.rec-header{display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;}
+.rec-icon{font-size:22px;flex-shrink:0;}
+.rec-title{font-size:14px;font-weight:800;}
+.rec-priority{font-size:10px;padding:3px 10px;border-radius:20px;font-weight:700;margin-top:4px;display:inline-block;}
+.priority-critical{background:rgba(239,68,68,0.15);color:#ef4444;}
+.priority-urgent{background:rgba(249,115,22,0.15);color:#f97316;}
+.priority-important{background:rgba(245,180,41,0.15);color:var(--gold2);}
+.rec-impact{font-size:12px;color:var(--green);background:rgba(34,197,94,0.08);border-radius:8px;padding:8px 12px;margin-bottom:8px;}
+.rec-fix{font-size:12px;color:var(--muted);line-height:1.7;}
+
+/* TIPS */
+.tips-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;margin-bottom:20px;}
+.tips-card h3{font-size:15px;font-weight:900;margin-bottom:20px;}
+.tip-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:13px;color:var(--muted);}
+.tip-item:last-child{border-bottom:none;}
+.tip-check{color:var(--green);font-size:16px;flex-shrink:0;margin-top:1px;}
+
+/* CTA */
+.cta-card{background:linear-gradient(135deg,#0B1F4E,#1A3A8F);border:1px solid rgba(245,180,41,0.3);border-radius:20px;padding:36px;text-align:center;margin-bottom:20px;}
+.cta-title{font-family:'Tajawal',sans-serif;font-size:22px;font-weight:900;margin-bottom:8px;}
+.cta-title strong{color:var(--gold2);}
+.cta-sub{font-size:14px;color:rgba(255,255,255,0.7);margin-bottom:24px;}
+.btn-cta{display:inline-block;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#0B1F4E;padding:15px 36px;border-radius:14px;font-family:'Cairo',sans-serif;font-size:15px;font-weight:900;text-decoration:none;transition:all 0.25s;margin-bottom:12px;}
+.btn-cta:hover{transform:translateY(-2px);box-shadow:0 12px 36px rgba(212,146,10,0.4);}
+.btn-share{background:rgba(255,255,255,0.08);border:1.5px solid rgba(255,255,255,0.2);color:#fff;padding:12px 28px;border-radius:12px;font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.2s;margin-right:10px;}
+.btn-share:hover{background:rgba(255,255,255,0.15);}
+.btn-redo{background:transparent;border:none;color:var(--muted);font-family:'Cairo',sans-serif;font-size:13px;cursor:pointer;margin-top:16px;display:block;margin:16px auto 0;text-decoration:underline;}
+.btn-redo:hover{color:var(--text);}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">5tars ★★★★★</a>
+  <a href="index.html" class="nav-back">← العودة للرئيسية</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="badge">🔍 مجاني 100% — لا تسجيل مطلوب</div>
+  <h1>اكتشف مستوى <em>سمعتك على Google</em></h1>
+  <p>أدخل بيانات محلك واحصل على تقرير تشخيصي مخصص خلال 30 ثانية</p>
+</div>
+
+<!-- FORM -->
+<div class="form-card">
+  <form id="diagForm" onsubmit="runDiagnostic(event)">
+    <div class="form-grid">
+
+      <div class="field full">
+        <label>اسم منشأتك التجارية *</label>
+        <input type="text" id="bizName" placeholder="مثال: مطعم الوادي" required>
+      </div>
+
+      <div class="field">
+        <label>نوع النشاط *</label>
+        <select id="bizType" required>
+          <option value="">اختر نوع النشاط</option>
+          <option value="restaurant">🍽️ مطعم</option>
+          <option value="cafe">☕ كافيه</option>
+          <option value="salon">💇 صالون تجميل</option>
+          <option value="clinic">🏥 عيادة</option>
+          <option value="retail">🛍️ متجر تجزئة</option>
+          <option value="other">📍 أخرى</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>إجمالي عدد التقييمات</label>
+        <input type="number" id="reviewCount" min="0" placeholder="مثال: 47" value="20">
+      </div>
+
+      <div class="field full">
+        <label>متوسط تقييمك الحالي: <span class="range-val" id="ratingVal">4.0</span> نجوم</label>
+        <input type="range" id="currentRating" min="1" max="5" step="0.1" value="4.0"
+          oninput="document.getElementById('ratingVal').textContent=parseFloat(this.value).toFixed(1)">
+      </div>
+
+      <div class="field full">
+        <label>نسبة ردودك على التقييمات: <span class="range-val" id="responseVal">50</span>%</label>
+        <input type="range" id="responseRate" min="0" max="100" value="50"
+          oninput="document.getElementById('responseVal').textContent=this.value">
+      </div>
+
+      <div class="field full">
+        <label>نسبة التقييمات السلبية (1-2 نجوم) بدون رد: <span class="range-val" id="negVal">40</span>%</label>
+        <input type="range" id="negativeUnanswered" min="0" max="100" value="40"
+          oninput="document.getElementById('negVal').textContent=this.value">
+      </div>
+
+      <div class="field full">
+        <label>تاريخ آخر تقييم استلمته <span>(اختياري)</span></label>
+        <input type="date" id="lastReview">
+      </div>
+
+    </div>
+    <button type="submit" class="btn-analyze" style="margin-top:24px;">
+      🔍 حلّل سمعتي الآن — مجاناً
+    </button>
+  </form>
+</div>
+
+<!-- RESULTS -->
+<div id="results">
+
+  <!-- GAUGE -->
+  <div class="gauge-card">
+    <div class="gauge-wrap">
+      <svg width="200" height="200" viewBox="0 0 200 200">
+        <circle cx="100" cy="100" r="80" fill="none" stroke="#1e293b" stroke-width="18"/>
+        <circle id="scoreArc" cx="100" cy="100" r="80" fill="none"
+          stroke="#22c55e" stroke-width="18" stroke-linecap="round"
+          stroke-dasharray="502.65" stroke-dashoffset="502.65"/>
+      </svg>
+      <div class="gauge-center">
+        <div class="score-num" id="scoreNumber">0</div>
+        <div class="score-sub">من 100</div>
+      </div>
+    </div>
+    <div class="grade-label" id="gradeLabel">—</div>
+    <div class="grade-desc" id="gradeDesc">—</div>
+  </div>
+
+  <!-- BREAKDOWN -->
+  <div class="breakdown-card">
+    <h3>📊 تفصيل النتيجة</h3>
+    <div class="bar-row">
+      <div class="bar-label">⭐ مستوى التقييم (35%)</div>
+      <div class="bar-track"><div class="bar-fill" id="barStar" style="width:0%"></div></div>
+      <div class="bar-pct" id="valStar">0</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">📝 الحجم والحداثة (25%)</div>
+      <div class="bar-track"><div class="bar-fill" id="barVolume" style="width:0%"></div></div>
+      <div class="bar-pct" id="valVolume">0</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">💬 نسبة الرد (25%)</div>
+      <div class="bar-track"><div class="bar-fill" id="barResponse" style="width:0%"></div></div>
+      <div class="bar-pct" id="valResponse">0</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">🛡️ إدارة السلبي (15%)</div>
+      <div class="bar-track"><div class="bar-fill" id="barNeg" style="width:0%"></div></div>
+      <div class="bar-pct" id="valNeg">0</div>
+    </div>
+  </div>
+
+  <!-- RECOMMENDATIONS -->
+  <div class="recs-card">
+    <h3>🎯 توصياتك المخصصة</h3>
+    <div id="recsList"></div>
+  </div>
+
+  <!-- GOOGLE MAPS TIPS -->
+  <div class="tips-card">
+    <h3>🗺️ كيف تصبح أولوية في Google Maps</h3>
+    <div id="tipsList"></div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-card">
+    <div class="cta-title">منصة 5tars تعالج <strong id="weakCount">3</strong> من نقاط ضعفك تلقائياً</div>
+    <div class="cta-sub">14 يوم مجاناً — لا بطاقة ائتمان مطلوبة</div>
+    <a href="signup.html" class="btn-cta">ابدأ مجاناً الآن ←</a>
+    <button class="btn-share" onclick="shareResult()">📤 شارك نتيجتك</button>
+    <button class="btn-redo" onclick="redoTest()">🔄 أعِد الاختبار</button>
+  </div>
+
+</div>
+
+<script>
+// ══════════════════════════════
+// DIAGNOSTIC ENGINE
+// ══════════════════════════════
+function runDiagnostic(e) {
+  e.preventDefault();
+
+  const data = {
+    bizName:   document.getElementById('bizName').value.trim(),
+    bizType:   document.getElementById('bizType').value,
+    rating:    parseFloat(document.getElementById('currentRating').value),
+    reviewCount: parseInt(document.getElementById('reviewCount').value) || 0,
+    responseRate: parseInt(document.getElementById('responseRate').value),
+    negativeUnanswered: parseInt(document.getElementById('negativeUnanswered').value),
+    lastReviewDate: document.getElementById('lastReview').value
+  };
+
+  const scores = calculateScore(data);
+  const grade  = getGrade(scores.total);
+  const recs   = generateRecommendations(data, scores);
+  const tips   = generateTips(data.bizType);
+
+  renderResults(scores, grade, recs, tips, data);
+
+  document.getElementById('results').style.display = 'block';
+  setTimeout(() => {
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+}
+
+function calculateScore(d) {
+  // 1. Star Rating (35%)
+  const starScore = Math.round(((d.rating - 1) / 4) * 100);
+
+  // 2. Volume & Recency (25%)
+  let volumeScore = Math.min(100, Math.round((d.reviewCount / 50) * 100));
+  if (d.lastReviewDate) {
+    const days = Math.floor((Date.now() - new Date(d.lastReviewDate)) / 86400000);
+    if (days > 90) volumeScore = Math.max(0, volumeScore - 30);
+    else if (days > 30) volumeScore = Math.max(0, volumeScore - 15);
+    else if (days > 14) volumeScore = Math.max(0, volumeScore - 5);
+  }
+
+  // 3. Response Rate (25%)
+  const responseScore = d.responseRate;
+
+  // 4. Negative management (15%)
+  const negScore = Math.max(0, 100 - d.negativeUnanswered);
+
+  const total = Math.min(100, Math.round(
+    starScore * 0.35 +
+    volumeScore * 0.25 +
+    responseScore * 0.25 +
+    negScore * 0.15
+  ));
+
+  return { total, starScore, volumeScore, responseScore, negScore };
+}
+
+function getGrade(score) {
+  if (score >= 85) return { label: 'استثنائي ⭐', color: '#22c55e', desc: 'أنت من أفضل 5% في منطقتك — حافظ على هذا المستوى!' };
+  if (score >= 70) return { label: 'ممتاز 🌟',    color: '#84cc16', desc: 'سمعتك قوية — هناك فرص صغيرة للوصول للقمة' };
+  if (score >= 55) return { label: 'جيد 👍',       color: '#f59e0b', desc: 'أداء جيد لكن هناك فرص تحسين واضحة تفوتك' };
+  if (score >= 35) return { label: 'متوسط ⚠️',    color: '#f97316', desc: 'سمعتك تحتاج اهتماماً عاجلاً قبل فوات الأوان' };
+  return              { label: 'ضعيف 🚨',         color: '#ef4444', desc: 'خطر حقيقي على نمو عملك — تصرف الآن' };
+}
+
+function generateRecommendations(d, scores) {
+  const recs = [];
+
+  if (d.rating < 4.0) recs.push({
+    icon: '⭐', priority: 'حرج', pClass: 'priority-critical',
+    title: `تقييمك ${d.rating} — أقل من عتبة الثقة الحرجة 4.0`,
+    impact: `رفع تقييمك من ${d.rating} إلى 4.3 يزيد نقرات Google بنسبة 28% ويجلب عملاء أكثر`,
+    fix: 'أطلق حملة طلب تقييمات لعملائك الراضين الآن عبر واتساب — أرسل 10 رسائل اليوم'
+  });
+
+  if (d.reviewCount < 20) recs.push({
+    icon: '📝', priority: 'عاجل', pClass: 'priority-urgent',
+    title: `${d.reviewCount} تقييم فقط — أقل من الحد الأدنى للظهور`,
+    impact: 'المنشآت بـ 50+ تقييم تظهر في الصفحة الأولى بنسبة 3 أضعاف مقارنة بمن لديهم أقل من 20',
+    fix: 'استهدف 4 تقييمات جديدة أسبوعياً. ضع QR Code في محلك لتسهيل التقييم'
+  });
+
+  if (d.responseRate < 60) recs.push({
+    icon: '💬', priority: 'عاجل', pClass: 'priority-urgent',
+    title: `نسبة ردودك ${d.responseRate}% — Google يعاقب على هذا مباشرة`,
+    impact: 'الرد المنتظم على التقييمات يرفع ترتيبك في Maps ويزيد الثقة 34%',
+    fix: 'اضبط تنبيهاً واتساب فورياً عند كل تقييم جديد وارد عليه خلال 24 ساعة كحد أقصى'
+  });
+
+  if (d.negativeUnanswered > 25) recs.push({
+    icon: '🛡️', priority: 'حرج', pClass: 'priority-critical',
+    title: `${d.negativeUnanswered}% من تقييماتك السلبية بدون رد — كارثة`,
+    impact: '1 تقييم سلبي بدون رد يطرد 22% من العملاء الجدد الذين يقرؤونه',
+    fix: 'ارد على كل تقييم سلبي برد متعاطف واحترافي. اعرض التواصل المباشر لحل المشكلة'
+  });
+
+  if (scores.volumeScore < 50) recs.push({
+    icon: '📅', priority: 'مهم', pClass: 'priority-important',
+    title: 'تقييماتك قديمة — Google يفضل النشاط الحديث',
+    impact: 'التقييمات الحديثة (آخر 30 يوم) تُعطى وزناً أعلى في خوارزمية Google Maps',
+    fix: 'أطلق حملة تقييمات شهرية منتظمة — لا تنتظر العميل ليقيّم من تلقاء نفسه'
+  });
+
+  if (recs.length < 3) recs.push({
+    icon: '📸', priority: 'مهم', pClass: 'priority-important',
+    title: 'الصور المحدّثة ترفع المشاهدات 42%',
+    impact: 'المنشآت بـ 10+ صور جديدة شهرياً تحصل على ضعف الزيارات من Google Maps',
+    fix: 'أضف 7 صور جديدة عالية الجودة كل شهر لبروفايل Google Business الخاص بك'
+  });
+
+  return recs.slice(0, 5);
+}
+
+function generateTips(bizType) {
+  const core = [
+    'اكتمال الملف التجاري 100% (صور، ساعات العمل، الخدمات، الوصف)',
+    'الكلمات المفتاحية الصحيحة في وصف المشروع (اسم المنطقة + نوع النشاط)',
+    'تقييمات منتظمة — استهدف 4+ تقييمات جديدة كل شهر',
+    'الرد على كل تقييم خلال 24 ساعة (إيجابي أو سلبي)',
+    'صور عالية الجودة — 7+ صور محدّثة كل شهر',
+    'استخدام Google Posts أسبوعياً لنشر عروض وأخبار',
+    'ثبات بيانات NAP (الاسم، العنوان، الهاتف) في كل المنصات',
+  ];
+
+  const specific = {
+    restaurant: ['ربط قائمة الطعام مباشرة بـ Google Business Profile', 'تفعيل خاصية الحجز والطلب عبر Google إن أمكن'],
+    cafe:       ['إضافة صور جذابة للمشروبات والأجواء بشكل أسبوعي', 'تفعيل "يوفر واي فاي" و"مناسب للعمل" في الوصف'],
+    clinic:     ['إضافة قائمة الخدمات الطبية بالتفصيل', 'الرد المحترف على كل تقييم سلبي — الثقة الطبية حساسة جداً'],
+    salon:      ['إضافة صور قبل/بعد كنماذج للأعمال', 'تفعيل خاصية الحجز المسبق عبر Google'],
+    retail:     ['إضافة المنتجات في قائمة Google Business', 'تحديث ساعات العمل في الأعياد والمناسبات فوراً'],
+  };
+
+  return [...core, ...(specific[bizType] || [])];
+}
+
+// ══════════════════════════════
+// RENDER
+// ══════════════════════════════
+function renderResults(scores, grade, recs, tips, data) {
+  // Grade
+  document.getElementById('gradeLabel').textContent = grade.label;
+  document.getElementById('gradeLabel').style.color = grade.color;
+  document.getElementById('gradeDesc').textContent = grade.desc;
+  document.getElementById('scoreNumber').style.color = grade.color;
+
+  // Animate score
+  animateScore(scores.total, grade.color);
+
+  // Breakdown bars
+  const barData = [
+    { bar: 'barStar',     val: 'valStar',     score: scores.starScore,     color: '#F5B429' },
+    { bar: 'barVolume',   val: 'valVolume',   score: scores.volumeScore,   color: '#2251D3' },
+    { bar: 'barResponse', val: 'valResponse', score: scores.responseScore, color: '#22c55e' },
+    { bar: 'barNeg',      val: 'valNeg',      score: scores.negScore,      color: '#f97316' },
+  ];
+  barData.forEach(b => {
+    const el = document.getElementById(b.bar);
+    const color = b.score >= 70 ? '#22c55e' : b.score >= 40 ? '#f97316' : '#ef4444';
+    setTimeout(() => {
+      el.style.width = b.score + '%';
+      el.style.background = color;
+    }, 300);
+    document.getElementById(b.val).textContent = b.score;
+  });
+
+  // Recommendations
+  const recsList = document.getElementById('recsList');
+  recsList.innerHTML = recs.map(r => `
+    <div class="rec-item">
+      <div class="rec-header">
+        <div class="rec-icon">${r.icon}</div>
+        <div>
+          <div class="rec-title">${r.title}</div>
+          <div class="rec-priority ${r.pClass}">${r.priority}</div>
+        </div>
+      </div>
+      <div class="rec-impact">💡 التأثير: ${r.impact}</div>
+      <div class="rec-fix">✅ الحل: ${r.fix}</div>
+    </div>
+  `).join('');
+
+  // Tips
+  const tipsList = document.getElementById('tipsList');
+  tipsList.innerHTML = tips.map(t => `
+    <div class="tip-item">
+      <span class="tip-check">✓</span>
+      <span>${t}</span>
+    </div>
+  `).join('');
+
+  // CTA weak count
+  const weakAreas = [
+    scores.starScore < 70,
+    scores.volumeScore < 70,
+    scores.responseScore < 70,
+    scores.negScore < 70
+  ].filter(Boolean).length;
+  document.getElementById('weakCount').textContent = weakAreas;
+}
+
+function animateScore(target, color) {
+  const arc = document.getElementById('scoreArc');
+  const num = document.getElementById('scoreNumber');
+  const circ = 2 * Math.PI * 80; // 502.65
+  arc.style.stroke = color;
+
+  let start = null;
+  function step(ts) {
+    if (!start) start = ts;
+    const p = Math.min((ts - start) / 1400, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    const current = Math.round(target * ease);
+    num.textContent = current;
+    arc.style.strokeDashoffset = circ - (ease * target / 100) * circ;
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// ══════════════════════════════
+// SHARE & REDO
+// ══════════════════════════════
+function shareResult() {
+  const score = document.getElementById('scoreNumber').textContent;
+  const grade = document.getElementById('gradeLabel').textContent;
+  const name  = document.getElementById('bizName').value;
+  const text  = `حصل ${name} على نتيجة ${score}/100 (${grade}) في تشخيص سمعة Google!\n\nاكتشف نتيجتك مجاناً 👇\nhttps://www.the5starsrating.com/diagnostic.html`;
+
+  if (navigator.share) {
+    navigator.share({ title: '5tars — تشخيص السمعة', text });
+  } else {
+    navigator.clipboard.writeText(text).then(() => {
+      alert('✅ تم نسخ النتيجة! شاركها الآن');
+    });
+  }
+}
+
+function redoTest() {
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('diagForm').scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
